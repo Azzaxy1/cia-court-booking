@@ -10,7 +10,7 @@ interface Product {
 
 const Home = () => {
   const fetchData = async () => {
-    const res = await axios.get("api/about");
+    const res = await axios.get("api/product");
     return res.data;
   };
 
@@ -18,7 +18,6 @@ const Home = () => {
     queryKey: ["product"],
     queryFn: fetchData,
   });
-  console.log(data);
 
   if (isLoading)
     return (
