@@ -1,5 +1,5 @@
 import Logo from "./images/logo-dark.png";
 
-export const image = {
+export const images = {
   Logo,
 };
