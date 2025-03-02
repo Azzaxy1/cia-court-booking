@@ -1,5 +1,7 @@
-import Logo from "./images/logo-dark.png";
+import LogoDark from "./images/logo-dark.png";
+import LogoLight from "./images/logo-light.png";
 
 export const images = {
-  Logo,
+  LogoDark,
+  LogoLight,
 };
