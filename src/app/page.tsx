@@ -27,8 +27,7 @@ const Home = () => {
 
   return (
     <div>
-      <h1 className="text-2xl text-blue-700 text-center flex justify-center items-center font-bold">
-        {/* {data} */}
+      <h1 className="text-2xl h-screen text-blue-700 text-center flex justify-center items-center font-bold">
         Home Page
       </h1>
       <ol>
