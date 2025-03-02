@@ -5,6 +5,9 @@ import "./globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useEffect } from "react";
+import Aos from "aos";
+import "aos/dist/aos.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,6 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const queryClient = new QueryClient();
+
+  useEffect(() => {
+    Aos.init({
+      duration: 800,
+      once: true,
+    });
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

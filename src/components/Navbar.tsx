@@ -15,8 +15,8 @@ const Navbar = () => {
   };
 
   return (
-    <header className="w-full fixed bg-white shadow-md py-3 px-4 md:px-6">
-      <div className="container mx-auto ">
+    <header className="w-full z-50 fixed bg-white shadow-md py-3 px-4 md:px-6">
+      <div data-aos="fade-down" className="container mx-auto">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
@@ -50,7 +50,7 @@ const Navbar = () => {
               <Link
                 key={item.id}
                 href={item.link}
-                className="flex justify-center items-center text-gray-700 hover:text-primary"
+                className="flex justify-center hover:underline hover:underline-offset-4 items-center text-gray-700 hover:text-primary"
               >
                 <span className="mr-2">
                   <item.icon className="h-5 w-5" />

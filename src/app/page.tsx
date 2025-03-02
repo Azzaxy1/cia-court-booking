@@ -27,7 +27,10 @@ const Home = () => {
 
   return (
     <div>
-      <h1 className="text-2xl h-screen text-blue-700 text-center flex justify-center items-center font-bold">
+      <h1
+        data-aos="fade-up"
+        className="text-2xl h-[1000px] text-blue-700 text-center flex justify-center items-center font-bold"
+      >
         Home Page
       </h1>
       <ol>
