@@ -59,15 +59,19 @@ const Navbar = () => {
               </Link>
             ))}
             <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                className="border-primary text-gray-700"
-              >
-                Masuk
-              </Button>
-              <Button className="bg-primary hover:bg-primary-foreground text-white">
-                Buat Akun
-              </Button>
+              <Link href="/login">
+                <Button
+                  variant="outline"
+                  className="border-primary text-gray-700"
+                >
+                  Masuk
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button className="bg-primary hover:bg-primary-foreground text-white">
+                  Buat Akun
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -90,15 +94,19 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-3 pt-2">
-                <Button
-                  variant="outline"
-                  className="w-full border-gray-300 text-gray-700"
-                >
-                  Masuk
-                </Button>
-                <Button className="w-full bg-teal-700 hover:bg-teal-800 text-white">
-                  Buat Akun
-                </Button>
+                <Link href="/login">
+                  <Button
+                    variant="outline"
+                    className="w-full border-gray-300 text-gray-700"
+                  >
+                    Masuk
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="w-full bg-teal-700 hover:bg-teal-800 text-white">
+                    Buat Akun
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

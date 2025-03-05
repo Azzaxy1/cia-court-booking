@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import { usePathname } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const queryClient = new QueryClient();
+  const pathname = usePathname();
 
   useEffect(() => {
     Aos.init({
@@ -32,6 +34,8 @@ export default function RootLayout({
       once: true,
     });
   }, []);
+
+  const hideNavbarFooter = ["/login", "/register"].includes(pathname);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -46,9 +50,9 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <Navbar />
+          {!hideNavbarFooter && <Navbar />}
           {children}
-          <Footer />
+          {!hideNavbarFooter && <Footer />}
         </body>
       </html>
     </QueryClientProvider>
