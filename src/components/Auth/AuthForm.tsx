@@ -5,20 +5,48 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { images } from "@/assets";
+import Link from "next/link";
 
-const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
+interface AuthFormProps {
+  isLogin?: boolean;
+  className?: string;
+}
+
+const AuthForm = ({ isLogin, className }: AuthFormProps) => {
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)}>
       <Card className="overflow-hidden">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
-            <div className="flex flex-col gap-6">
+          <form className={`p-6 md:p-8 ${isLogin ? "order-2" : "order-1"}`}>
+            <div className={`flex flex-col ${isLogin ? "gap-6" : "gap-3"}`}>
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">CIA Serang</h1>
                 <p className="text-balance text-muted-foreground">
-                  Masuk ke akun Anda
+                  {isLogin ? "Masuk ke akun Anda" : "Daftarkan akun baru Anda"}
                 </p>
               </div>
+              {!isLogin && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label htmlFor="name">Nama</Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="John Doe"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="handphone">No Telepon</Label>
+                    <Input
+                      id="handphone"
+                      type="text"
+                      placeholder="081234567890"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -40,9 +68,9 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                 />
               </div>
               <Button type="submit" className="w-full text-white">
-                Masuk
+                {isLogin ? "Masuk" : "Daftar"}
               </Button>
-              <div className=" gap-4 w-full">
+              <div className="gap-4 w-full">
                 <Button variant="outline" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
@@ -54,22 +82,27 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                 </Button>
               </div>
               <div className="text-center text-sm">
-                Belum punya akun?{" "}
-                <a href="#" className="underline underline-offset-4">
-                  Daftar disini
-                </a>
+                {isLogin ? "Belum" : "Sudah"} punya akun?{" "}
+                <Link
+                  href={isLogin ? "/register" : "/login"}
+                  className="underline underline-offset-4"
+                >
+                  {isLogin ? "Daftar" : "Masuk"} disini
+                </Link>
               </div>
             </div>
           </form>
-          <div className="hidden bg-primary  md:block">
+          <div className={`hidden bg-primary md:block`}>
             <div className="flex justify-center h-full items-center">
-              <Image
-                src={images.LogoWhite}
-                alt="Image"
-                className="inset-0 object-cover dark:brightness-[0.2] dark:grayscale"
-                width={300}
-                height={300}
-              />
+              <Link href="/">
+                <Image
+                  src={images.LogoWhite}
+                  alt="Image"
+                  className="inset-0 object-cover dark:brightness-[0.2] dark:grayscale"
+                  width={300}
+                  height={300}
+                />
+              </Link>
             </div>
           </div>
         </CardContent>
@@ -78,4 +111,4 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   );
 };
 
-export { LoginForm };
+export { AuthForm };
