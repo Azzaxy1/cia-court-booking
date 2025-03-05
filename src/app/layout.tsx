@@ -1,7 +1,7 @@
 "use client";
 
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -35,7 +35,9 @@ export default function RootLayout({
     });
   }, []);
 
-  const hideNavbarFooter = ["/login", "/register"].includes(pathname);
+  const hideNavbarFooter = ["/login", "/register", "/admin/login"].includes(
+    pathname
+  );
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -52,7 +52,7 @@ const AuthForm = ({ isLogin, className }: AuthFormProps) => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="email@example.com"
+                  placeholder="example@mail.com"
                   required
                 />
               </div>
