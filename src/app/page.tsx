@@ -1,46 +1,13 @@
-"use client";
+import HeroSection from "@/components/Home/hero-section";
+import React from "react";
 
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-
-interface Product {
-  id: number;
-  name: string;
-}
-
-const Home = () => {
-  const fetchData = async () => {
-    const res = await axios.get("api/product");
-    return res.data;
-  };
-
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["product"],
-    queryFn: fetchData,
-  });
-
-  if (isLoading)
-    return (
-      <p className="flex justify-center items-center h-screen">Loading...</p>
-    );
-  if (isError) return <p>Error fetching data!</p>;
-
+const HomePage = () => {
   return (
-    <div>
-      <h1
-        data-aos="fade-up"
-        className="text-2xl h-[1000px] text-blue-700 text-center flex justify-center items-center font-bold"
-      >
-        Home Page
-      </h1>
-      <ol>
-        {data.map((item: Product) => (
-          <li key={item.id}>{item.name}</li>
-        ))}
-      </ol>
-    </div>
+    <main className="container mx-auto">
+      <HeroSection />
+    </main>
   );
 };
 
-export default Home;
+export default HomePage;
 

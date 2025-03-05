@@ -16,12 +16,10 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary container text-white" data-aos="fade-up">
-      {/* Main Footer */}
+    <footer className="bg-primary container text-white">
       <div className="container mx-auto px-4 pt-12 pb-7">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
-          <div className="space-y-6" data-aos="fade-right">
+          <div className="space-y-6">
             <div className="flex items-center">
               <Image
                 src={images.LogoLight}
@@ -41,21 +39,18 @@ const Footer = () => {
                 <Link
                   href="https://facebook.com"
                   className="text-gray-300 hover:text-white transition-colors"
-                  data-aos="zoom-in"
                 >
                   <Facebook size={20} />
                 </Link>
                 <Link
                   href="https://instagram.com"
                   className="text-gray-300 hover:text-white transition-colors"
-                  data-aos="zoom-in"
                 >
                   <Instagram size={20} />
                 </Link>
                 <Link
                   href="https://twitter.com"
                   className="text-gray-300 hover:text-white transition-colors"
-                  data-aos="zoom-in"
                 >
                   <Twitter size={20} />
                 </Link>
@@ -63,14 +58,13 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-6" data-aos="fade-up">
+          <div className="space-y-6">
             <h3 className="text-xl font-semibold border-b border-white pb-2 text-white">
               Tautan Cepat
             </h3>
             <ul className="space-y-3">
               {NAVMENU.map((item) => (
-                <li key={item.id} data-aos="fade-left">
+                <li key={item.id}>
                   <Link
                     href={item.link}
                     className="text-gray-300 hover:text-white transition-colors flex items-center"
@@ -82,54 +76,43 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Jenis Lapangan */}
-          <div className="space-y-6" data-aos="fade-up">
+          <div className="space-y-6">
             <h3 className="text-xl font-semibold border-b border-white pb-2 text-white">
               Jenis Lapangan
             </h3>
             <ul className="space-y-3">
-              <li
-                className="text-gray-300 flex items-center"
-                data-aos="fade-left"
-              >
+              <li className="text-gray-300 flex items-center">
                 <span className="mr-2">›</span> Lapangan Futsal
               </li>
-              <li
-                className="text-gray-300 flex items-center"
-                data-aos="fade-left"
-              >
+              <li className="text-gray-300 flex items-center">
                 <span className="mr-2">›</span> Lapangan Badminton
               </li>
-              <li
-                className="text-gray-300 flex items-center"
-                data-aos="fade-left"
-              >
+              <li className="text-gray-300 flex items-center">
                 <span className="mr-2">›</span> Lapangan Tenis Meja
               </li>
             </ul>
           </div>
 
-          {/* Contact Info */}
-          <div className="space-y-6" data-aos="fade-right">
+          <div className="space-y-6">
             <h3 className="text-xl font-semibold border-b border-white pb-2 text-white">
               Hubungi Kami
             </h3>
             <ul className="space-y-4">
-              <li className="flex items-start" data-aos="fade-left">
+              <li className="flex items-start">
                 <MapPin className="mr-3 h-5 w-5 text-white flex-shrink-0 mt-1" />
                 <span className="text-gray-300">
                   Jl. Cilampang, Unyur, Kec. Serang, Kota Serang, Banten 42111
                 </span>
               </li>
-              <li className="flex items-center" data-aos="fade-left">
+              <li className="flex items-center">
                 <Phone className="mr-3 h-5 w-5 text-white flex-shrink-0" />
                 <span className="text-gray-300">+62 851-8219-8144</span>
               </li>
-              <li className="flex items-center" data-aos="fade-left">
+              <li className="flex items-center">
                 <Mail className="mr-3 h-5 w-5 text-white flex-shrink-0" />
                 <span className="text-gray-300">info@ciaserang.com</span>
               </li>
-              <li className="flex items-start" data-aos="fade-left">
+              <li className="flex items-start">
                 <Clock className="mr-3 h-5 w-5 text-white flex-shrink-0 mt-1" />
                 <div>
                   <p className="text-gray-300">Setiap Hari: 07.00 - 23.00</p>
@@ -140,7 +123,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Copyright */}
       <div className="bg-primary py-4">
         <div className="mx-auto px-4">
           <div className="flex flex-col border-t pt-4 border-white md:flex-row justify-between items-center">
