@@ -15,7 +15,7 @@ const HeroSection = () => {
             Nikmati Pengalaman Bermain di{" "}
             <span className="text-primary">Lapangan Terbaik!</span>
           </h1>
-          <p className="text-sm sm:text-base mt-4 text-slate-600">
+          <p className="text-sm sm:text-base mt-4 text-justify text-slate-600">
             Temukan dan sewa lapangan futsal, badminton, dan tenis meja yang
             sesuai dengan kebutuhan Anda. Kami menyediakan fasilitas terbaik
             untuk mendukung hobi dan aktivitas olahraga Anda, mulai dari
