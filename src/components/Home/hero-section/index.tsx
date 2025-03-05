@@ -11,7 +11,7 @@ const HeroSection = () => {
           className="flex flex-col justify-center  md:text-left"
           data-aos="fade-right"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight text-slate-800">
+          <h1 className="text-2xl sm:text-3xl md:text-3xl font-semibold leading-tight text-slate-800">
             Nikmati Pengalaman Bermain di{" "}
             <span className="text-primary">Lapangan Terbaik!</span>
           </h1>
