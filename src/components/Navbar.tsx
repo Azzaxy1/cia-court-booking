@@ -25,7 +25,7 @@ const Navbar = () => {
               alt="Logo"
               width={48}
               height={48}
-              className="object-contain"
+              className="w-auto h-auto object-contain"
               priority
             />
           </Link>
@@ -103,7 +103,7 @@ const Navbar = () => {
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="w-full bg-teal-700 hover:bg-teal-800 text-white">
+                  <Button className="w-full bg-primary hover:bg-primary-foreground text-white">
                     Buat Akun
                   </Button>
                 </Link>

@@ -18,7 +18,7 @@ export const navMenu = [
   {
     id: 3,
     title: "Tentang Kami",
-    link: "/tentang",
+    link: "/tentang-kami",
     icon: FaBuilding,
   },
 ] as const;
