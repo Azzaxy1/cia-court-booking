@@ -2,7 +2,7 @@ import { PiCourtBasketball } from "react-icons/pi";
 import { MdOutlinePayments } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
 
-export const HOWTOORDER = [
+export const howToOrder = [
   {
     id: 1,
     title: "Pilih Lapangan",
@@ -21,4 +21,4 @@ export const HOWTOORDER = [
     description: "Lakukan pembayaran dengan metode yang aman dan terpercaya.",
     icon: MdOutlinePayments,
   },
-];
+] as const;

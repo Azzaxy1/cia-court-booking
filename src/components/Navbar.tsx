@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { images } from "@/assets";
 import { IoCloseSharp } from "react-icons/io5";
 import { FiMenu } from "react-icons/fi";
-import { NAVMENU } from "@/constants/navmenu";
+import { navMenu } from "@/constants/navmenu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,7 +46,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden  md:flex items-center space-x-6">
-            {NAVMENU.map((item) => (
+            {navMenu.map((item) => (
               <Link
                 key={item.id}
                 href={item.link}
@@ -80,7 +80,7 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-2">
             <div className="flex flex-col space-y-4">
-              {NAVMENU.map((item) => (
+              {navMenu.map((item) => (
                 <Link
                   key={item.id}
                   href={item.link}

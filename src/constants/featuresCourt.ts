@@ -1,6 +1,6 @@
 import { FaCheckCircle } from "react-icons/fa";
 
-export const FEATURESCOURT = [
+export const featuresCourt = [
   {
     id: 1,
     title:
@@ -25,4 +25,4 @@ export const FEATURESCOURT = [
       "Kami menyediakan pembayaran yang aman untuk mendukung aktivitas olahraga Anda.",
     icon: FaCheckCircle,
   },
-];
+] as const;

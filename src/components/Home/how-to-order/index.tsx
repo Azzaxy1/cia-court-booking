@@ -1,7 +1,7 @@
 import { images } from "@/assets";
 import Image from "next/image";
 import React from "react";
-import { HOWTOORDER } from "@/constants/howToOrder";
+import { howToOrder } from "@/constants/howToOrder";
 
 const HowToOrder = () => {
   return (
@@ -20,7 +20,7 @@ const HowToOrder = () => {
             tanpa ribet.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            {HOWTOORDER.map((order) => (
+            {howToOrder.map((order) => (
               <div key={order.id} className="flex flex-col">
                 <section className="flex items-center space-x-4">
                   <div className="rounded-full bg-primary px-2 py-1">

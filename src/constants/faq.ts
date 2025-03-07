@@ -1,4 +1,4 @@
-export const FAQDATA = [
+export const faqData = [
   {
     id: 1,
     question: "Bagaimana cara memesan lapangan?",
@@ -29,4 +29,4 @@ export const FAQDATA = [
     answer:
       "Lapangan kami beroperasi dari pukul 07.00 hingga 23.00 di setiap harinya.",
   },
-];
+] as const;

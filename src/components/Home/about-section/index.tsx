@@ -1,7 +1,7 @@
 import { images } from "@/assets";
 import Image from "next/image";
 import React from "react";
-import { FEATURESCOURT } from "@/constants/featuresCourt";
+import { featuresCourt } from "@/constants/featuresCourt";
 
 const AboutSection = () => {
   return (
@@ -30,7 +30,7 @@ const AboutSection = () => {
             mendukung pengalaman bermain Anda. Pesan lapangan dengan mudah
             melalui sistem online yang cepat dan terpercaya.
           </p>
-          {FEATURESCOURT.map((feature) => (
+          {featuresCourt.map((feature) => (
             <div key={feature.id} className="flex items-center mt-4">
               <span className="text-primary text-xl mr-2">
                 <feature.icon />

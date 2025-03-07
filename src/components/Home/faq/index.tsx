@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { FAQDATA } from "@/constants/faq";
+import { faqData } from "@/constants/faq";
 import { FaqItemProps } from "@/types/FaqItem";
 import Link from "next/link";
 
@@ -57,7 +57,7 @@ const Faq = () => {
           </div>
 
           <div className="mt-8">
-            {FAQDATA.map((faq) => (
+            {faqData.map((faq) => (
               <FaqItem
                 key={faq.id}
                 question={faq.question}

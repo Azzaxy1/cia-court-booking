@@ -2,7 +2,7 @@ import { MdHome } from "react-icons/md";
 import { PiCourtBasketballFill } from "react-icons/pi";
 import { FaBuilding } from "react-icons/fa";
 
-export const NAVMENU = [
+export const navMenu = [
   {
     id: 1,
     title: "Beranda",
@@ -21,4 +21,4 @@ export const NAVMENU = [
     link: "/tentang",
     icon: FaBuilding,
   },
-];
+] as const;
