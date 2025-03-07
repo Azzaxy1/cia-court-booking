@@ -10,7 +10,7 @@ import {
   Clock,
 } from "lucide-react";
 import { images } from "@/assets";
-import { NAVMENU } from "@/constants/navmenu";
+import { navMenu } from "@/constants/navmenu";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -63,7 +63,7 @@ const Footer = () => {
               Tautan Cepat
             </h3>
             <ul className="space-y-3">
-              {NAVMENU.map((item) => (
+              {navMenu.map((item) => (
                 <li key={item.id}>
                   <Link
                     href={item.link}
