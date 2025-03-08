@@ -1,0 +1,115 @@
+import { images } from "@/assets";
+
+export const facilities = {
+  futsal: [
+    {
+      id: 1,
+      name: "Lapangan 1",
+      price: "Rp. 90.000/jam",
+      image: images.Futsal,
+      available: true,
+    },
+    {
+      id: 2,
+      name: "Lapangan 2",
+      price: "Rp. 100.000/jam",
+      image: images.Futsal,
+      available: true,
+    },
+    {
+      id: 3,
+      name: "Lapangan 3",
+      price: "Rp. 100.000/jam",
+      image: images.Futsal,
+      available: true,
+    },
+    {
+      id: 4,
+      name: "Lapangan 4",
+      price: "Rp. 95.000/jam",
+      image: images.Futsal,
+      available: false,
+    },
+    {
+      id: 5,
+      name: "Lapangan 5",
+      price: "Rp. 95.000/jam",
+      image: images.Futsal,
+      available: true,
+    },
+    {
+      id: 6,
+      name: "Lapangan 6",
+      price: "Rp. 110.000/jam",
+      image: images.Futsal,
+      available: true,
+    },
+  ],
+  badminton: [
+    {
+      id: 1,
+      name: "Lapangan 1",
+      price: "Rp. 75.000/jam",
+      image: images.Badminton,
+      available: true,
+    },
+    {
+      id: 2,
+      name: "Lapangan 2",
+      price: "Rp. 80.000/jam",
+      image: images.Badminton,
+      available: true,
+    },
+    {
+      id: 3,
+      name: "Lapangan 3",
+      price: "Rp. 80.000/jam",
+      image: images.Badminton,
+      available: true,
+    },
+    {
+      id: 4,
+      name: "Lapangan 4",
+      price: "Rp. 75.000/jam",
+      image: images.Badminton,
+      available: true,
+    },
+    {
+      id: 5,
+      name: "Lapangan 5",
+      price: "Rp. 85.000/jam",
+      image: images.Badminton,
+      available: false,
+    },
+    {
+      id: 6,
+      name: "Lapangan 6",
+      price: "Rp. 80.000/jam",
+      image: images.Badminton,
+      available: true,
+    },
+    {
+      id: 7,
+      name: "Lapangan 7",
+      price: "Rp. 80.000/jam",
+      image: images.Badminton,
+      available: true,
+    },
+  ],
+  tableTennis: [
+    {
+      id: 1,
+      name: "Lapangan 1",
+      price: "Rp. 50.000/jam",
+      image: images.TenisMeja,
+      available: true,
+    },
+    {
+      id: 2,
+      name: "Lapangan 2",
+      price: "Rp. 50.000/jam",
+      image: images.TenisMeja,
+      available: false,
+    },
+  ],
+};

@@ -5,26 +5,26 @@ import { featuresCourt } from "@/constants/featuresCourt";
 
 const AboutSection = () => {
   return (
-    <section className="flex items-center bg-[#F2FDFC] justify-center px-6 md:px-12 pt-20 md:pt-0 pb-10 md:pb-0">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8 w-full max-w-6xl">
-        <div className="flex justify-start items-start" data-aos="fade-left">
+    <section className="flex items-center bg-[#F2FDFC] justify-center md:px-12 pt-20 md:pt-0 pb-10 md:pb-0">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8 w-full container">
+        <div className="flex justify-start items-start " data-aos="fade-left">
           <Image
             src={images.About}
             alt="About Image"
             width={500}
             height={500}
-            className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl"
+            className="w-full max-w-sm sm:max-w-md md:max-w-lg 2xl:max-w-2xl"
           />
         </div>
         <div
           className="flex flex-col justify-center  md:text-left"
           data-aos="fade-right"
         >
-          <h1 className="text-2xl sm:text-3xl md:text-3xl font-semibold leading-tight text-slate-800">
+          <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800">
             Lapangan Olahraga{" "}
             <span className="text-primary">Pilihan Terbaik</span>
           </h1>
-          <p className="text-sm sm:text-base mt-4 text-justify text-slate-600">
+          <p className="text-sm sm:text-base 2xl:text-lg mt-4 text-justify text-slate-600">
             Kami menyediakan lapangan olahraga berkualitas untuk futsal,
             badminton, dan tenis meja, lengkap dengan fasilitas terbaik yang
             mendukung pengalaman bermain Anda. Pesan lapangan dengan mudah
@@ -35,7 +35,7 @@ const AboutSection = () => {
               <span className="text-primary text-xl mr-2">
                 <feature.icon />
               </span>
-              <p className="text-sm sm:text-base text-slate-600 text-justify">
+              <p className="text-sm sm:text-base 2xl:text-lg text-slate-600 text-justify">
                 {feature.title}
               </p>
             </div>

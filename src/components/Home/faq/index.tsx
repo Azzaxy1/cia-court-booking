@@ -33,23 +33,21 @@ const FaqItem = ({
 };
 
 const Faq = () => {
-  // State untuk mengontrol accordion yang terbuka
   const [openAccordion, setOpenAccordion] = useState<number | null>(null);
 
-  // Fungsi untuk toggle accordion
   const toggleAccordion = (id: number) => {
     setOpenAccordion(openAccordion === id ? null : id);
   };
 
   return (
     <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-3xl font-semibold leading-tight text-slate-800 mb-4">
+            <h2 className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800 mb-4">
               Ada pertanyaan?
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-sm sm:text-base 2xl:text-lg mt-4  text-slate-600">
               Kami telah merangkum jawaban atas berbagai pertanyaan yang sering
               diajukan. Jika masih ada yang belum terjawab, silahkan hubungi WA
               kami!

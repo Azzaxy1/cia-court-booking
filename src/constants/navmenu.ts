@@ -11,7 +11,7 @@ export const navMenu = [
   },
   {
     id: 2,
-    title: "Daftar Lapangan",
+    title: "Booking Lapangan",
     link: "/lapangan",
     icon: PiCourtBasketballFill,
   },

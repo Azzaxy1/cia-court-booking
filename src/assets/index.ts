@@ -14,6 +14,11 @@ import About3 from "./images/about/about3.jpg";
 import About4 from "./images/about/about4.jpg";
 import About5 from "./images/about/about5.jpg";
 
+// Lapangan
+import Futsal from "./images/lapangan/futsal.svg";
+import Badminton from "./images/lapangan/badminton.svg";
+import TenisMeja from "./images/lapangan/tenis-meja.svg";
+
 export const images = {
   LogoDark,
   LogoLight,
@@ -28,4 +33,7 @@ export const images = {
   About3,
   About4,
   About5,
+  Futsal,
+  Badminton,
+  TenisMeja,
 };

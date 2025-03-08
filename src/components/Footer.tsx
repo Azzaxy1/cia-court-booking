@@ -16,8 +16,8 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary container text-white">
-      <div className="container mx-auto px-4 pt-12 pb-7">
+    <footer className="bg-primary text-white">
+      <div className="container px-4 pt-12 pb-7">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="space-y-6">
             <div className="flex items-center">
@@ -123,7 +123,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="bg-primary py-4">
+      <div className="bg-primary container py-4">
         <div className="mx-auto px-4">
           <div className="flex flex-col border-t pt-4 border-white md:flex-row justify-between items-center">
             <p className="text-white text-sm">

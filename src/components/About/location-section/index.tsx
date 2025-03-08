@@ -3,8 +3,8 @@ import React from "react";
 
 const Location = () => {
   return (
-    <section className="py-16 px-4 bg-gray-50">
-      <div className="container mx-auto max-w-6xl">
+    <section className="py-16 md:px-12 bg-gray-50">
+      <div className="container mx-auto ">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Lokasi Kami</h2>
           <p className="text-gray-600 max-w-3xl mx-auto">
@@ -17,7 +17,7 @@ const Location = () => {
           <div className="h-96 w-full rounded-lg overflow-hidden shadow-md">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2846.2618151206048!2d106.16661067498939!3d-6.1032890938831335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e41f4cf8fe80f27%3A0xb5197ff6fa7a5f0f!2sCIA%20Futsal!5e1!3m2!1sid!2sid!4v1741375703020!5m2!1sid!2sid"
-              width="600"
+              width="800"
               height="450"
               loading="lazy"
             ></iframe>

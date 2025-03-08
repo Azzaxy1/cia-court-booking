@@ -19,7 +19,7 @@ const CTA = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  href="/booking"
+                  href="/lapangan"
                   className="inline-block px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors text-center"
                 >
                   Sewa Lapangan

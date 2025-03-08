@@ -4,14 +4,14 @@ import React from "react";
 
 const OurStory = () => {
   return (
-    <section className="py-16 px-4">
-      <div className="container mx-auto max-w-6xl">
+    <section className="py-16 md:px-12">
+      <div className="container mx-auto ">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
               Cerita Kami
             </h2>
-            <div className="space-y-4 text-gray-700">
+            <div className="space-y-4 text-gray-700 text-justify">
               <p>
                 CIA Serang didirikan pada tahun 2018 oleh sekelompok penggemar
                 olahraga yang percaya bahwa masyarakat Serang layak mendapatkan

@@ -5,17 +5,17 @@ import { howToOrder } from "@/constants/howToOrder";
 
 const HowToOrder = () => {
   return (
-    <section className="flex items-center justify-center px-6 md:px-12 pt-10 md:pt-6 pb-10 md:pb-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
+    <section className="flex items-center justify-center md:px-12 pt-10 md:pt-6 pb-10 md:pb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full container">
         <div
           className="flex flex-col justify-center  md:text-left"
           data-aos="fade-right"
         >
-          <h1 className="text-2xl sm:text-3xl md:text-3xl font-semibold leading-tight text-slate-800">
+          <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800">
             Pesan Lapangan Anda dalam{" "}
             <span className="text-primary">3 Langkah Mudah!</span>
           </h1>
-          <p className="text-sm sm:text-base mt-4 text-justify text-slate-600">
+          <p className="text-sm sm:text-base 2xl:text-lg mt-4 text-justify text-slate-600">
             Kami mempermudah Anda untuk memesan lapangan dengan proses cepat dan
             tanpa ribet.
           </p>
@@ -27,11 +27,11 @@ const HowToOrder = () => {
                     <span className="text-white">{order.id}</span>
                   </div>
                   <order.icon className="text-primary w-[40px] h-[40px]" />
-                  <h4 className="text-sm sm:text-base text-primary font-semibold">
+                  <h4 className="text-sm sm:text-base 2xl:text-lg text-primary font-semibold">
                     {order.title}
                   </h4>
                 </section>
-                <div className="text-sm sm:text-basetext-slate-600">
+                <div className="text-sm sm:text-base 2xl:text-lg text-slate-600">
                   <p>{order.description}</p>
                 </div>
               </div>

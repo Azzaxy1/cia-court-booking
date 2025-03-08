@@ -5,8 +5,8 @@ import React from "react";
 
 const Facilities = () => {
   return (
-    <section className="py-16 px-4">
-      <div className="container mx-auto max-w-6xl">
+    <section className="py-16 md:px-12">
+      <div className="container mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Fasilitas Unggulan

@@ -1,25 +1,18 @@
+"use client";
 import React from "react";
+import { facilities } from "@/lib/facilities";
+import SelectCourt from "@/components/Lapangan/select-court";
 
-const courts = [
-  { id: 1, name: "Court 1", location: "Location 1" },
-  { id: 2, name: "Court 2", location: "Location 2" },
-  { id: 3, name: "Court 3", location: "Location 3" },
-];
+export default function FacilitiesPage() {
+  // const [activeTab, setActiveTab] = useState("futsal");
 
-const LapanganPage: React.FC = () => {
   return (
-    <div className="min-h-screen p-4 flex justify-center items-center flex-col">
-      <h1>List of Courts</h1>
-      <ul>
-        {courts.map((court) => (
-          <li key={court.id}>
-            <h2>{court.name}</h2>
-            <p>{court.location}</p>
-          </li>
-        ))}
-      </ul>
+    <div className="container mx-auto md:px-12 py-20">
+      <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800 mb-8 text-center">
+        Cari Lapangan <span className="text-primary">Kesukaan Anda</span>
+      </h1>
+
+      <SelectCourt facilities={facilities} />
     </div>
   );
-};
-
-export default LapanganPage;
+}
