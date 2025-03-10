@@ -1,4 +1,4 @@
-import { CreditCard, LogOut, User } from "lucide-react";
+import {  LogOut, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,12 +29,6 @@ const AccountMenu = () => {
             <DropdownMenuItem className="cursor-pointer">
               <User />
               <span>Profile saya</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link href="/payment-history">
-            <DropdownMenuItem className="cursor-pointer">
-              <CreditCard />
-              <span>Riwayat pembayaran</span>
             </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>

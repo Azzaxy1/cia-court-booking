@@ -115,7 +115,6 @@ const DetailLapangan = async ({
             <TabsList className="grid grid-cols-2 mb-4">
               <TabsTrigger value="informasi">Informasi</TabsTrigger>
               <TabsTrigger value="jadwal">Jadwal & Harga</TabsTrigger>
-              {/* <TabsTrigger value="ulasan">Ulasan</TabsTrigger> */}
             </TabsList>
 
             <TabsContent value="informasi" className="space-y-4">
@@ -170,21 +169,6 @@ const DetailLapangan = async ({
                     <p>{facilityDetails.capacity}</p>
                   </CardContent>
                 </Card>
-
-                {/* <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      Lokasi
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>
-                      Lantai {Math.floor(Math.random() * 3) + 1}, Blok{" "}
-                      {String.fromCharCode(65 + Math.floor(Math.random() * 5))}
-                    </p>
-                  </CardContent>
-                </Card> */}
               </div>
             </TabsContent>
 
