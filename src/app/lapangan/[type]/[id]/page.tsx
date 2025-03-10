@@ -4,7 +4,6 @@ import Image from "next/image";
 import {
   Calendar,
   Clock,
-  // MapPin,
   Users,
   Award,
   DollarSign,

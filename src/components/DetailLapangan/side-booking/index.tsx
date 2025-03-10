@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,8 +10,13 @@ import {
 } from "@/components/ui/card";
 import { Court } from "@/types/Court";
 import React from "react";
+import toast from "react-hot-toast";
 
 const SideBooking = ({ lapangan }: { lapangan: Court }) => {
+  const handleBooking = () => {
+    toast.success("Pesan lapangan dengan harga " + lapangan.price + " per jam");
+  };
+
   return (
     <div>
       <Card className="sticky top-24">
@@ -45,7 +51,11 @@ const SideBooking = ({ lapangan }: { lapangan: Court }) => {
             </div>
           </div>
 
-          <Button className="w-full mb-3" disabled={!lapangan.available}>
+          <Button
+            onClick={handleBooking}
+            className="w-full mb-3"
+            disabled={!lapangan.available}
+          >
             {lapangan.available ? "Pesan Sekarang" : "Tidak Tersedia"}
           </Button>
         </CardContent>

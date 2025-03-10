@@ -1,4 +1,4 @@
-import {  LogOut, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,8 +11,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 const AccountMenu = () => {
+  const handleLogout = () => {
+    toast.success("Berhasil keluar");
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,7 +39,7 @@ const AccountMenu = () => {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <Link href="/login">
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
             <LogOut />
             <span>Log out</span>
           </DropdownMenuItem>

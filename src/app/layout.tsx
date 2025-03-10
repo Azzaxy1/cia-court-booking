@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { usePathname } from "next/navigation";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +56,7 @@ export default function RootLayout({
           {!hideNavbarFooter && <Navbar />}
           {children}
           {!hideNavbarFooter && <Footer />}
+          <Toaster position="top-right" />
         </body>
       </html>
     </QueryClientProvider>
