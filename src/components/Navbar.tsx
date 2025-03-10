@@ -6,9 +6,12 @@ import { images } from "@/assets";
 import { IoCloseSharp } from "react-icons/io5";
 import { FiMenu } from "react-icons/fi";
 import { navMenu } from "@/constants/navmenu";
+import AccountMenu from "./AccountMenu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const isLogin = true;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -55,21 +58,25 @@ const Navbar = () => {
                 <span>{item.title}</span>
               </Link>
             ))}
-            <div className="flex items-center space-x-3">
-              <Link href="/login">
-                <Button
-                  variant="outline"
-                  className="border-primary text-gray-700"
-                >
-                  Masuk
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button className="bg-primary hover:bg-primary-foreground text-white">
-                  Buat Akun
-                </Button>
-              </Link>
-            </div>
+            {isLogin ? (
+              <AccountMenu />
+            ) : (
+              <div className="flex items-center space-x-3">
+                <Link href="/login">
+                  <Button
+                    variant="outline"
+                    className="border-primary text-gray-700"
+                  >
+                    Masuk
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="bg-primary hover:bg-primary-foreground text-white">
+                    Buat Akun
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
@@ -90,21 +97,25 @@ const Navbar = () => {
                   <span>{item.title}</span>
                 </Link>
               ))}
-              <div className="flex flex-col space-y-3 pt-2">
-                <Link href="/login">
-                  <Button
-                    variant="outline"
-                    className="w-full border-gray-300 text-gray-700"
-                  >
-                    Masuk
-                  </Button>
-                </Link>
-                <Link href="/register">
-                  <Button className="w-full bg-primary hover:bg-primary-foreground text-white">
-                    Buat Akun
-                  </Button>
-                </Link>
-              </div>
+              {isLogin ? (
+                <AccountMenu />
+              ) : (
+                <div className="flex flex-col space-y-3 pt-2">
+                  <Link href="/login">
+                    <Button
+                      variant="outline"
+                      className="w-full border-gray-300 text-gray-700"
+                    >
+                      Masuk
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button className="w-full bg-primary hover:bg-primary-foreground text-white">
+                      Buat Akun
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         )}
