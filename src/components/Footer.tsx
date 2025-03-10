@@ -24,9 +24,7 @@ const Footer = () => {
               <Image
                 src={images.LogoLight}
                 alt="CIA Serang Logo"
-                width={70}
-                height={70}
-                className="object-contain"
+                className="w-[70px] h-[70px] object-contain"
               />
               <h2 className="text-2xl font-bold text-white">CIA Serang</h2>
             </div>

@@ -18,7 +18,9 @@ const FaqItem = ({
         className="w-full flex justify-between items-center p-4 text-left bg-white hover:bg-gray-50 focus:outline-none transition-colors"
         onClick={toggleAccordion}
       >
-        <h3 className="text-lg font-medium text-gray-900">{question}</h3>
+        <h3 className="text-base md:text-lg font-medium text-gray-900">
+          {question}
+        </h3>
         <span className="text-teal-600 flex-shrink-0 ml-2">
           {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </span>

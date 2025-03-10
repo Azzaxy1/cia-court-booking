@@ -15,7 +15,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="w-full z-50 fixed bg-white shadow-md py-3 px-4 md:px-6">
+    <header className="w-full z-50 fixed bg-white shadow-md py-3 md:px-6">
       <div data-aos="fade-down" className="container mx-auto">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -23,10 +23,7 @@ const Navbar = () => {
             <Image
               src={images.LogoDark}
               alt="Logo"
-              width={48}
-              height={48}
-              className="w-auto h-auto object-contain"
-              priority
+              className="w-[48px] h-[48px] object-contain"
             />
           </Link>
 

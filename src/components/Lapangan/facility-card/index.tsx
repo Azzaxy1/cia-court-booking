@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Facility } from "@/types/Facilities";
+import { Court } from "@/types/Court";
 import { Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +9,7 @@ const FacilityCard = ({
   facility,
   type,
 }: {
-  facility: Facility;
+  facility: Court;
   type: "futsal" | "badminton" | "tableTennis";
 }) => {
   // Map the sport type to a readable Indonesian name
@@ -28,9 +28,6 @@ const FacilityCard = ({
           <Image
             src={facility.image}
             alt={`${facility.name} - ${sportTypeNames[type]}`}
-            className="w-full h-full object-cover"
-            layout="fill"
-            priority
           />
         </div>
         {!facility.available && (

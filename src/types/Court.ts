@@ -1,4 +1,4 @@
-export interface Facility {
+export interface Court {
   id: number;
   name: string;
   image: string;

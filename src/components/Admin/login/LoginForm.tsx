@@ -20,7 +20,11 @@ export function LoginForm({
             href="/"
             className="flex items-center flex-col gap-2 self-center font-medium"
           >
-            <Image src={images.LogoLight} alt="logo" width={100} height={100} />
+            <Image
+              src={images.LogoLight}
+              alt="logo"
+              className="w-[100px] h-[100px]"
+            />
             CIA Serang
           </Link>
         </CardHeader>

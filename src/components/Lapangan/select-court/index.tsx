@@ -1,12 +1,12 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FacilityCard from "../facility-card";
-import { Facility } from "@/types/Facilities";
+import { Court } from "@/types/Court";
 
 interface Facilities {
-  futsal: Facility[];
-  badminton: Facility[];
-  tableTennis: Facility[];
+  futsal: Court[];
+  badminton: Court[];
+  tableTennis: Court[];
 }
 
 interface SelectCourtProps {

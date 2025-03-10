@@ -11,7 +11,6 @@ const HeroAbout = () => {
           alt="CIA Serang Sports Facility"
           fill
           className="object-cover brightness-50"
-          priority
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
