@@ -40,7 +40,12 @@ const CourtCard = ({
         )}
       </div>
       <CardContent className="p-4">
-        <h3 className="text-lg font-semibold">{court.name}</h3>
+        <h3 className="text-lg font-semibold">
+          {court.name}{" "}
+          <span className="text-primary">
+            {court.type && `(${court.type})`}
+          </span>
+        </h3>
         <div className="flex items-center text-gray-600 mt-2">
           <Clock className="h-4 w-4 mr-1" />
           <span className="text-sm">{court.price}</span>
