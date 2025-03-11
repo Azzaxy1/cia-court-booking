@@ -26,10 +26,10 @@ const OurStory = () => {
               <p>
                 Berawal dari lapangan futsal sederhana, kini CIA Serang telah
                 berkembang menjadi pusat olahraga terlengkap di Kota Serang
-                dengan berbagai jenis lapangan termasuk futsal, basket,
-                badminton, tenis, dan voli. Semua lapangan kami dirancang dengan
-                standar internasional untuk memberikan pengalaman bermain
-                terbaik bagi semua level pemain.
+                dengan berbagai jenis lapangan termasuk futsal, badminton, tenis
+                meja. Semua lapangan kami dirancang dengan standar internasional
+                untuk memberikan pengalaman bermain terbaik bagi semua level
+                pemain.
               </p>
               <p>
                 Visi kami sederhana: menjadi katalisator gaya hidup sehat

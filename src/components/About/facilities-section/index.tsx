@@ -32,8 +32,8 @@ const Facilities = () => {
                 Lapangan Futsal
               </h3>
               <p className="text-gray-600 mb-4">
-                6 lapangan futsal indoor dengan berbagai jenis lantai lapangan
-                dan pencahayaan profesional untuk permainan yang optimal.
+                6 lapangan futsal indoor dengan berbagai jenis tipe lapangan dan
+                pencahayaan profesional untuk permainan yang optimal.
               </p>
             </div>
           </div>
