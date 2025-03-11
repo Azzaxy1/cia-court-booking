@@ -7,9 +7,13 @@ import { IoCloseSharp } from "react-icons/io5";
 import { FiMenu } from "react-icons/fi";
 import { navMenu } from "@/constants/navmenu";
 import AccountMenu from "./AccountMenu";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  console.log(pathname);
 
   const isLogin = true;
 
@@ -50,7 +54,9 @@ const Navbar = () => {
               <Link
                 key={item.id}
                 href={item.link}
-                className="flex justify-center hover:underline hover:underline-offset-4 items-center text-gray-700 hover:text-primary"
+                className={`flex justify-center hover:underline hover:underline-offset-4 items-center text-gray-700 hover:text-primary ${
+                  pathname === item.link && "text-primary font-semibold "
+                }`}
               >
                 <span className="mr-2">
                   <item.icon className="h-5 w-5" />
@@ -88,7 +94,9 @@ const Navbar = () => {
                 <Link
                   key={item.id}
                   href={item.link}
-                  className="flex items-center text-gray-700 hover:text-primary"
+                  className={`flex items-center text-gray-700 hover:text-primary  ${
+                    pathname === item.link && "text-primary font-semibold "
+                  }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span className="mr-2">
