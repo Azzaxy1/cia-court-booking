@@ -13,8 +13,6 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  console.log(pathname);
-
   const isLogin = true;
 
   const toggleMenu = () => {

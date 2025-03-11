@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { courtInfo, scheduleData } from "@/lib/dummy/detailCourt";
 import SideBooking from "@/components/DetailLapangan/side-booking";
+import { Court } from "@/types/Court";
 
 type CourtType = "futsal" | "badminton" | "tableTennis";
 
@@ -36,7 +37,7 @@ const DetailLapangan = async ({
 
   const lapangan = court[type as CourtType]?.find(
     (item) => item?.id === Number(id)
-  );
+  ) as Court;
 
   if (!lapangan) {
     return (
@@ -88,9 +89,12 @@ const DetailLapangan = async ({
           <h1 className="text-3xl flex-col md:flex-row md:items-center font-bold mb-4 flex items-start gap-2">
             <courtDetails.icon className="h-5 w-5" />
             <div className="flex items-center gap-2">
-              <span className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800">
-                {courtDetails.title} - {lapangan.name}
-              </span>
+              <p className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800">
+                {courtDetails.title} - {lapangan.name}{" "}
+                <span className="text-primary">
+                  {lapangan.type && `(${lapangan.type})`}
+                </span>
+              </p>
               {lapangan.available ? (
                 <Badge className="ml-2 bg-green-500 text-white">Tersedia</Badge>
               ) : (
