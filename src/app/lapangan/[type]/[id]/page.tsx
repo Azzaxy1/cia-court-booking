@@ -1,30 +1,30 @@
 import React from "react";
 import { court } from "@/lib/dummy/court";
 import Image from "next/image";
-import {
-  Calendar,
-  Clock,
-  Users,
-  Award,
-  DollarSign,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { courtInfo, scheduleData } from "@/lib/dummy/detailCourt";
 import SideBooking from "@/components/DetailLapangan/side-booking";
-import { Court } from "@/types/Court";
+import { Court } from "@/types/court/Court";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import InformationCourt from "@/components/DetailLapangan/information-court";
+import ScheduleCourt from "@/components/DetailLapangan/schedule-court";
 
 type CourtType = "futsal" | "badminton" | "tableTennis";
 
@@ -67,29 +67,33 @@ const DetailLapangan = async ({
   const courtDetails = courtInfo[type as CourtType];
 
   return (
-    <div className="container mx-auto md:px-12 py-20 min-h-screen">
+    <div className="container mx-auto md:px-12 py-24 min-h-screen">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Kolom Kiri - Gambar dan Informasi Utama */}
         <div className="lg:col-span-2">
-          <div className="flex items-center gap-2 mb-4">
-            <Link
-              href="/lapangan"
-              className="text-teal-700 hover:underline text-sm"
-            >
-              Daftar Lapangan
-            </Link>
-            <span className="text-gray-400">/</span>
-            <span className="text-gray-600 text-sm">{courtDetails.title}</span>
-            <span className="text-gray-400">/</span>
-            <span className="text-gray-800 text-sm font-medium">
-              {lapangan.name}
-            </span>
-          </div>
+          <Breadcrumb className="flex items-center mb-4">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  href="lapangan"
+                  className="text-teal-700 hover:underline text-sm"
+                >
+                  Daftar Lapangan
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>{courtDetails.title}</BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem className="text-gray-800 font-semibold">
+                {lapangan.name} ({lapangan.type})
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
 
           <h1 className="text-3xl flex-col md:flex-row md:items-center font-bold mb-4 flex items-start gap-2">
             <courtDetails.icon className="h-5 w-5" />
             <div className="flex items-center gap-2">
-              <p className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800">
+              <p className="text-2xl sm:text-3xl 2xl:text-3xl font-semibold leading-tight text-slate-800">
                 {courtDetails.title} - {lapangan.name}{" "}
                 <span className="text-primary">
                   {lapangan.type && `(${lapangan.type})`}
@@ -118,201 +122,9 @@ const DetailLapangan = async ({
               <TabsTrigger value="jadwal">Jadwal & Harga</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="informasi" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Deskripsi Lapangan</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 mb-6">
-                    {type === "futsal"
-                      ? "Lapangan futsal dengan standar internasional, dilengkapi dengan rumput sintetis berkualitas tinggi yang nyaman untuk bermain. Fasilitas ini dirancang untuk memberikan pengalaman bermain yang maksimal bagi para pecinta futsal."
-                      : type === "badminton"
-                      ? "Lapangan badminton dengan lantai vinyl berkualitas premium yang memberikan traksi sempurna. Dilengkapi dengan pencahayaan anti-silau dan ruangan berpendingin untuk kenyamanan bermain sepanjang hari."
-                      : "Meja tenis meja dengan standar kompetisi, ditempatkan dalam ruangan yang dirancang khusus dengan pencahayaan optimal. Ideal untuk bermain kasual maupun latihan intensif."}
-                  </p>
+            <InformationCourt type={type} courtDetails={courtDetails} />
 
-                  <h3 className="text-lg font-semibold mb-3">
-                    Fasilitas Unggulan
-                  </h3>
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {courtDetails.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      Jam Operasional
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{courtDetails.openHours}</p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      Kapasitas
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{courtDetails.capacity}</p>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="jadwal" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="h-5 w-5" />
-                    Informasi Harga
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-teal-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-teal-800 mb-2">
-                        Harga Standar
-                      </h4>
-                      <p className="text-2xl font-bold text-teal-600">
-                        {lapangan.price}
-                      </p>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Senin - Jumat
-                      </p>
-                    </div>
-                    <div className="bg-teal-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-teal-800 mb-2">
-                        Harga Akhir Pekan
-                      </h4>
-                      <p className="text-2xl font-bold text-teal-600">
-                        {lapangan.price.replace(
-                          /Rp\.\s(\d+)/,
-                          (_, price) =>
-                            `Rp. ${Math.floor(
-                              parseInt(price) * 1.2
-                            ).toLocaleString("id-ID")}`
-                        )}
-                      </p>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Sabtu - Minggu
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <h4 className="font-semibold text-lg mb-2">Paket Khusus</h4>
-                    <ul className="space-y-2">
-                      <li className="flex items-center gap-2">
-                        <Award className="h-4 w-4 text-yellow-500" />
-                        <span>Paket 5 Jam: Diskon 10%</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Award className="h-4 w-4 text-yellow-500" />
-                        <span>Paket Bulanan: Diskon 20%</span>
-                      </li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    Jadwal Tersedia
-                  </CardTitle>
-                  <CardDescription>
-                    Pilih hari dan jam untuk pemesanan
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
-                    {scheduleData.map((day) => (
-                      <div key={day.day} className="border rounded-lg p-2">
-                        <h4 className="font-semibold text-center border-b pb-1 mb-2">
-                          {day.day}
-                        </h4>
-                        <div className="space-y-1">
-                          {day.slots.map((time) => {
-                            const isAvailable = Math.random() > 0.3;
-                            return (
-                              <div
-                                key={`${day.day}-${time}`}
-                                className={`text-center py-1 text-sm rounded ${
-                                  isAvailable
-                                    ? "bg-green-100 text-green-800 cursor-pointer hover:bg-green-200"
-                                    : "bg-gray-100 text-gray-400"
-                                }`}
-                              >
-                                {time}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            {/* 
-            <TabsContent value="ulasan">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Ulasan Pengguna</CardTitle>
-                  <CardDescription>
-                    Rating Rata-rata:
-                    <span className="text-yellow-500 ml-2">
-                      {"★".repeat(4.7)}
-                      <span className="text-gray-300">
-                        {"★".repeat(5 - 4.7)}
-                      </span>
-                    </span>
-                    <span className="ml-2 text-blue-600 font-semibold">
-                      4.7/5
-                    </span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {reviews.map((review, index) => (
-                      <div
-                        key={index}
-                        className="border-b pb-4 last:border-b-0"
-                      >
-                        <div className="flex justify-between items-center mb-2">
-                          <h4 className="font-semibold">{review.name}</h4>
-                          <span className="text-sm text-gray-500">
-                            {review.date}
-                          </span>
-                        </div>
-                        <div className="text-yellow-500 mb-2">
-                          {"★".repeat(review.rating)}
-                          <span className="text-gray-300">
-                            {"★".repeat(5 - review.rating)}
-                          </span>
-                        </div>
-                        <p className="text-gray-700">{review.comment}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent> */}
+            <ScheduleCourt lapangan={lapangan} scheduleData={scheduleData} />
           </Tabs>
         </div>
 

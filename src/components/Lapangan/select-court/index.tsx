@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Court } from "@/types/Court";
+import { Court } from "@/types/court/Court";
 import CourtCard from "../court-card";
 
 interface SelectCourtProps {

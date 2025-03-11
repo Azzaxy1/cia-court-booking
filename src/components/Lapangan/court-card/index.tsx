@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Court } from "@/types/Court";
+import { Court } from "@/types/court/Court";
 import { Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

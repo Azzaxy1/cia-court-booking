@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Court } from "@/types/Court";
+import { Court } from "@/types/court/Court";
 import React from "react";
 import toast from "react-hot-toast";
 
