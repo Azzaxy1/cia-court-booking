@@ -3,8 +3,14 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { faqData } from "@/constants/faq";
-import { FaqItemProps } from "@/types/FaqItem";
 import Link from "next/link";
+
+type FaqItemProps = {
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  toggleAccordion: () => void;
+};
 
 const FaqItem = ({
   question,

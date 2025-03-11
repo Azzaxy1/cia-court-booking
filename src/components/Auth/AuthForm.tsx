@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { images } from "@/assets";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface AuthFormProps {
   isLogin?: boolean;
@@ -13,11 +17,26 @@ interface AuthFormProps {
 }
 
 const AuthForm = ({ isLogin, className }: AuthFormProps) => {
+  const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isLogin) {
+      router.push("/");
+    } else {
+      router.push("/login");
+    }
+    toast.success(isLogin ? "Berhasil masuk" : "Berhasil mendaftar");
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)}>
       <Card className="overflow-hidden">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className={`p-6 md:p-8 ${isLogin ? "order-2" : "order-1"}`}>
+          <form
+            className={`p-6 md:p-8 ${isLogin ? "order-2" : "order-1"}`}
+            onSubmit={handleSubmit}
+          >
             <div className={`flex flex-col ${isLogin ? "gap-6" : "gap-3"}`}>
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">CIA Serang</h1>

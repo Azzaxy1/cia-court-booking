@@ -1,19 +1,17 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import FacilityCard from "../facility-card";
 import { Court } from "@/types/Court";
-
-interface Facilities {
-  futsal: Court[];
-  badminton: Court[];
-  tableTennis: Court[];
-}
+import CourtCard from "../court-card";
 
 interface SelectCourtProps {
-  facilities: Facilities;
+  court: {
+    futsal: Court[];
+    badminton: Court[];
+    tableTennis: Court[];
+  };
 }
 
-const SelectCourt = ({ facilities }: SelectCourtProps) => {
+const SelectCourt = ({ court }: SelectCourtProps) => {
   return (
     <Tabs defaultValue="futsal" className="w-full" onValueChange={() => {}}>
       <TabsList className="grid grid-cols-1 md:grid-cols-3 mb-16 md:mb-8">
@@ -28,8 +26,8 @@ const SelectCourt = ({ facilities }: SelectCourtProps) => {
           Pilihan Lapangan <span className="text-primary">Futsal</span>
         </h2>
         <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {facilities.futsal.map((court) => (
-            <FacilityCard key={court.id} facility={court} type="futsal" />
+          {court.futsal.map((court) => (
+            <CourtCard key={court.id} court={court} type="futsal" />
           ))}
         </div>
       </TabsContent>
@@ -40,8 +38,8 @@ const SelectCourt = ({ facilities }: SelectCourtProps) => {
           Pilihan Lapangan <span className="text-primary">Badminton</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {facilities.badminton.map((court) => (
-            <FacilityCard key={court.id} facility={court} type="badminton" />
+          {court.badminton.map((court) => (
+            <CourtCard key={court.id} court={court} type="badminton" />
           ))}
         </div>
       </TabsContent>
@@ -52,8 +50,8 @@ const SelectCourt = ({ facilities }: SelectCourtProps) => {
           Pilihan Lapangan <span className="text-primary">Tenis Meja</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {facilities.tableTennis.map((court) => (
-            <FacilityCard key={court.id} facility={court} type="tableTennis" />
+          {court.tableTennis.map((court) => (
+            <CourtCard key={court.id} court={court} type="tableTennis" />
           ))}
         </div>
       </TabsContent>

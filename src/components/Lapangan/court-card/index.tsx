@@ -5,11 +5,11 @@ import { Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const FacilityCard = ({
-  facility,
+const CourtCard = ({
+  court,
   type,
 }: {
-  facility: Court;
+  court: Court;
   type: "futsal" | "badminton" | "tableTennis";
 }) => {
   // Map the sport type to a readable Indonesian name
@@ -26,27 +26,27 @@ const FacilityCard = ({
       <div className="relative h-48 w-full">
         <div className="w-full h-full bg-gray-200">
           <Image
-            src={facility.image}
-            alt={`${facility.name} - ${sportTypeNames[type]}`}
+            src={court.image}
+            alt={`${court.name} - ${sportTypeNames[type]}`}
           />
         </div>
-        {!facility.available && (
+        {!court.available && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <span className="text-white font-bold text-lg">Tidak Tersedia</span>
           </div>
         )}
       </div>
       <CardContent className="p-4">
-        <h3 className="text-lg font-semibold">{facility.name}</h3>
+        <h3 className="text-lg font-semibold">{court.name}</h3>
         <div className="flex items-center text-gray-600 mt-2">
           <Clock className="h-4 w-4 mr-1" />
-          <span className="text-sm">{facility.price}</span>
+          <span className="text-sm">{court.price}</span>
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between">
-        {facility.available ? (
+        {court.available ? (
           <Link
-            href={`/lapangan/${type}/${facility.id}`}
+            href={`/lapangan/${type}/${court.id}`}
             className="w-full text-white"
           >
             <Button variant="default" className="w-full text-white">
@@ -63,4 +63,4 @@ const FacilityCard = ({
   );
 };
 
-export default FacilityCard;
+export default CourtCard;

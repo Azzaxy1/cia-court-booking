@@ -1,5 +1,5 @@
 import React from "react";
-import { facilities } from "@/lib/facilities";
+import { court } from "@/lib/dummy/court";
 import Image from "next/image";
 import {
   Calendar,
@@ -22,10 +22,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { facilityInfo, scheduleData } from "@/lib/detailCourt";
+import { courtInfo, scheduleData } from "@/lib/dummy/detailCourt";
 import SideBooking from "@/components/DetailLapangan/side-booking";
 
-type FacilityType = "futsal" | "badminton" | "tableTennis";
+type CourtType = "futsal" | "badminton" | "tableTennis";
 
 const DetailLapangan = async ({
   params,
@@ -34,8 +34,8 @@ const DetailLapangan = async ({
 }) => {
   const { type, id } = await params;
 
-  const lapangan = facilities[type as FacilityType]?.find(
-    (court) => court?.id === Number(id)
+  const lapangan = court[type as CourtType]?.find(
+    (item) => item?.id === Number(id)
   );
 
   if (!lapangan) {
@@ -63,7 +63,7 @@ const DetailLapangan = async ({
     );
   }
 
-  const facilityDetails = facilityInfo[type as FacilityType];
+  const courtDetails = courtInfo[type as CourtType];
 
   return (
     <div className="container mx-auto md:px-12 py-20 min-h-screen">
@@ -78,9 +78,7 @@ const DetailLapangan = async ({
               Daftar Lapangan
             </Link>
             <span className="text-gray-400">/</span>
-            <span className="text-gray-600 text-sm">
-              {facilityDetails.title}
-            </span>
+            <span className="text-gray-600 text-sm">{courtDetails.title}</span>
             <span className="text-gray-400">/</span>
             <span className="text-gray-800 text-sm font-medium">
               {lapangan.name}
@@ -88,10 +86,10 @@ const DetailLapangan = async ({
           </div>
 
           <h1 className="text-3xl flex-col md:flex-row md:items-center font-bold mb-4 flex items-start gap-2">
-            <facilityDetails.icon className="h-5 w-5" />
+            <courtDetails.icon className="h-5 w-5" />
             <div className="flex items-center gap-2">
               <span className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800">
-                {facilityDetails.title} - {lapangan.name}
+                {courtDetails.title} - {lapangan.name}
               </span>
               {lapangan.available ? (
                 <Badge className="ml-2 bg-green-500 text-white">Tersedia</Badge>
@@ -134,7 +132,7 @@ const DetailLapangan = async ({
                     Fasilitas Unggulan
                   </h3>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {facilityDetails.features.map((feature, index) => (
+                    {courtDetails.features.map((feature, index) => (
                       <li key={index} className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-500" />
                         <span>{feature}</span>
@@ -153,7 +151,7 @@ const DetailLapangan = async ({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p>{facilityDetails.openHours}</p>
+                    <p>{courtDetails.openHours}</p>
                   </CardContent>
                 </Card>
 
@@ -165,7 +163,7 @@ const DetailLapangan = async ({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p>{facilityDetails.capacity}</p>
+                    <p>{courtDetails.capacity}</p>
                   </CardContent>
                 </Card>
               </div>

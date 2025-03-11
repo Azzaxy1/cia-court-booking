@@ -158,7 +158,7 @@ const scheduleData = [
 ];
 
 // Tambahkan informasi tambahan untuk setiap jenis lapangan
-const facilityInfo = {
+const courtInfo = {
   futsal: {
     title: "Lapangan Futsal",
     icon: Users,
@@ -225,4 +225,4 @@ const reviews = [
   },
 ];
 
-export { scheduleData, facilityInfo, reviews };
+export { scheduleData, courtInfo, reviews };

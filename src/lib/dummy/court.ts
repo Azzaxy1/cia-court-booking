@@ -1,6 +1,6 @@
 import { images } from "@/assets";
 
-export const facilities = {
+export const court = {
   futsal: [
     {
       id: 1,
