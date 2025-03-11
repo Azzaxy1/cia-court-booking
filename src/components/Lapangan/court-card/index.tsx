@@ -28,6 +28,9 @@ const CourtCard = ({
           <Image
             src={court.image}
             alt={`${court.name} - ${sportTypeNames[type]}`}
+            width={500}
+            height={300}
+            className="object-cover object-center w-full h-full"
           />
         </div>
         {!court.available && (
