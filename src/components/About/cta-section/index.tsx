@@ -25,7 +25,9 @@ const CTA = () => {
                   Sewa Lapangan
                 </Link>
                 <Link
-                  href="/contact"
+                  href="https://wa.me/6285182198144"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-block px-6 py-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors text-center"
                 >
                   Hubungi Kami
