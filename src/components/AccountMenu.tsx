@@ -23,17 +23,17 @@ const AccountMenu = () => {
       <DropdownMenuTrigger asChild>
         <Button className="flex bg-primary items-center">
           <User />
-          <span>My Account</span>
+          <span>Akun Saya</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <Link href="/profile">
             <DropdownMenuItem className="cursor-pointer">
               <User />
-              <span>Profile saya</span>
+              <span>Kelola Profil</span>
             </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>

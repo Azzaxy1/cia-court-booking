@@ -25,7 +25,7 @@ const ProfilePage = () => {
           <Tabs defaultValue="bookings" className="w-full">
             <TabsList className="grid grid-cols-2 mb-6">
               <TabsTrigger value="bookings">Pemesanan</TabsTrigger>
-              <TabsTrigger value="profile">Edit Profile</TabsTrigger>
+              <TabsTrigger value="profile">Edit Profil</TabsTrigger>
             </TabsList>
 
             {/* Tab Pemesanan */}
