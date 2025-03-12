@@ -9,12 +9,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Court } from "@/types/court";
+import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
 
 const SideBooking = ({ lapangan }: { lapangan: Court }) => {
+  const router = useRouter();
+
   const handleBooking = () => {
-    toast.success("Pesan lapangan dengan harga " + lapangan.price + " per jam");
+    router.push("/payment/success?orderId=123124&amount=150.000");
+    toast.success("Pesan lapangan berhasil!");
   };
 
   return (
