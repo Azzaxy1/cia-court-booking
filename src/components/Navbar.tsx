@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { images } from "@/assets";
 import { IoCloseSharp } from "react-icons/io5";
 import { FiMenu } from "react-icons/fi";
-import { navMenu } from "@/constants/navmenu";
+import { navUser } from "@/constants/navmenu";
 import AccountMenu from "./AccountMenu";
 import { usePathname } from "next/navigation";
 
@@ -48,7 +48,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden  md:flex items-center space-x-6">
-            {navMenu.map((item) => (
+            {navUser.map((item) => (
               <Link
                 key={item.id}
                 href={item.link}
@@ -91,7 +91,7 @@ const Navbar = () => {
           } overflow-hidden`}
         >
           <div className="flex flex-col space-y-4">
-            {navMenu.map((item) => (
+            {navUser.map((item) => (
               <Link
                 key={item.id}
                 href={item.link}

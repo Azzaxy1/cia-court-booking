@@ -8,44 +8,9 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavMain } from "../nav-main";
-import { PiCourtBasketballDuotone } from "react-icons/pi";
-import { MdHome } from "react-icons/md";
-import { IoCart } from "react-icons/io5";
-import { FaMoneyBillWave } from "react-icons/fa";
-import { BiLogOut } from "react-icons/bi";
 import Image from "next/image";
 import { images } from "@/assets";
-
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/admin/dashboard",
-      icon: MdHome,
-    },
-    {
-      title: "Lapangan",
-      url: "/admin/lapangan",
-      icon: PiCourtBasketballDuotone,
-    },
-    {
-      title: "Pemesanan",
-      url: "/admin/pemesanan",
-      icon: IoCart,
-    },
-    {
-      title: "Pemasukan",
-      url: "/admin/pemasukan",
-      icon: FaMoneyBillWave,
-    },
-    {
-      title: "Keluar",
-      url: "/admin/login",
-      icon: BiLogOut,
-    },
-  ],
-};
+import { navAdmin } from "@/constants/navmenu";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -58,7 +23,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navAdmin} />
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
