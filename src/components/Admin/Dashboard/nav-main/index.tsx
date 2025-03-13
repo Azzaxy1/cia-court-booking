@@ -39,7 +39,7 @@ export function NavMain({
                       : "text-gray-500"
                   }`}
                 >
-                  <SidebarMenuButton className="text-white w-full">
+                  <SidebarMenuButton className="text-white text-sm sm:text-base 2xl:text-lg w-full">
                     {item.icon && <item.icon />} {item.title}
                   </SidebarMenuButton>
                 </Link>

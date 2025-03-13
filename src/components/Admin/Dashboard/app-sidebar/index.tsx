@@ -18,7 +18,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="w-full mx-auto flex items-center justify-center">
-            <Image src={images.LogoWhite} alt="logo" width={50} height={50} />
+            <Image src={images.LogoWhite} alt="logo" width={70} height={70} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
