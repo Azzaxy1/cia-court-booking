@@ -5,7 +5,7 @@ import SelectCourt from "@/components/Lapangan/select-court";
 
 export default function CourtPage() {
   return (
-    <div className="container mx-auto md:px-12 py-20">
+    <div className="container mx-auto md:px-12 pt-24 pb-10">
       <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800 mb-8 text-center">
         Cari Lapangan <span className="text-primary">Kesukaan Anda</span>
       </h1>

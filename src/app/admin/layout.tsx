@@ -18,24 +18,18 @@ import {
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-
   const path = pathname.split("/").pop();
-  const currentPage = () => {
-    switch (path) {
-      case "dashboard":
-        return "Dashboard";
-      case "lapangan":
-        return "Kelola Lapangan";
-      case "pemesanan":
-        return "Kelola Pemesanan";
-      case "pemasukan":
-        return "Kelola Pemasukan";
-      default:
-        return "Admin";
-    }
+
+  const pageTitles: Record<string, string> = {
+    dashboard: "Dashboard",
+    lapangan: "Kelola Lapangan",
+    pemesanan: "Kelola Pemesanan",
+    pemasukan: "Kelola Pemasukan",
   };
+
+  const currentPage = pageTitles[path ?? ""] || "Admin";
 
   return (
     <SidebarProvider>
@@ -51,7 +45,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>{currentPage()}</BreadcrumbPage>
+                <BreadcrumbPage>{currentPage}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -62,4 +56,4 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default Layout;
+export default AdminLayout;

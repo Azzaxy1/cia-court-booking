@@ -1,6 +1,6 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 
-export default function Page() {
+export default function DashboardPage() {
   return (
     <SidebarProvider>
       <div className="flex flex-1 flex-col gap-4 p-4">
