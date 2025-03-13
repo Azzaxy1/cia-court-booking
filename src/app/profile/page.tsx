@@ -16,7 +16,7 @@ import { user } from "@/lib/dummy/user";
 
 const ProfilePage = () => {
   return (
-    <div className="container mx-auto md:px-12 py-28">
+    <div className="container mx-auto md:px-12 pt-28 pb-10">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <SideProfile user={user} />
 

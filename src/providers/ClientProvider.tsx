@@ -21,9 +21,15 @@ const ClientProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }, []);
 
-  const hideNavbarFooter = ["/login", "/register", "/admin/login"].includes(
-    pathname
-  );
+  const hideNavbarFooter = [
+    "/login",
+    "/register",
+    "/admin/login",
+    "/admin/dashboard",
+    "/admin/lapangan",
+    "/admin/pemesanan",
+    "/admin/pemasukan",
+  ].includes(pathname);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -36,12 +36,12 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className="p-2 text-gray-600 hover:text-gray-900 focus:outline-none"
+              className="p-2 text-gray-600 hover:text-gray-900 focus:outline-none transition-all duration-300"
             >
               {isMenuOpen ? (
-                <IoCloseSharp className="h-6 w-6" />
+                <IoCloseSharp className="h-6 w-6 transform rotate-180 transition-transform duration-300" />
               ) : (
-                <FiMenu className="h-6 w-6" />
+                <FiMenu className="h-6 w-6 transform rotate-0 transition-transform duration-300" />
               )}
             </button>
           </div>
@@ -85,46 +85,48 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-2">
-            <div className="flex flex-col space-y-4">
-              {navMenu.map((item) => (
-                <Link
-                  key={item.id}
-                  href={item.link}
-                  className={`flex items-center text-gray-700 hover:text-primary  ${
-                    pathname === item.link && "text-primary font-semibold "
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <span className="mr-2">
-                    <item.icon className="h-5 w-5" />
-                  </span>
-                  <span>{item.title}</span>
+        <div
+          className={`md:hidden transform transition-all duration-500 ease-in-out ${
+            isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+          } overflow-hidden`}
+        >
+          <div className="flex flex-col space-y-4">
+            {navMenu.map((item) => (
+              <Link
+                key={item.id}
+                href={item.link}
+                className={`flex items-center text-gray-700 hover:text-primary ${
+                  pathname === item.link && "text-primary font-semibold"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="mr-2">
+                  <item.icon className="h-5 w-5" />
+                </span>
+                <span>{item.title}</span>
+              </Link>
+            ))}
+            {isLogin ? (
+              <AccountMenu />
+            ) : (
+              <div className="flex flex-col space-y-3 pt-2">
+                <Link href="/login">
+                  <Button
+                    variant="outline"
+                    className="w-full border-gray-300 text-gray-700"
+                  >
+                    Masuk
+                  </Button>
                 </Link>
-              ))}
-              {isLogin ? (
-                <AccountMenu />
-              ) : (
-                <div className="flex flex-col space-y-3 pt-2">
-                  <Link href="/login">
-                    <Button
-                      variant="outline"
-                      className="w-full border-gray-300 text-gray-700"
-                    >
-                      Masuk
-                    </Button>
-                  </Link>
-                  <Link href="/register">
-                    <Button className="w-full bg-primary hover:bg-primary-foreground text-white">
-                      Buat Akun
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
+                <Link href="/register">
+                  <Button className="w-full bg-primary hover:bg-primary-foreground text-white">
+                    Buat Akun
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </header>
   );
