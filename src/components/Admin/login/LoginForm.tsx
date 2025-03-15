@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,11 +8,24 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Image from "next/image";
 import { images } from "@/assets";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const router = useRouter();
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    router.push("/admin/dashboard");
+    toast.success("Login Success");
+    // const formData = new FormData(e.currentTarget);
+    // const email = formData.get("email") as string;
+    // const password = formData.get("password") as string;
+    // console.log({ email, password });
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -23,13 +38,13 @@ export function LoginForm({
             <Image
               src={images.LogoLight}
               alt="logo"
-              className="w-[100px] h-[100px]"
+              className="w-[80px] h-[80px]"
             />
             CIA Serang
           </Link>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
