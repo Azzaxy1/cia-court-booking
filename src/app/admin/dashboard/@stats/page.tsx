@@ -9,7 +9,7 @@ const Stats = () => {
 
   return (
     <section className="flex gap-4 mb-4">
-      <div className="p-4 flex gap-4 items-center bg-green-500 text-white rounded-lg w-1/2">
+      <div className="p-4 flex gap-4 items-center bg-[#489CFF] text-white rounded-lg w-1/2">
         <PiCourtBasketballFill className="w-[40px] h-[40px]" />
         <div>
           <p className="text-2xl sm:text-3xl 2xl:text-4xl font-bold">
@@ -18,7 +18,7 @@ const Stats = () => {
           <p>Jumlah Lapangan</p>
         </div>
       </div>
-      <div className="p-4 flex gap-4 items-center bg-[#489CFF] text-white rounded-lg w-1/2">
+      <div className="p-4 flex gap-4 items-center bg-green-500 text-white rounded-lg w-1/2">
         <FaCartShopping className="w-[40px] h-[40px]" />
         <div>
           <p className="text-2xl sm:text-3xl 2xl:text-4xl font-bold">450</p>

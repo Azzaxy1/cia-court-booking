@@ -17,16 +17,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ordersData } from "@/lib/dummy/orders";
+import { generateChartData } from "@/lib/utils";
 
 const OrdersChart = () => {
-  const chartDataOrders = [
-    { month: "January", futsal: 186, badminton: 80, tenisMeja: 20 },
-    { month: "February", futsal: 305, badminton: 200, tenisMeja: 30 },
-    { month: "March", futsal: 237, badminton: 120, tenisMeja: 10 },
-    { month: "April", futsal: 73, badminton: 190, tenisMeja: 12 },
-    { month: "May", futsal: 209, badminton: 130, tenisMeja: 8 },
-    { month: "June", futsal: 214, badminton: 140, tenisMeja: 16 },
-  ];
+  const chartDataOrders = generateChartData(ordersData);
 
   const chartConfig = {
     futsal: {
