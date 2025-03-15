@@ -3,11 +3,12 @@
 import React from "react";
 
 import { Pie, PieChart, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { court } from "@/lib/dummy/court";
 
 const chartData = [
-  { name: "Futsal", value: 6, fill: "#2563eb" },
-  { name: "Badminton", value: 7, fill: "#60a5fa" },
-  { name: "Tenis Meja", value: 2, fill: "#f87171" },
+  { name: "Futsal", value: court.futsal.length, fill: "#2563eb" },
+  { name: "Badminton", value: court.badminton.length, fill: "#60a5fa" },
+  { name: "Tenis Meja", value: court.tableTennis.length, fill: "#f87171" },
 ];
 
 const CourtChart = () => {
