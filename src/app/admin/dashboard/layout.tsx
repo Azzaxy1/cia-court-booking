@@ -16,14 +16,14 @@ const LayoutDashboard = ({
   orders,
 }: LayoutDashboardProps) => {
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <>
       {children}
       {stats}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 my-4">
         {court}
         {orders}
       </div>
-    </div>
+    </>
   );
 };
 

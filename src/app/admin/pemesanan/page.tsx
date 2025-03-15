@@ -2,9 +2,11 @@ import React from "react";
 
 const ManageCourt = () => {
   return (
-    <div className="min-h-[100vh] flex justify-center items-center">
-      <h1>Kelola Pemesanan</h1>
-    </div>
+    <section>
+      <h1 className="text-2xl sm:text-2xl 2xl:text-4xl font-semibold leading-tight text-primary">
+        Kelola Pemesanan
+      </h1>
+    </section>
   );
 };
 

@@ -50,7 +50,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        {children}
+        <div className="flex flex-col gap-4 p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
