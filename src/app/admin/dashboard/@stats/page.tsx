@@ -2,10 +2,17 @@ import { FaCartShopping } from "react-icons/fa6";
 import React from "react";
 import { PiCourtBasketballFill } from "react-icons/pi";
 import { court } from "@/lib/dummy/court";
+import { ordersData } from "@/lib/dummy/orders";
 
 const Stats = () => {
   const totalCourts =
     court.futsal.length + court.badminton.length + court.tableTennis.length;
+
+  const totalOrderThisMonth = ordersData.filter(
+    (order) =>
+      new Date(order.date).getMonth() === new Date().getMonth() &&
+      new Date(order.date).getFullYear() === new Date().getFullYear()
+  ).length;
 
   return (
     <section className="flex gap-4 mb-4">
@@ -21,7 +28,9 @@ const Stats = () => {
       <div className="p-4 flex gap-4 items-center bg-green-500 text-white rounded-lg w-1/2">
         <FaCartShopping className="w-[40px] h-[40px]" />
         <div>
-          <p className="text-2xl sm:text-3xl 2xl:text-4xl font-bold">450</p>
+          <p className="text-2xl sm:text-3xl 2xl:text-4xl font-bold">
+            {totalOrderThisMonth}
+          </p>
           <p>Total Pemesanan</p>
         </div>
       </div>

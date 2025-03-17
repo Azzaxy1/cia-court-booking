@@ -7,7 +7,7 @@ export const ordersData = [
     time: "18:00 - 19:00",
     duration: 1,
     totalPrice: 120000,
-    paymentStatus: "Paid",
+    status: "Paid",
   },
   {
     id: "TRX002",
@@ -17,7 +17,7 @@ export const ordersData = [
     time: "14:00 - 16:00",
     duration: 2,
     totalPrice: 100000,
-    paymentStatus: "Pending",
+    status: "Pending",
   },
   {
     id: "TRX003",
@@ -27,7 +27,17 @@ export const ordersData = [
     time: "10:00 - 11:00",
     duration: 1,
     totalPrice: 50000,
-    paymentStatus: "Paid",
+    status: "Paid",
+  },
+  {
+    id: "TRX003",
+    customer: "Citra Lestari",
+    fieldType: "Tenis Meja",
+    date: "2025-03-05",
+    time: "10:00 - 11:00",
+    duration: 1,
+    totalPrice: 50000,
+    status: "Paid",
   },
   {
     id: "TRX004",
@@ -37,7 +47,17 @@ export const ordersData = [
     time: "19:00 - 21:00",
     duration: 2,
     totalPrice: 200000,
-    paymentStatus: "Cancelled",
+    status: "Cancelled",
+  },
+  {
+    id: "TRX004",
+    customer: "Dewi Ananda",
+    fieldType: "Futsal",
+    date: "2025-03-20",
+    time: "19:00 - 21:00",
+    duration: 2,
+    totalPrice: 200000,
+    status: "Cancelled",
   },
   {
     id: "TRX005",
@@ -47,7 +67,7 @@ export const ordersData = [
     time: "16:00 - 17:00",
     duration: 1,
     totalPrice: 50000,
-    paymentStatus: "Paid",
+    status: "Paid",
   },
   {
     id: "TRX006",
@@ -57,7 +77,7 @@ export const ordersData = [
     time: "20:00 - 21:00",
     duration: 1,
     totalPrice: 120000,
-    paymentStatus: "Pending",
+    status: "Pending",
   },
   {
     id: "TRX007",
@@ -67,7 +87,7 @@ export const ordersData = [
     time: "08:00 - 10:00",
     duration: 2,
     totalPrice: 180000,
-    paymentStatus: "Paid",
+    status: "Paid",
   },
   {
     id: "TRX008",
@@ -77,7 +97,7 @@ export const ordersData = [
     time: "17:00 - 19:00",
     duration: 2,
     totalPrice: 120000,
-    paymentStatus: "Paid",
+    status: "Paid",
   },
   {
     id: "TRX009",
@@ -87,7 +107,7 @@ export const ordersData = [
     time: "13:00 - 14:00",
     duration: 1,
     totalPrice: 40000,
-    paymentStatus: "Cancelled",
+    status: "Cancelled",
   },
   {
     id: "TRX010",
@@ -97,7 +117,7 @@ export const ordersData = [
     time: "21:00 - 23:00",
     duration: 2,
     totalPrice: 220000,
-    paymentStatus: "Pending",
+    status: "Pending",
   },
   {
     id: "TRX011",
@@ -107,7 +127,7 @@ export const ordersData = [
     time: "15:00 - 17:00",
     duration: 2,
     totalPrice: 110000,
-    paymentStatus: "Paid",
+    status: "Paid",
   },
   {
     id: "TRX012",
@@ -117,6 +137,6 @@ export const ordersData = [
     time: "11:00 - 12:00",
     duration: 1,
     totalPrice: 45000,
-    paymentStatus: "Pending",
+    status: "Pending",
   },
 ];
