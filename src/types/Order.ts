@@ -3,8 +3,9 @@ export interface Order {
   customer: string;
   fieldType: string;
   date: string;
+  startTime?: string;
   time: string;
-  duration: number;
-  totalPrice: number;
+  duration: number | string;
+  totalPrice: number | string;
   status: string;
 }
