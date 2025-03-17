@@ -29,8 +29,15 @@ import { id } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { Order } from "@/types/Order";
 
-const OrderForm = ({ isAddForm }: { isAddForm: boolean }) => {
+const OrderForm = ({
+  isAddForm,
+  order,
+}: {
+  isAddForm?: boolean;
+  order?: Order;
+}) => {
   const router = useRouter();
 
   // Opsi untuk dropdown
@@ -169,6 +176,8 @@ const OrderForm = ({ isAddForm }: { isAddForm: boolean }) => {
     }
   };
 
+  const startTime = order?.time?.split(" - ")[0];
+
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
@@ -190,7 +199,7 @@ const OrderForm = ({ isAddForm }: { isAddForm: boolean }) => {
               id="customer"
               name="customer"
               placeholder="Masukkan nama pelanggan"
-              value={formData.customer}
+              value={order?.customer || formData.customer}
               onChange={handleInputChange}
               required
             />
@@ -200,6 +209,7 @@ const OrderForm = ({ isAddForm }: { isAddForm: boolean }) => {
           <div className="space-y-2">
             <Label htmlFor="fieldType">Jenis Lapangan</Label>
             <Select
+              value={order?.fieldType || formData.fieldType}
               onValueChange={(value) => handleSelectChange("fieldType", value)}
               required
             >
@@ -250,6 +260,7 @@ const OrderForm = ({ isAddForm }: { isAddForm: boolean }) => {
             <div className="space-y-2">
               <Label htmlFor="startTime">Waktu Mulai</Label>
               <Select
+                value={startTime || formData.startTime}
                 onValueChange={(value) =>
                   handleSelectChange("startTime", value)
                 }
@@ -271,6 +282,7 @@ const OrderForm = ({ isAddForm }: { isAddForm: boolean }) => {
             <div className="space-y-2">
               <Label htmlFor="duration">Durasi (jam)</Label>
               <Select
+                value={isAddForm ? formData.duration : String(order?.duration)}
                 onValueChange={(value) => handleSelectChange("duration", value)}
                 required
               >
@@ -296,9 +308,10 @@ const OrderForm = ({ isAddForm }: { isAddForm: boolean }) => {
                 id="totalPrice"
                 name="totalPrice"
                 value={
-                  formData.totalPrice
-                    ? `Rp ${Number(formData.totalPrice).toLocaleString()}`
-                    : ""
+                  isAddForm
+                    ? formData.totalPrice &&
+                      `Rp ${Number(formData.totalPrice).toLocaleString()}`
+                    : `Rp ${order?.totalPrice}`
                 }
                 readOnly
                 className="bg-gray-50"
@@ -308,6 +321,7 @@ const OrderForm = ({ isAddForm }: { isAddForm: boolean }) => {
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
+                value={order?.status || formData.status}
                 defaultValue="Pending"
                 onValueChange={(value) => handleSelectChange("status", value)}
               >

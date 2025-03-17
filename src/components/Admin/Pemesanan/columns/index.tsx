@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -83,6 +84,11 @@ export const columns: ColumnDef<Order>[] = [
     header: "Aksi",
     cell: ({ row }) => {
       const orders = row.original;
+
+      const handleDelete = () => {
+        console.log("Delete order", orders.id);
+      };
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -93,13 +99,15 @@ export const columns: ColumnDef<Order>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(orders.id)}
-            >
-              Edit
-            </DropdownMenuItem>
+            <Link href={`/admin/pemesanan/edit/${orders.id}`}>
+              <DropdownMenuItem className="cursor-pointer">
+                Edit
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={handleDelete}>
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

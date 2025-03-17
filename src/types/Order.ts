@@ -3,7 +3,6 @@ export interface Order {
   customer: string;
   fieldType: string;
   date: string;
-  startTime?: string;
   time: string;
   duration: number | string;
   totalPrice: number | string;
