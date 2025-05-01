@@ -58,7 +58,7 @@ const CourtCard = ({
             className="w-full text-white"
           >
             <Button variant="default" className="w-full text-white">
-              Pesan Sekarang
+              Lihat Detail
             </Button>
           </Link>
         ) : (
