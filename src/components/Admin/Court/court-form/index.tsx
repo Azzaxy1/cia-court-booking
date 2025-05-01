@@ -56,7 +56,6 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log(file);
     if (file) {
       setFormData((prev) => ({
         ...prev,
@@ -143,29 +142,30 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
             </Select>
           </div>
 
-          {"surfaceType" in formData && formData.type === "Futsal" && (
-            <div className="space-y-2">
-              <Label>Jenis Permukaan</Label>
-              <Select
-                value={court?.surfaceType || formData.surfaceType}
-                disabled={formData.type !== "Futsal"}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, surfaceType: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih jenis permukaan" />
-                </SelectTrigger>
-                <SelectContent>
-                  {surfaceTypes.map((surface) => (
-                    <SelectItem key={surface} value={surface}>
-                      {surface}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          {("surfaceType" in formData && formData.type === "Futsal") ||
+            (court?.type === "Futsal" && (
+              <div className="space-y-2">
+                <Label>Jenis Permukaan</Label>
+                <Select
+                  value={court?.surfaceType || formData.surfaceType}
+                  disabled={formData.type !== "Futsal"}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, surfaceType: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih jenis permukaan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {surfaceTypes.map((surface) => (
+                      <SelectItem key={surface} value={surface}>
+                        {surface}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ))}
 
           <div className="space-y-2">
             <Label htmlFor="image">Pilih Gambar</Label>
@@ -177,9 +177,13 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
               onChange={handleFileChange}
               required
             />
-            {formData.image && (
+            {(court?.image || formData.image) && (
               <Image
-                src={court?.image || formData.image}
+                src={
+                  typeof court?.image === "string"
+                    ? court?.image
+                    : court?.image?.src || formData.image
+                }
                 alt="Preview Gambar"
                 width={100}
                 height={100}
@@ -219,7 +223,7 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
             <Input
               id="description"
               name="description"
-              value={formData.description}
+              value={court?.description || formData.description}
               onChange={handleInputChange}
               required
               placeholder="Deskripsi lapangan"

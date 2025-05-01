@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 type CourtType = "Futsal" | "Badminton" | "Tenis Meja";
 type FutsalSurface = "Interlok" | "Rumput" | "Semen";
 
@@ -18,7 +20,7 @@ export interface CourtReal {
   name: string;
   type: CourtType;
   surfaceType?: FutsalSurface;
-  image: string;
+  image: string | StaticImageData;
   price: {
     [day in DayType]: {
       [time in TimeSlot]: number;
