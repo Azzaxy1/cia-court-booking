@@ -164,6 +164,7 @@ const OrderForm = ({
           formData.startTime,
           formData.duration
         )}`,
+        paymentMethod: "Cash",
       });
 
       toast.success("Pemesanan berhasil ditambahkan");

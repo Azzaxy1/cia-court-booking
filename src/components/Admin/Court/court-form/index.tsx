@@ -142,30 +142,28 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
             </Select>
           </div>
 
-          {("surfaceType" in formData && formData.type === "Futsal") ||
-            (court?.type === "Futsal" && (
-              <div className="space-y-2">
-                <Label>Jenis Permukaan</Label>
-                <Select
-                  value={court?.surfaceType || formData.surfaceType}
-                  disabled={formData.type !== "Futsal"}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, surfaceType: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih jenis permukaan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {surfaceTypes.map((surface) => (
-                      <SelectItem key={surface} value={surface}>
-                        {surface}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            ))}
+          {(court?.type === "Futsal" || formData.type === "Futsal") && (
+            <div className="space-y-2">
+              <Label>Jenis Permukaan</Label>
+              <Select
+                value={court?.surfaceType || formData.surfaceType}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, surfaceType: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih jenis permukaan" />
+                </SelectTrigger>
+                <SelectContent>
+                  {surfaceTypes.map((surface) => (
+                    <SelectItem key={surface} value={surface}>
+                      {surface}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="image">Pilih Gambar</Label>
