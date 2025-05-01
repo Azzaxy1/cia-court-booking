@@ -53,13 +53,13 @@ export const columns: ColumnDef<CourtReal>[] = [
           <div className="flex gap-2">
             <div>Pagi: {price.Weekday.Pagi}</div>
             <div>Siang: {price.Weekday.Siang}</div>
-            <div>Sore: {price.Weekday.Sore}</div>
+            <div>Malam: {price.Weekday.Malam}</div>
           </div>
           <div className="font-semibold">Weekend</div>
           <div className="flex gap-2">
             <div>Pagi: {price.Weekend.Pagi}</div>
             <div>Siang: {price.Weekend.Siang}</div>
-            <div>Sore: {price.Weekend.Sore}</div>
+            <div>Malam: {price.Weekend.Malam}</div>
           </div>
         </div>
       );

@@ -1,8 +1,8 @@
 type CourtType = "Futsal" | "Badminton" | "Tenis Meja";
 type FutsalSurface = "Interlok" | "Rumput" | "Semen";
 
-type TimeSlot = "Pagi" | "Siang" | "Sore";
-type DayType = "Weekday" | "Weekend";
+export type TimeSlot = "Pagi" | "Siang" | "Malam";
+export type DayType = "Weekday" | "Weekend";
 
 export interface Court {
   id: number;

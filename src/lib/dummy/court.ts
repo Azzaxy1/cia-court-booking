@@ -133,12 +133,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 100000,
         Siang: 120000,
-        Sore: 150000,
+        Malam: 150000,
       },
       Weekend: {
         Pagi: 120000,
         Siang: 150000,
-        Sore: 180000,
+        Malam: 180000,
       },
     },
     available: true,
@@ -154,12 +154,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 85000,
         Siang: 100000,
-        Sore: 130000,
+        Malam: 130000,
       },
       Weekend: {
         Pagi: 100000,
         Siang: 130000,
-        Sore: 160000,
+        Malam: 160000,
       },
     },
     available: true,
@@ -175,12 +175,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 90000,
         Siang: 110000,
-        Sore: 140000,
+        Malam: 140000,
       },
       Weekend: {
         Pagi: 110000,
         Siang: 140000,
-        Sore: 170000,
+        Malam: 170000,
       },
     },
     available: true,
@@ -196,12 +196,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 70000,
         Siang: 90000,
-        Sore: 120000,
+        Malam: 120000,
       },
       Weekend: {
         Pagi: 90000,
         Siang: 120000,
-        Sore: 150000,
+        Malam: 150000,
       },
     },
     available: false,
@@ -217,12 +217,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 70000,
         Siang: 90000,
-        Sore: 120000,
+        Malam: 120000,
       },
       Weekend: {
         Pagi: 90000,
         Siang: 120000,
-        Sore: 150000,
+        Malam: 150000,
       },
     },
     available: true,
@@ -238,12 +238,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 70000,
         Siang: 90000,
-        Sore: 120000,
+        Malam: 120000,
       },
       Weekend: {
         Pagi: 90000,
         Siang: 120000,
-        Sore: 150000,
+        Malam: 150000,
       },
     },
     available: true,
@@ -258,12 +258,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 20000,
         Siang: 25000,
-        Sore: 30000,
+        Malam: 30000,
       },
       Weekend: {
         Pagi: 25000,
         Siang: 30000,
-        Sore: 35000,
+        Malam: 35000,
       },
     },
     available: true,
@@ -278,12 +278,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 20000,
         Siang: 25000,
-        Sore: 30000,
+        Malam: 30000,
       },
       Weekend: {
         Pagi: 25000,
         Siang: 30000,
-        Sore: 35000,
+        Malam: 35000,
       },
     },
     available: false,
@@ -298,12 +298,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 20000,
         Siang: 25000,
-        Sore: 30000,
+        Malam: 30000,
       },
       Weekend: {
         Pagi: 25000,
         Siang: 30000,
-        Sore: 35000,
+        Malam: 35000,
       },
     },
     available: true,
@@ -318,12 +318,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 20000,
         Siang: 25000,
-        Sore: 30000,
+        Malam: 30000,
       },
       Weekend: {
         Pagi: 25000,
         Siang: 30000,
-        Sore: 35000,
+        Malam: 35000,
       },
     },
     available: true,
@@ -338,12 +338,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 20000,
         Siang: 25000,
-        Sore: 30000,
+        Malam: 30000,
       },
       Weekend: {
         Pagi: 25000,
         Siang: 30000,
-        Sore: 35000,
+        Malam: 35000,
       },
     },
     available: false,
@@ -358,12 +358,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 20000,
         Siang: 25000,
-        Sore: 30000,
+        Malam: 30000,
       },
       Weekend: {
         Pagi: 25000,
         Siang: 30000,
-        Sore: 35000,
+        Malam: 35000,
       },
     },
     available: true,
@@ -378,12 +378,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 20000,
         Siang: 25000,
-        Sore: 30000,
+        Malam: 30000,
       },
       Weekend: {
         Pagi: 25000,
         Siang: 30000,
-        Sore: 35000,
+        Malam: 35000,
       },
     },
     available: true,
@@ -398,12 +398,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 15000,
         Siang: 20000,
-        Sore: 25000,
+        Malam: 25000,
       },
       Weekend: {
         Pagi: 20000,
         Siang: 25000,
-        Sore: 30000,
+        Malam: 30000,
       },
     },
     available: true,
@@ -418,12 +418,12 @@ export const courtDummy: CourtReal[] = [
       Weekday: {
         Pagi: 15000,
         Siang: 20000,
-        Sore: 25000,
+        Malam: 25000,
       },
       Weekend: {
         Pagi: 20000,
         Siang: 25000,
-        Sore: 30000,
+        Malam: 30000,
       },
     },
     available: false,
