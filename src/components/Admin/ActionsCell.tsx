@@ -11,13 +11,13 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import AlertModal from "@/components/AlertDialog";
-import { Order } from "@/types/Order";
 
 interface ActionsCellProps {
-  orders: Order;
+  id: number | string;
+  isOrder?: boolean;
 }
 
-const ActionsCell: React.FC<ActionsCellProps> = ({ orders }) => {
+const ActionsCell: React.FC<ActionsCellProps> = ({ id, isOrder }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -30,7 +30,11 @@ const ActionsCell: React.FC<ActionsCellProps> = ({ orders }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-          <Link href={`/admin/pemesanan/edit/${orders.id}`}>
+          <Link
+            href={` ${
+              isOrder ? "/admin/pemesanan" : "/admin/lapangan"
+            }/edit/${id}`}
+          >
             <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
           </Link>
           <DropdownMenuSeparator />

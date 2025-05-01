@@ -17,16 +17,14 @@ import {
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { CourtReal } from "@/types/court";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface CourtTableProps {
+  data: CourtReal[];
+  columns: ColumnDef<CourtReal>[];
 }
 
-export function OrderTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+const CourtTable = ({ data, columns }: CourtTableProps) => {
   const [pageIndex, setPageIndex] = useState(0);
   const pageSize = 10;
 
@@ -129,4 +127,6 @@ export function OrderTable<TData, TValue>({
       </div>
     </section>
   );
-}
+};
+
+export default CourtTable;

@@ -1,10 +1,10 @@
-import { OrderTable } from "@/components/Admin/Pemesanan/order-table";
 import React from "react";
 import { ordersData } from "@/lib/dummy/orders";
 import { columns } from "@/components/Admin/Pemesanan/columns";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { ManageTable } from "@/components/ManageTable";
 
 const ManageOrder = () => {
   return (
@@ -21,7 +21,7 @@ const ManageOrder = () => {
             </Button>
           </Link>
         </div>
-        <OrderTable data={ordersData} columns={columns} />
+        <ManageTable data={ordersData} columns={columns} />
       </div>
     </section>
   );

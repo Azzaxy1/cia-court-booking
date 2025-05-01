@@ -72,6 +72,9 @@ export const columns: ColumnDef<Order>[] = [
   {
     id: "actions",
     header: "Aksi",
-    cell: ({ row }) => <ActionsCell orders={row.original} />,
+    cell: ({ row }) => {
+      const orders = row.original;
+      return <ActionsCell id={orders.id} isOrder />;
+    },
   },
 ];
