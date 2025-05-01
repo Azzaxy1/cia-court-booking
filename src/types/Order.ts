@@ -5,6 +5,7 @@ export interface Order {
   date: string;
   time: string;
   duration: number | string;
-  totalPrice: number | string;
+  amount: number | string;
   status: string;
+  paymentMethod: string;
 }

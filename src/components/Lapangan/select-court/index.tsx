@@ -13,7 +13,7 @@ interface SelectCourtProps {
 
 const SelectCourt = ({ court }: SelectCourtProps) => {
   return (
-    <Tabs defaultValue="futsal" className="w-full" onValueChange={() => {}}>
+    <Tabs defaultValue="futsal" className="w-full">
       <TabsList className="grid grid-cols-1 md:grid-cols-3 mb-16 md:mb-8">
         <TabsTrigger value="futsal">Lapangan Futsal</TabsTrigger>
         <TabsTrigger value="badminton">Lapangan Badminton</TabsTrigger>

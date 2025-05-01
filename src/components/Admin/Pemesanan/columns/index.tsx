@@ -35,14 +35,14 @@ export const columns: ColumnDef<Order>[] = [
     },
   },
   {
-    accessorKey: "totalPrice",
+    accessorKey: "amount",
     header: () => <div className="">Total Harga</div>,
     cell: ({ row }) => {
-      const totalPrice = parseFloat(row.getValue("totalPrice"));
+      const amount = parseFloat(row.getValue("amount"));
       const formatted = new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
-      }).format(totalPrice);
+      }).format(amount);
       return <div className="font-medium">{formatted}</div>;
     },
   },

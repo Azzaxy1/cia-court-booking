@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { FiMenu } from "react-icons/fi";
 import { navUser } from "@/constants/navmenu";
 import AccountMenu from "./AccountMenu";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

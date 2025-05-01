@@ -69,7 +69,7 @@ const OrderForm = ({
     date: "",
     startTime: "",
     duration: "",
-    totalPrice: "",
+    amount: "",
     status: "Pending",
   });
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -139,7 +139,7 @@ const OrderForm = ({
       const price = calculatePrice(formData.fieldType, formData.duration);
       setFormData((prev) => ({
         ...prev,
-        totalPrice: price.toString(),
+        amount: price.toString(),
       }));
     }
   }, [formData.fieldType, formData.duration]);
@@ -303,15 +303,15 @@ const OrderForm = ({
           {/* Total Price and Status */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="totalPrice">Total Harga</Label>
+              <Label htmlFor="amount">Total Harga</Label>
               <Input
-                id="totalPrice"
-                name="totalPrice"
+                id="amount"
+                name="amount"
                 value={
                   isAddForm
-                    ? formData.totalPrice &&
-                      `Rp ${Number(formData.totalPrice).toLocaleString()}`
-                    : `Rp ${order?.totalPrice}`
+                    ? formData.amount &&
+                      `Rp ${Number(formData.amount).toLocaleString()}`
+                    : `Rp ${order?.amount}`
                 }
                 readOnly
                 className="bg-gray-50"
