@@ -1,7 +1,9 @@
+type Role = "customer" | "cashier" | "owner";
+
 export interface IUser {
   name: string;
   email: string;
   phone: string;
-  role?: "user" | "admin";
   image: string | null;
+  role?: Role;
 }
