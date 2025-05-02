@@ -8,14 +8,14 @@ export async function POST(req: Request) {
 
     if (!name || !email || !phone || !password || !role) {
       return NextResponse.json(
-        { message: "Semua field harus diisi" },
+        { success: false, message: "Semua field harus diisi" },
         { status: 400 }
       );
     }
 
     if (password.length < 8) {
       return NextResponse.json(
-        { message: "Password minimal 8 karakter" },
+        { success: false, message: "Password minimal 8 karakter" },
         { status: 400 }
       );
     }
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "Email sudah terdaftar" },
+        { success: false, message: "Email sudah terdaftar" },
         { status: 400 }
       );
     }
@@ -49,14 +49,15 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
+        success: true,
         message: "Berhasil mendaftar",
-        user,
+        data: user,
       },
       { status: 201 }
     );
   } catch (error) {
     return NextResponse.json(
-      { message: "Gagal mendaftar", error },
+      { success: false, message: "Gagal mendaftar", error },
       { status: 500 }
     );
   }

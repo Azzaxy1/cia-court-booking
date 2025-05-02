@@ -11,7 +11,7 @@ import { images } from "@/assets";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-export function LoginForm({
+export function LoginAdminForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
