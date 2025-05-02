@@ -8,12 +8,15 @@ import { navUser } from "@/constants/navmenu";
 import AccountMenu from "./AccountMenu";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const isLogin = true;
+  const { data: session } = useSession();
+
+  const isLogin = !!session;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

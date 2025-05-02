@@ -12,10 +12,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { signOut } from "next-auth/react";
 
 const AccountMenu = () => {
-  const handleLogout = () => {
-    toast.success("Berhasil keluar");
+  const handleLogout = async () => {
+    try {
+      await signOut({ callbackUrl: "/login" });
+      toast.success("Berhasil keluar");
+    } catch (error) {
+      toast.error(`Gagal keluar, silakan coba lagi. ${error}`);
+    }
   };
 
   return (

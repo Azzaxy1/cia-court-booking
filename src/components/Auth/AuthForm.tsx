@@ -19,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { authSchema } from "@/validation";
 import { useLogin } from "@/hooks/useLogin";
 import { z } from "zod";
+import { signIn } from "next-auth/react";
 
 interface AuthFormProps {
   isLogin?: boolean;
@@ -41,7 +42,7 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
       : { name: "", email: "", phone: "", password: "", role: "CUSTOMER" },
   });
 
-  const mutation = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: register,
     retry: 1,
     onSuccess: (data) => {
@@ -64,10 +65,28 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
       if (isLogin) {
         await login(formData.email, formData.password);
       } else {
-        mutation.mutate(formData);
+        mutate(formData);
       }
     } catch (error) {
       toast.error(`Terjadi kesalahan, silakan coba lagi. ${String(error)}`);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signIn("google", {
+        redirect: false,
+        callbackUrl: `${window.location.origin}/`,
+      }).then((res) => {
+        if (res?.error) {
+          toast.error("Gagal masuk dengan Google");
+        } else {
+          toast.success("Berhasil masuk dengan Google");
+          router.push("/");
+        }
+      });
+    } catch (error) {
+      toast.error(`Gagal masuk dengan Google. ${String(error)}`);
     }
   };
 
@@ -158,9 +177,9 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
               <Button
                 type="submit"
                 className="w-full text-white"
-                disabled={isSubmitting || mutation.isPending}
+                disabled={isSubmitting || isPending}
               >
-                {isSubmitting || mutation.isPending ? (
+                {isSubmitting || isPending ? (
                   <span className="flex items-center justify-center gap-3">
                     <FaSpinner className="animate-spin mr-2" size={16} />{" "}
                     Loading...
@@ -172,7 +191,11 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
                 )}
               </Button>
               <div className="gap-4 w-full">
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleGoogleLogin}
+                >
                   <FaGoogle />
                   <span>Masuk dengan Google</span>
                 </Button>
