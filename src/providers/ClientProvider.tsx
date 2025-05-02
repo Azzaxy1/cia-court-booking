@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
+import { SessionProvider } from "next-auth/react";
 
 const ClientProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient();
@@ -26,12 +27,14 @@ const ClientProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {!hideNavbarFooter && <Navbar />}
-      {children}
-      {!hideNavbarFooter && <Footer />}
-      <Toaster position="top-right" />
-    </QueryClientProvider>
+    <SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        {!hideNavbarFooter && <Navbar />}
+        {children}
+        {!hideNavbarFooter && <Footer />}
+        <Toaster position="top-right" />
+      </QueryClientProvider>
+    </SessionProvider>
   );
 };
 

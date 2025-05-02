@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 TODO
+
+# Ignore generated Prisma files
+src/app/generated

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { AppSidebar } from "@/components/Admin/Dashboard/app-sidebar";
 import {
   Breadcrumb,
@@ -16,10 +16,14 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
   const path = pathname.split("/").pop();
 
   const pageTitles: Record<string, string> = {
@@ -30,6 +34,15 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   const currentPage = pageTitles[path ?? ""] || "Admin";
+
+  useEffect(() => {
+    if (
+      (status === "authenticated" && session?.user?.role !== "owner") ||
+      (status === "authenticated" && session?.user?.role !== "cashier")
+    ) {
+      router.push("/unauthorized");
+    }
+  }, [status, session, router]);
 
   return (
     <SidebarProvider>
