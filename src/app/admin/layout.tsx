@@ -40,7 +40,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       (status === "authenticated" && session?.user?.role !== "owner") ||
       (status === "authenticated" && session?.user?.role !== "cashier")
     ) {
-      router.push("/unauthorized");
+      router.push("/admin/login");
     }
   }, [status, session, router]);
 
