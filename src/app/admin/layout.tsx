@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { AppSidebar } from "@/components/Admin/Dashboard/app-sidebar";
 import {
   Breadcrumb,
@@ -16,13 +16,10 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const { data: session, status } = useSession();
-  const router = useRouter();
 
   const path = pathname.split("/").pop();
 
@@ -34,15 +31,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   const currentPage = pageTitles[path ?? ""] || "Admin";
-
-  useEffect(() => {
-    if (
-      (status === "authenticated" && session?.user?.role !== "owner") ||
-      (status === "authenticated" && session?.user?.role !== "cashier")
-    ) {
-      router.push("/admin/login");
-    }
-  }, [status, session, router]);
 
   return (
     <SidebarProvider>
