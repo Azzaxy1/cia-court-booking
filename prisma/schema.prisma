@@ -15,13 +15,15 @@ datasource db {
 }
 
 model User {
-  id      String    @id @default(cuid())
-  name    String
-  email   String    @unique
-  image   String?
-  role    Role      @default(CUSTOMER)
-  Account Account[]
-  Session Session[]
+  id       String    @id @default(cuid())
+  name     String
+  email    String    @unique
+  image    String?
+  phone    String
+  password String
+  role     Role      @default(CUSTOMER)
+  Account  Account[]
+  Session  Session[]
 }
 
 model Account {

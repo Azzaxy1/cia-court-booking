@@ -10,6 +10,9 @@ import { images } from "@/assets";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import axios from "axios";
+import { signIn } from "next-auth/react";
 
 interface AuthFormProps {
   isLogin?: boolean;
@@ -17,16 +20,68 @@ interface AuthFormProps {
 }
 
 const AuthForm = ({ isLogin, className }: AuthFormProps) => {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    role: "CUSTOMER",
+  });
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setIsLoading(true);
     e.preventDefault();
-    if (isLogin) {
-      router.push("/");
-    } else {
-      router.push("/login");
+    setError(null);
+
+    try {
+      if (isLogin) {
+        const res = await signIn("credentials", {
+          email: form.email,
+          password: form.password,
+          redirect: false,
+        });
+
+        if (res?.error) {
+          setError("Email atau Password salah");
+          toast.error("Email atau Password salah");
+          setIsLoading(true);
+          return;
+        } else {
+          router.push("/");
+          toast.success("Berhasil masuk");
+        }
+      } else {
+        if (!form.name || !form.email || !form.phone || !form.password) {
+          setError("Semua field harus diisi");
+          return;
+        }
+
+        const res = await axios.post("/api/register", form);
+        console.log(res);
+
+        if (res.status !== 201) {
+          setError(res.data.message || "Gagal mendaftar");
+          return;
+        } else {
+          setIsLoading(true);
+          router.push("/login");
+          toast.success(res.data.message || "Berhasil mendaftar");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      setError("Terjadi kesalahan, silakan coba lagi.");
+    } finally {
+      setIsLoading(false);
     }
-    toast.success(isLogin ? "Berhasil masuk" : "Berhasil mendaftar");
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -43,6 +98,7 @@ const AuthForm = ({ isLogin, className }: AuthFormProps) => {
                 <p className="text-balance text-muted-foreground">
                   {isLogin ? "Masuk ke akun Anda" : "Daftarkan akun baru Anda"}
                 </p>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
               </div>
               {!isLogin && (
                 <div className="grid grid-cols-2 gap-2">
@@ -53,15 +109,21 @@ const AuthForm = ({ isLogin, className }: AuthFormProps) => {
                       type="text"
                       placeholder="John Doe"
                       required
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="handphone">No Telepon</Label>
+                    <Label htmlFor="phone">No Telepon</Label>
                     <Input
-                      id="handphone"
+                      id="phone"
                       type="text"
                       placeholder="081234567890"
                       required
+                      value={form.phone}
+                      onChange={handleChange}
+                      name="phone"
                     />
                   </div>
                 </div>
@@ -73,6 +135,9 @@ const AuthForm = ({ isLogin, className }: AuthFormProps) => {
                   type="email"
                   placeholder="example@mail.com"
                   required
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
                 />
               </div>
               <div className="grid gap-2">
@@ -84,9 +149,28 @@ const AuthForm = ({ isLogin, className }: AuthFormProps) => {
                   type="password"
                   required
                   placeholder="*******"
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
                 />
               </div>
-              <Button type="submit" className="w-full text-white">
+              <Button
+                type="submit"
+                className="w-full text-white"
+                disabled={isLoading}
+              >
+                {isLoading && (
+                  <svg
+                    className="animate-spin mr-2 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 1C5.372 1 0 6.372 0 13s5.372 12 12 12 12-5.372 12-12S18.628 1 12 1zm0 22c-5.523 0-10-4.477-10-10S6.477 3 12 3s10 4.477 10 10-4.477 10-10 10z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                )}
                 {isLogin ? "Masuk" : "Daftar"}
               </Button>
               <div className="gap-4 w-full">

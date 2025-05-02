@@ -12,13 +12,13 @@ export default withAuth(
 
     if (
       pathname.startsWith("/admin") &&
-      role !== "owner" &&
-      role !== "cashier"
+      role !== "OWNER" &&
+      role !== "CASHIER"
     ) {
       return NextResponse.redirect(new URL("/admin/login", req.url));
     }
 
-    if (pathname.startsWith("/profile") && role !== "customer") {
+    if (pathname.startsWith("/profile") && role !== "CUSTOMER") {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
@@ -26,7 +26,7 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: () => true, // ← penting: biar gak auto redirect ke /api/auth/signin
+      authorized: () => true,
     },
   }
 );
