@@ -60,7 +60,6 @@ const AuthForm = ({ isLogin, className }: AuthFormProps) => {
         }
 
         const res = await axios.post("/api/register", form);
-        console.log(res);
 
         if (res.status !== 201) {
           setError(res.data.message || "Gagal mendaftar");

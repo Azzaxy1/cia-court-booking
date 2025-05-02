@@ -6,10 +6,6 @@ export default withAuth(
     const role = req.nextauth.token?.role;
     const pathname = req.nextUrl.pathname;
 
-    console.log("Role:", role);
-    console.log("Token:", req.nextauth.token);
-    console.log("Pathname:", pathname);
-
     if (
       pathname.startsWith("/admin") &&
       role !== "OWNER" &&
