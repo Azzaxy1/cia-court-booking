@@ -1,10 +1,6 @@
 "use client";
 
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
@@ -18,8 +14,9 @@ export function NavMain({
 }: {
   items: {
     title: string;
-    url: string;
+    url?: string;
     icon?: React.ElementType;
+    onClick?: () => void;
   }[];
 }) {
   const pathname = usePathname();
@@ -28,24 +25,31 @@ export function NavMain({
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
-          <DropdownMenu key={item.title}>
-            <SidebarMenuItem>
-              <DropdownMenuTrigger asChild>
-                <Link
-                  href={item.url}
-                  className={`flex items-center text-white gap-2 w-full ${
-                    pathname === item.url
-                      ? "bg-[#159aac] rounded-sm"
-                      : "text-gray-500"
-                  }`}
-                >
-                  <SidebarMenuButton className="text-white text-sm sm:text-base 2xl:text-lg w-full">
-                    {item.icon && <item.icon />} {item.title}
-                  </SidebarMenuButton>
-                </Link>
-              </DropdownMenuTrigger>
-            </SidebarMenuItem>
-          </DropdownMenu>
+          <SidebarMenuItem key={item.title}>
+            {item.title === "Keluar" ? (
+              <SidebarMenuButton
+                onClick={() => {
+                  if (item.onClick) item.onClick();
+                }}
+                className="text-white text-sm sm:text-base 2xl:text-lg w-full flex items-center gap-2"
+              >
+                {item.icon && <item.icon />} {item.title}
+              </SidebarMenuButton>
+            ) : (
+              <Link
+                href={item.url || "#"}
+                className={`flex items-center text-white gap-2 w-full ${
+                  pathname === item.url
+                    ? "bg-[#159aac] rounded-sm"
+                    : "text-gray-500"
+                }`}
+              >
+                <SidebarMenuButton className="text-white text-sm sm:text-base 2xl:text-lg w-full">
+                  {item.icon && <item.icon />} {item.title}
+                </SidebarMenuButton>
+              </Link>
+            )}
+          </SidebarMenuItem>
         ))}
       </SidebarMenu>
     </SidebarGroup>

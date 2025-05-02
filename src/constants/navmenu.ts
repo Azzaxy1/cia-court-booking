@@ -6,6 +6,8 @@ import {
 import { FaBuilding } from "react-icons/fa";
 import { IoCart } from "react-icons/io5";
 import { FaMoneyBillWave } from "react-icons/fa";
+import { signOut } from "next-auth/react";
+import toast from "react-hot-toast";
 import { BiLogOut } from "react-icons/bi";
 
 export const navUser = [
@@ -52,7 +54,12 @@ export const navAdmin = [
   },
   {
     title: "Keluar",
-    url: "/admin/login",
+    onClick: () => {
+      signOut({
+        callbackUrl: "/admin/login",
+      });
+      toast.success("Berhasil keluar dari akun");
+    },
     icon: BiLogOut,
   },
 ];
