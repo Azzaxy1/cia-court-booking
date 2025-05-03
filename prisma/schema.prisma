@@ -15,15 +15,18 @@ datasource db {
 }
 
 model User {
-  id       String    @id @default(cuid())
-  name     String
-  email    String    @unique
-  image    String?
-  phone    String
-  password String
-  role     Role      @default(CUSTOMER)
-  Account  Account[]
-  Session  Session[]
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  image     String?
+  phone     String
+  password  String
+  role      Role      @default(CUSTOMER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Account   Account[]
+  Session   Session[]
+  Booking   Booking[]
 }
 
 model Account {
@@ -54,8 +57,105 @@ model Session {
   user User @relation(fields: [userId], references: [id])
 }
 
+model Court {
+  id          String         @id @default(cuid())
+  name        String
+  type        CourtType
+  image       String
+  description String
+  surfaceType FutsalSurface?
+  prices      CourtPrice[]
+  capacity    Int
+  available   Boolean
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  Booking     Booking[]
+}
+
+model CourtPrice {
+  id        String   @id @default(cuid())
+  court     Court    @relation(fields: [courtId], references: [id])
+  courtId   String
+  dayType   DayType
+  timeSlot  TimeSlot
+  price     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  userId        String
+  courtId       String
+  startTime     DateTime
+  endTime       DateTime
+  courtType     CourtType
+  duration      Int
+  date          DateTime
+  paymentMethod PaymentMethod
+  isConfirmed   Boolean       @default(false)
+  amount        Int
+  status        BookingStatus @default(Pending)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user        User          @relation(fields: [userId], references: [id])
+  court       Court         @relation(fields: [courtId], references: [id])
+  Transaction Transaction[]
+}
+
+model Transaction {
+  id            String        @id @default(cuid())
+  bookingId     String
+  paymentMethod PaymentMethod
+  transactionId String        @unique
+  amount        Int
+  status        BookingStatus
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+}
+
 enum Role {
   CUSTOMER
   CASHIER
   OWNER
+}
+
+enum CourtType {
+  Futsal
+  Badminton
+  TenisMeja
+}
+
+enum FutsalSurface {
+  Interlok
+  Rumput
+  Semen
+}
+
+enum DayType {
+  Weekend
+  Weekday
+}
+
+enum TimeSlot {
+  Pagi
+  Siang
+  Malam
+}
+
+enum BookingStatus {
+  Pending
+  Paid
+  Canceled
+  Refunded
+}
+
+enum PaymentMethod {
+  BankTransfer
+  EWallet
+  Cash
+  CreditCard
 }
