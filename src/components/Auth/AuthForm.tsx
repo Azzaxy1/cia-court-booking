@@ -146,7 +146,6 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
                   id="email"
                   type="email"
                   placeholder="example@mail.com"
-                  required
                   {...formRegister("email")}
                 />
                 {errors.email && (
@@ -162,7 +161,6 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
                 <Input
                   id="password"
                   type="password"
-                  required
                   placeholder="*******"
                   {...formRegister("password")}
                 />
@@ -191,6 +189,7 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
                   "Daftar"
                 )}
               </Button>
+
               <div className="gap-4 w-full">
                 <Button
                   variant="outline"
@@ -212,6 +211,7 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
               </div>
             </div>
           </form>
+
           <div className={`hidden bg-primary md:block`}>
             <div className="flex justify-center h-full items-center">
               <Link href="/">
