@@ -12,13 +12,12 @@ import SideProfile from "@/components/Profile/side-profile";
 import BookingHistory from "@/components/Profile/booking-history";
 import EditProfileForm from "@/components/Profile/edit-profile";
 import { bookingHistory } from "@/lib/dummy/bookingHistory";
-import { user } from "@/lib/dummy/user";
 
 const ProfilePage = () => {
   return (
     <div className="container mx-auto md:px-12 pt-28 pb-10">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <SideProfile user={user} />
+        <SideProfile />
 
         {/* Konten Utama */}
         <div className="lg:col-span-2">
@@ -56,7 +55,7 @@ const ProfilePage = () => {
                   </CardHeader>
 
                   {/* Edit Profile Form */}
-                  <EditProfileForm user={user} />
+                  <EditProfileForm />
                 </Card>
               </div>
             </TabsContent>

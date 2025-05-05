@@ -3,16 +3,23 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, LogOut, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import toast from "react-hot-toast";
 import { MdEmail } from "react-icons/md";
-import { IUser } from "@/types/User";
+import { signOut, useSession } from "next-auth/react";
 
-const SideProfile = ({ user }: { user: IUser }) => {
-  const handleLogout = () => {
-    toast.success("Berhasil keluar");
+const SideProfile = () => {
+  const { data: session } = useSession();
+
+  const handleLogout = async () => {
+    try {
+      await signOut({ callbackUrl: "/login" });
+      toast.success("Berhasil keluar");
+    } catch (error) {
+      toast.error(`Gagal keluar, silakan coba lagi. ${error}`);
+    }
   };
 
   return (
@@ -25,19 +32,19 @@ const SideProfile = ({ user }: { user: IUser }) => {
         </CardHeader>
         <CardContent className="flex flex-col items-center pb-6">
           <Avatar className="h-24 w-24 mb-4">
-            {user.image ? (
-              <AvatarImage src={user.image} alt={user.name} />
-            ) : (
-              <AvatarFallback className="text-2xl bg-blue-100 text-blue-600">
-                {user.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
-            )}
+            <AvatarImage
+              src={session?.user.image || ""}
+              alt={session?.user.name || "Avatar"}
+            />
+            <AvatarFallback className="text-2xl bg-blue-100 text-blue-600">
+              {(session?.user?.name || "")
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </AvatarFallback>
           </Avatar>
-          <h2 className="text-xl font-bold mb-1">{user.name}</h2>
-          <p className="text-gray-500 mb-4">{user.email}</p>
+          <h2 className="text-xl font-bold mb-1">{session?.user.name}</h2>
+          <p className="text-gray-500 mb-4">{session?.user.email}</p>
           <Link href="/login" className="w-full">
             <Button variant="outline" className="w-full" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" /> Keluar
@@ -55,22 +62,14 @@ const SideProfile = ({ user }: { user: IUser }) => {
             <User className="h-5 w-5 text-teal-700 mt-0.5" />
             <div>
               <p className="text-sm text-gray-500">Nama Lengkap</p>
-              <p className="font-medium">{user.name}</p>
+              <p className="font-medium">{session?.user.name}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <MdEmail className="h-5 w-5 text-teal-700 mt-0.5" />
             <div>
               <p className="text-sm text-gray-500">Email</p>
-              <p className="font-medium">{user.email}</p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <Bell className="h-5 w-5 text-teal-700 mt-0.5" />
-            <div>
-              <p className="text-sm text-gray-500">Telepon</p>
-              <p className="font-medium">{user.phone}</p>
+              <p className="font-medium">{session?.user.email}</p>
             </div>
           </div>
         </CardContent>
