@@ -1,17 +1,17 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Court } from "@/types/court/Court";
 import CourtCard from "../court-card";
+import { CourtReal } from "@/types/court";
 
-interface SelectCourtProps {
-  court: {
-    futsal: Court[];
-    badminton: Court[];
-    tableTennis: Court[];
-  };
-}
+type Props = {
+  courts: CourtReal[];
+};
 
-const SelectCourt = ({ court }: SelectCourtProps) => {
+const SelectCourt = ({ courts }: Props) => {
+  const courtFutsal = courts.filter((court) => court.type === "Futsal");
+  const courtBadminton = courts.filter((court) => court.type === "Badminton");
+  const courtTableTennis = courts.filter((court) => court.type === "TenisMeja");
+
   return (
     <Tabs defaultValue="futsal" className="w-full">
       <TabsList className="grid grid-cols-1 md:grid-cols-3 mb-16 md:mb-8">
@@ -26,8 +26,8 @@ const SelectCourt = ({ court }: SelectCourtProps) => {
           Pilihan Lapangan <span className="text-primary">Futsal</span>
         </h2>
         <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {court.futsal.map((court) => (
-            <CourtCard key={court.id} court={court} type="futsal" />
+          {courtFutsal.map((court) => (
+            <CourtCard key={court.id} court={court} type="Futsal" />
           ))}
         </div>
       </TabsContent>
@@ -38,8 +38,8 @@ const SelectCourt = ({ court }: SelectCourtProps) => {
           Pilihan Lapangan <span className="text-primary">Badminton</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {court.badminton.map((court) => (
-            <CourtCard key={court.id} court={court} type="badminton" />
+          {courtBadminton.map((court) => (
+            <CourtCard key={court.id} court={court} type="Badminton" />
           ))}
         </div>
       </TabsContent>
@@ -50,8 +50,8 @@ const SelectCourt = ({ court }: SelectCourtProps) => {
           Pilihan Lapangan <span className="text-primary">Tenis Meja</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {court.tableTennis.map((court) => (
-            <CourtCard key={court.id} court={court} type="tableTennis" />
+          {courtTableTennis.map((court) => (
+            <CourtCard key={court.id} court={court} type="TenisMeja" />
           ))}
         </div>
       </TabsContent>

@@ -1,25 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Court } from "@/types/court/Court";
+import { formatRupiah } from "@/lib/utils";
+import { CourtReal, CourtType } from "@/types/court/Court";
 import { Clock } from "lucide-react";
+// import { Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const CourtCard = ({
-  court,
-  type,
-}: {
-  court: Court;
-  type: "futsal" | "badminton" | "tableTennis";
-}) => {
+const CourtCard = ({ court, type }: { court: CourtReal; type: CourtType }) => {
   // Map the sport type to a readable Indonesian name
   const sportTypeNames: {
-    [key in "futsal" | "badminton" | "tableTennis"]: string;
+    [key in CourtType]: string;
   } = {
-    futsal: "Futsal",
-    badminton: "Badminton",
-    tableTennis: "Tenis Meja",
+    Futsal: "Futsal",
+    Badminton: "Badminton",
+    TenisMeja: "Tenis Meja",
   };
+
+  const minPrice = Math.min(...court.prices.map((price) => price.price));
+  const maxPrice = Math.max(...court.prices.map((price) => price.price));
+
+  const priceRange =
+    minPrice === maxPrice
+      ? formatRupiah(minPrice)
+      : `${formatRupiah(minPrice)} - ${formatRupiah(maxPrice)}`;
 
   return (
     <Card className="overflow-hidden">
@@ -43,12 +47,12 @@ const CourtCard = ({
         <h3 className="text-lg font-semibold">
           {court.name}{" "}
           <span className="text-primary">
-            {court.type && `(${court.type})`}
+            {court.surfaceType && `(${court.surfaceType})`}
           </span>
         </h3>
         <div className="flex items-center text-gray-600 mt-2">
           <Clock className="h-4 w-4 mr-1" />
-          <span className="text-sm">{court.price}</span>
+          <span className="text-sm">{priceRange}</span>
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between">

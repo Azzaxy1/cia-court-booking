@@ -1,6 +1,6 @@
 import { StaticImageData } from "next/image";
 
-type CourtType = "Futsal" | "Badminton" | "Tenis Meja";
+export type CourtType = "Futsal" | "Badminton" | "TenisMeja";
 type FutsalSurface = "Interlok" | "Rumput" | "Semen";
 
 export type TimeSlot = "Pagi" | "Siang" | "Malam";
@@ -16,16 +16,20 @@ export interface Court {
 }
 
 export interface CourtReal {
-  id: number;
+  id: string;
   name: string;
   type: CourtType;
-  surfaceType?: FutsalSurface;
+  surfaceType?: FutsalSurface | null;
   image: string | StaticImageData;
-  price: {
-    [day in DayType]: {
-      [time in TimeSlot]: number;
-    };
-  };
+  prices: {
+    id: string;
+    dayType: DayType;
+    timeSlot: TimeSlot;
+    price: number;
+  }[];
   available: boolean;
   description: string;
+  capacity: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

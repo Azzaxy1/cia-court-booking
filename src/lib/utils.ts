@@ -5,6 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const formatRupiah = (price: number) => {
+  return `Rp. ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+};
+
 // Format nama sport
 export const formatSportType = (type: string) => {
   switch (type) {
