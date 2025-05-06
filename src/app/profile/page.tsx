@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
@@ -7,13 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { History } from "lucide-react";
+// import { History } from "lucide-react";
 import SideProfile from "@/components/Profile/side-profile";
 import BookingHistory from "@/components/Profile/booking-history";
 import EditProfileForm from "@/components/Profile/edit-profile";
 import { getBookingHistory } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { BsFillCartXFill } from "react-icons/bs";
 
 const ProfilePage = async () => {
   const session = await getServerSession(authOptions);
@@ -48,9 +49,9 @@ const ProfilePage = async () => {
             <TabsContent value="bookings">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Riwayat Pemesanan</h2>
-                <Button variant="outline" size="sm">
+                {/* <Button variant="outline" size="sm">
                   <History className="h-4 w-4 mr-2" /> Lihat Semua
-                </Button>
+                </Button> */}
               </div>
 
               <div className="space-y-4">
@@ -59,8 +60,11 @@ const ProfilePage = async () => {
                     <BookingHistory key={booking.id} booking={booking} />
                   ))
                 ) : (
-                  <div className="text-center py-10">
-                    <p className="text-gray-500">Tidak ada pemesanan</p>
+                  <div className="flex flex-col items-center justify-center py-36">
+                    <BsFillCartXFill className="h-20 w-20 text-gray-400 mb-4" />
+                    <p className="text-gray-500">
+                      Tidak ada pemesanan yang ditemukan
+                    </p>
                   </div>
                 )}
               </div>
