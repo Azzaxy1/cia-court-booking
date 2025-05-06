@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -7,6 +9,14 @@ export function cn(...inputs: ClassValue[]) {
 
 export const formatRupiah = (price: number) => {
   return `Rp. ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+};
+
+export const formattedDate = (date: Date) => {
+  return format(date, "d MMMM yyyy", { locale: id });
+};
+
+export const formattedTime = (date: Date) => {
+  return format(date, "HH:mm", { locale: id });
 };
 
 // Format nama sport

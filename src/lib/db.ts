@@ -14,3 +14,21 @@ export const getAllCourts = async () => {
     },
   });
 };
+
+export const getBookingHistory = async (userId: string) => {
+  return await prisma.booking.findMany({
+    where: {
+      userId: userId,
+    },
+    include: {
+      court: {
+        include: {
+          prices: true,
+        },
+      },
+    },
+    orderBy: {
+      date: "desc",
+    },
+  });
+};

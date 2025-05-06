@@ -11,9 +11,26 @@ import { History } from "lucide-react";
 import SideProfile from "@/components/Profile/side-profile";
 import BookingHistory from "@/components/Profile/booking-history";
 import EditProfileForm from "@/components/Profile/edit-profile";
-import { bookingHistory } from "@/lib/dummy/bookingHistory";
+import { getBookingHistory } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-const ProfilePage = () => {
+const ProfilePage = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user.id) {
+    return (
+      <div className="container mx-auto md:px-12 pt-28 pb-10">
+        <h2 className="text-2xl font-bold">Anda belum login</h2>
+        <p className="text-gray-500">
+          Silakan login untuk mengakses halaman ini.
+        </p>
+      </div>
+    );
+  }
+
+  const bookingHistories = await getBookingHistory(session.user.id);
+
   return (
     <div className="container mx-auto md:px-12 pt-28 pb-10">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -37,9 +54,15 @@ const ProfilePage = () => {
               </div>
 
               <div className="space-y-4">
-                {bookingHistory.map((booking) => (
-                  <BookingHistory key={booking.id} booking={booking} />
-                ))}
+                {bookingHistories.length > 0 ? (
+                  bookingHistories.map((booking) => (
+                    <BookingHistory key={booking.id} booking={booking} />
+                  ))
+                ) : (
+                  <div className="text-center py-10">
+                    <p className="text-gray-500">Tidak ada pemesanan</p>
+                  </div>
+                )}
               </div>
             </TabsContent>
 

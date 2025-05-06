@@ -21,7 +21,7 @@ export interface CourtReal {
   type: CourtType;
   surfaceType?: FutsalSurface | null;
   image: string | StaticImageData;
-  prices: {
+  prices?: {
     id: string;
     dayType: DayType;
     timeSlot: TimeSlot;

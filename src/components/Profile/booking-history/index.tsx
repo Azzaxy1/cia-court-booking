@@ -1,45 +1,57 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { formatSportType } from "@/lib/utils";
+import {
+  formatRupiah,
+  formatSportType,
+  formattedDate,
+  formattedTime,
+} from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
-import { Calendar, Clock, CreditCard, Bookmark } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { IBookingHistory } from "@/types/BookingHistory";
+import {
+  Calendar,
+  Clock,
+  CreditCard,
+  Info,
+  CircleDollarSign,
+} from "lucide-react";
+import { Booking, BookingStatus } from "@/types/Booking";
 
-// Status badges dengan warna yang berbeda
-const getStatusBadge = (status: string) => {
+interface Props {
+  booking: Booking;
+}
+
+const getStatusBadge = (status: BookingStatus) => {
   switch (status) {
-    case "completed":
+    case "Paid":
       return <Badge className="bg-green-500 text-white">Selesai</Badge>;
-    case "upcoming":
-      return <Badge className="bg-blue-500 text-white">Akan Datang</Badge>;
-    case "cancelled":
+    case "Canceled":
       return <Badge className="bg-red-500 text-white">Dibatalkan</Badge>;
     default:
       return <Badge className="bg-gray-500 text-white">Tidak Diketahui</Badge>;
   }
 };
 
-const BookingHistory = ({ booking }: { booking: IBookingHistory }) => {
+const BookingHistory = ({ booking }: Props) => {
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden shadow-lg border border-gray-200">
       <div className="flex flex-col md:flex-row">
+        {/* Gambar Lapangan */}
         <div className="relative h-48 md:h-auto md:w-1/3">
-          <div className="w-full h-full bg-gray-200">
-            <Image
-              src={booking.image}
-              alt={booking.courtName}
-              width={400}
-              height={320}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <Image
+            src={booking.court.image}
+            alt={booking.court.name}
+            width={400}
+            height={320}
+            className="w-full h-full object-cover"
+          />
         </div>
-        <div className="flex-1 p-4">
-          <div className="flex justify-between items-start mb-2">
+
+        {/* Detail Booking */}
+        <div className="flex-1 p-6">
+          <div className="flex justify-between items-start mb-4">
             <div>
-              <h3 className="text-lg font-bold">{booking.courtName}</h3>
+              <h3 className="text-xl font-bold">{booking.court.name}</h3>
               <p className="text-sm text-gray-500">
                 {formatSportType(booking.courtType)}
               </p>
@@ -47,46 +59,51 @@ const BookingHistory = ({ booking }: { booking: IBookingHistory }) => {
             {getStatusBadge(booking.status)}
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-500" />
-              <span>{booking.date}</span>
+              <Calendar className="h-5 w-5 text-gray-500" />
+              <p>
+                <span className="font-semibold text-gray-700">Tanggal:</span>{" "}
+                <span className="text-gray-600">
+                  {formattedDate(booking.date)}
+                </span>
+              </p>
             </div>
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-gray-500" />
-              <span>{booking.time}</span>
+              <Clock className="h-5 w-5 text-gray-500" />
+              <p>
+                <span className="font-semibold text-gray-700">Jam:</span>{" "}
+                <span className="text-gray-600">
+                  {formattedTime(booking.startTime)} -{" "}
+                  {formattedTime(booking.endTime)}
+                </span>
+              </p>
             </div>
             <div className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4 text-gray-500" />
-              <span>{booking.price}</span>
+              <CircleDollarSign className="h-5 w-5 text-gray-500" />
+              <p>
+                <span className="font-semibold text-gray-700">Harga:</span>{" "}
+                <span className="text-gray-600">
+                  {formatRupiah(booking.amount)}
+                </span>
+              </p>
             </div>
             <div className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-gray-500" />
-              <span>No. {booking.id}</span>
+              <CreditCard className="h-5 w-5 text-gray-500" />
+              <p>
+                <span className="font-semibold text-gray-700">
+                  Metode Pembayaran:
+                </span>{" "}
+                <span className="text-gray-600">{booking.paymentMethod}</span>
+              </p>
             </div>
-          </div>
-
-          <div className="flex space-x-2 mt-4">
-            {booking.status === "completed" ? (
-              <>
-                <Button variant="outline" size="sm">
-                  Pesan Lagi
-                </Button>
-              </>
-            ) : booking.status === "upcoming" ? (
-              <>
-                <Button variant="default" size="sm">
-                  Lihat Detail
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-red-500 border-red-200 hover:bg-red-50"
-                >
-                  Batalkan
-                </Button>
-              </>
-            ) : null}
+            <div className="flex items-center gap-2">
+              <Info className="h-5 w-5 text-gray-500" />
+              <p>
+                <span className="font-semibold text-gray-700">Durasi:</span>{" "}
+                <span className="text-gray-600">{booking.duration} Jam</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
