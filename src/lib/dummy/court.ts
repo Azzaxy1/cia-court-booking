@@ -123,13 +123,13 @@ export const court = {
 
 export const courtDummy: CourtReal[] = [
   {
-    id: 1,
+    id: "1",
     name: "Lapangan 1",
     type: "Futsal",
     image: images.Futsal,
     description: "Lapangan Futsal 1 dengan permukaan rumput sintetis",
     surfaceType: "Rumput",
-    price: {
+    prices: {
       Weekday: {
         Pagi: 100000,
         Siang: 120000,
@@ -144,13 +144,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 2,
+    id: "2",
     name: "Lapangan 2",
     type: "Futsal",
     image: images.Futsal,
     description: "Lapangan Futsal 2 dengan permukaan interlok",
     surfaceType: "Interlok",
-    price: {
+    prices: {
       Weekday: {
         Pagi: 85000,
         Siang: 100000,
@@ -165,13 +165,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 3,
+    id: "3",
     name: "Lapangan 3",
     type: "Futsal",
     image: images.Futsal,
     description: "Lapangan Futsal 3 dengan permukaan rumput sintetis",
     surfaceType: "Rumput",
-    price: {
+    prices: {
       Weekday: {
         Pagi: 90000,
         Siang: 110000,
@@ -186,13 +186,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 4,
+    id: "4",
     name: "Lapangan 4",
     type: "Futsal",
     image: images.Futsal,
     description: "Lapangan Futsal 4 dengan permukaan semen",
     surfaceType: "Semen",
-    price: {
+    prices: {
       Weekday: {
         Pagi: 70000,
         Siang: 90000,
@@ -207,13 +207,13 @@ export const courtDummy: CourtReal[] = [
     available: false,
   },
   {
-    id: 5,
+    id: "5",
     name: "Lapangan 5",
     type: "Futsal",
     image: images.Futsal,
     description: "Lapangan Futsal 5 dengan permukaan semen",
     surfaceType: "Semen",
-    price: {
+    prices: {
       Weekday: {
         Pagi: 70000,
         Siang: 90000,
@@ -228,13 +228,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 6,
+    id: "6",
     name: "Lapangan 6",
     type: "Futsal",
     image: images.Futsal,
     description: "Lapangan Futsal 6 dengan permukaan semen",
     surfaceType: "Semen",
-    price: {
+    prices: {
       Weekday: {
         Pagi: 70000,
         Siang: 90000,
@@ -249,13 +249,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 7,
+    id: "7",
     name: "Lapangan 1",
     type: "Badminton",
     image: images.Badminton,
     description: "Lapangan Badminton 1 dengan permukaan kayu",
     price: {
-      Weekday: {
+      Weekdays: {
         Pagi: 20000,
         Siang: 25000,
         Malam: 30000,
@@ -269,13 +269,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 8,
+    id: "8",
     name: "Lapangan 2",
     type: "Badminton",
     image: images.Badminton,
     description: "Lapangan Badminton 2 dengan permukaan kayu",
     price: {
-      Weekday: {
+      Weekdays: {
         Pagi: 20000,
         Siang: 25000,
         Malam: 30000,
@@ -289,13 +289,13 @@ export const courtDummy: CourtReal[] = [
     available: false,
   },
   {
-    id: 9,
+    id: "9",
     name: "Lapangan 3",
     type: "Badminton",
     image: images.Badminton,
     description: "Lapangan Badminton 3 dengan permukaan kayu",
     price: {
-      Weekday: {
+      Weekdays: {
         Pagi: 20000,
         Siang: 25000,
         Malam: 30000,
@@ -309,13 +309,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 10,
+    id: "10",
     name: "Lapangan 4",
     type: "Badminton",
     image: images.Badminton,
     description: "Lapangan Badminton 4 dengan permukaan kayu",
     price: {
-      Weekday: {
+      Weekdays: {
         Pagi: 20000,
         Siang: 25000,
         Malam: 30000,
@@ -329,13 +329,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 11,
+    id: "11",
     name: "Lapangan 5",
     type: "Badminton",
     image: images.Badminton,
     description: "Lapangan Badminton 5 dengan permukaan kayu",
     price: {
-      Weekday: {
+      Weekdays: {
         Pagi: 20000,
         Siang: 25000,
         Malam: 30000,
@@ -349,13 +349,13 @@ export const courtDummy: CourtReal[] = [
     available: false,
   },
   {
-    id: 12,
+    id: "12",
     name: "Lapangan 6",
     type: "Badminton",
     image: images.Badminton,
     description: "Lapangan Badminton 6 dengan permukaan kayu",
     price: {
-      Weekday: {
+      Weekdays: {
         Pagi: 20000,
         Siang: 25000,
         Malam: 30000,
@@ -369,13 +369,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 13,
+    id: "13",
     name: "Lapangan 7",
     type: "Badminton",
     image: images.Badminton,
     description: "Lapangan Badminton 7 dengan permukaan kayu",
     price: {
-      Weekday: {
+      Weekdays: {
         Pagi: 20000,
         Siang: 25000,
         Malam: 30000,
@@ -389,13 +389,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 14,
+    id: "14",
     name: "Lapangan 1",
     type: "Tenis Meja",
     image: images.TenisMeja,
     description: "Lapangan Tenis Meja 1 dengan permukaan kayu",
     price: {
-      Weekday: {
+      Weekdays: {
         Pagi: 15000,
         Siang: 20000,
         Malam: 25000,
@@ -409,13 +409,13 @@ export const courtDummy: CourtReal[] = [
     available: true,
   },
   {
-    id: 15,
+    id: "15",
     name: "Lapangan 2",
     type: "Tenis Meja",
     image: images.TenisMeja,
     description: "Lapangan Tenis Meja 2 dengan permukaan kayu",
     price: {
-      Weekday: {
+      Weekdays: {
         Pagi: 15000,
         Siang: 20000,
         Malam: 25000,

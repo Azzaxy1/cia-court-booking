@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 const EditProfileForm = () => {
   const { data: session } = useSession();
+  const user = session?.user;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ const EditProfileForm = () => {
             <input
               type="text"
               className="w-full p-2 border rounded-md"
-              defaultValue={session?.user?.name || ""}
+              defaultValue={user?.name || ""}
             />
           </div>
           <div className="space-y-2">
@@ -31,17 +32,19 @@ const EditProfileForm = () => {
             <input
               type="email"
               className="w-full p-2 border rounded-md"
-              defaultValue={session?.user.email || ""}
+              defaultValue={user?.email || ""}
             />
           </div>
-          {/* <div className="space-y-2">
-            <label className="text-sm font-medium">Nomor Telepon</label>
-            <input
-              type="tel"
-              className="w-full p-2 border rounded-md"
-              defaultValue={user.phone}
-            />
-          </div> */}
+          {user?.phone && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Nomor Telepon</label>
+              <input
+                type="tel"
+                className="w-full p-2 border rounded-md"
+                defaultValue={user?.phone || ""}
+              />
+            </div>
+          )}
         </div>
         <div className="pt-4">
           <Button>Simpan Perubahan</Button>

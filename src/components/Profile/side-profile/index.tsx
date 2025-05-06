@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, User } from "lucide-react";
+import { LogOut, Phone, User } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import toast from "react-hot-toast";
@@ -72,6 +72,15 @@ const SideProfile = () => {
               <p className="font-medium">{session?.user.email}</p>
             </div>
           </div>
+          {session?.user.phone && (
+            <div className="flex items-start gap-3">
+              <Phone className="h-5 w-5 text-teal-700 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-500">Nomor Telepon</p>
+                <p className="font-medium">{session.user.phone}</p>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
