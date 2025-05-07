@@ -12,7 +12,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { courtInfo, scheduleData } from "@/lib/dummy/detailCourt";
+import { courtInfo } from "@/lib/dummy/detailCourt";
 import SideBooking from "@/components/DetailLapangan/side-booking";
 import { CourtReal } from "@/types/court/Court";
 import {
@@ -124,7 +124,7 @@ const DetailLapangan = async ({
 
             <InformationCourt courtDetails={courtDetails} court={court} />
 
-            <ScheduleCourt court={court} scheduleData={scheduleData} />
+            <ScheduleCourt court={court} />
           </Tabs>
         </div>
 

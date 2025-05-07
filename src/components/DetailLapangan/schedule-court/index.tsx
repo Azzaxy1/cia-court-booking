@@ -6,17 +6,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
+import { schedule } from "@/lib/dummy/detailCourt";
 import { formatRupiah } from "@/lib/utils";
 import { CourtReal } from "@/types/court";
 import { Calendar, DollarSign } from "lucide-react";
 import React from "react";
+// import { schedule } from "@/lib/dummy/detailCourt";
 
-interface ScheduleCourtProps {
+interface Props {
   court: CourtReal;
-  scheduleData: { day: string; slots: string[] }[];
+  // scheduleData: { day: string; slots: string[] }[];
 }
 
-const ScheduleCourt = ({ court, scheduleData }: ScheduleCourtProps) => {
+const ScheduleCourt = ({ court }: Props) => {
   const rangeMinPriceWeekday = Math.min(
     ...(
       court?.prices?.filter((price) => price.dayType === "Weekday") ?? []
@@ -84,7 +86,7 @@ const ScheduleCourt = ({ court, scheduleData }: ScheduleCourtProps) => {
           <CardDescription>Pilih hari dan jam untuk pemesanan</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
+          {/* <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
             {scheduleData.map((day) => (
               <div key={day.day} className="border rounded-lg p-2">
                 <h4 className="font-semibold text-center border-b pb-1 mb-2">
@@ -107,6 +109,20 @@ const ScheduleCourt = ({ court, scheduleData }: ScheduleCourtProps) => {
                     );
                   })}
                 </div>
+              </div>
+            ))}
+          </div> */}
+          <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
+            {schedule.map((time) => (
+              <div
+                key={time}
+                className={`text-center py-1 text-sm rounded ${
+                  Math.random() > 0.3
+                    ? "bg-green-100 text-green-800 cursor-pointer hover:bg-green-200"
+                    : "bg-gray-100 text-gray-400"
+                }`}
+              >
+                {time}
               </div>
             ))}
           </div>
