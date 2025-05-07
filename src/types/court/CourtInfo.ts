@@ -7,6 +7,5 @@ export interface CourtInfo {
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
   features: string[];
-  capacity: string;
   openHours: string;
 }

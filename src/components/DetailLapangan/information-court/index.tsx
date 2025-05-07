@@ -1,15 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { CourtInfo } from "@/types/court";
+import { CourtInfo, CourtReal } from "@/types/court";
 import { CheckCircle, Clock, Users } from "lucide-react";
 import React from "react";
 
 interface InformationCourtProps {
-  type: string;
   courtDetails: CourtInfo;
+  court: CourtReal;
 }
 
-const InformationCourt = ({ type, courtDetails }: InformationCourtProps) => {
+const InformationCourt = ({ courtDetails, court }: InformationCourtProps) => {
   return (
     <TabsContent value="informasi" className="space-y-4">
       <Card>
@@ -17,14 +17,7 @@ const InformationCourt = ({ type, courtDetails }: InformationCourtProps) => {
           <CardTitle>Deskripsi Lapangan</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-700 mb-6">
-            {type === "futsal"
-              ? "Lapangan futsal dengan standar internasional, dilengkapi dengan rumput sintetis berkualitas tinggi yang nyaman untuk bermain. Fasilitas ini dirancang untuk memberikan pengalaman bermain yang maksimal bagi para pecinta futsal."
-              : type === "badminton"
-              ? "Lapangan badminton dengan lantai vinyl berkualitas premium yang memberikan traksi sempurna. Dilengkapi dengan pencahayaan anti-silau dan ruangan berpendingin untuk kenyamanan bermain sepanjang hari."
-              : "Meja tenis meja dengan standar kompetisi, ditempatkan dalam ruangan yang dirancang khusus dengan pencahayaan optimal. Ideal untuk bermain kasual maupun latihan intensif."}
-          </p>
-
+          <p className="text-gray-700 mb-6">{court.description}</p>
           <h3 className="text-lg font-semibold mb-3">Fasilitas Unggulan</h3>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {courtDetails.features.map((feature, index) => (
@@ -58,7 +51,7 @@ const InformationCourt = ({ type, courtDetails }: InformationCourtProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>{courtDetails.capacity}</p>
+            <p>{court.capacity} Orang</p>
           </CardContent>
         </Card>
       </div>

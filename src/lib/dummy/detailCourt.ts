@@ -169,7 +169,6 @@ const courtInfo = {
       "Area Ganti dan Istirahat",
       "Skor Elektronik",
     ],
-    capacity: "10 pemain",
     openHours: "07:00 - 23:00",
   },
   badminton: {
@@ -182,7 +181,6 @@ const courtInfo = {
       "Net Standar BWF",
       "Area Istirahat",
     ],
-    capacity: "2-4 pemain",
     openHours: "07:00 - 23:00",
   },
   tableTennis: {
@@ -195,7 +193,6 @@ const courtInfo = {
       "Ruangan Berpendingin",
       "Perlengkapan Tersedia",
     ],
-    capacity: "2-4 pemain",
     openHours: "07:00 - 23:00",
   },
 };

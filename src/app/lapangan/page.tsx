@@ -1,5 +1,4 @@
 import React from "react";
-// import { court } from "@/lib/dummy/court";
 import SelectCourt from "@/components/Lapangan/select-court";
 import { getAllCourts } from "@/lib/db";
 

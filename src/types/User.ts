@@ -1,10 +1,10 @@
-type Role = "CUSTOMER" | "CASHIER" | "OWNER";
+// type Role = "CUSTOMER" | "CASHIER" | "OWNER";
 
 export interface IUser {
-  name: string;
-  email: string;
-  phone: string;
+  id: string;
+  name?: string | null;
+  email?: string | null;
   image?: string | null;
-  password: string;
-  role?: Role;
+  role?: string | null;
+  phone?: string | null;
 }

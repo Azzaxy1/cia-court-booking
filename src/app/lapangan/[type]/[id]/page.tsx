@@ -1,5 +1,4 @@
 import React from "react";
-import { court } from "@/lib/dummy/court";
 import Image from "next/image";
 import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { courtInfo, scheduleData } from "@/lib/dummy/detailCourt";
 import SideBooking from "@/components/DetailLapangan/side-booking";
-import { Court } from "@/types/court/Court";
+import { CourtReal } from "@/types/court/Court";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,6 +24,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import InformationCourt from "@/components/DetailLapangan/information-court";
 import ScheduleCourt from "@/components/DetailLapangan/schedule-court";
+import { getAllCourts } from "@/lib/db";
 
 type CourtType = "futsal" | "badminton" | "tableTennis";
 
@@ -33,15 +33,15 @@ const DetailLapangan = async ({
 }: {
   params: Promise<{ type: string; id: string }>;
 }) => {
+  const courts = await getAllCourts();
+
   const { type, id } = await params;
 
-  const lapangan = court[type as CourtType]?.find(
-    (item) => item?.id === Number(id)
-  ) as Court;
+  const court = courts.find((court: CourtReal) => court.id === id);
 
-  if (!lapangan) {
+  if (!court) {
     return (
-      <div className="container mx-auto md:px-12 py-20 min-h-screen flex items-center justify-center">
+      <div className="container mx-auto md:px-12 pt-20 min-h-screen flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-2xl text-center">
@@ -67,7 +67,7 @@ const DetailLapangan = async ({
   const courtDetails = courtInfo[type as CourtType];
 
   return (
-    <div className="container mx-auto md:px-12 py-24 min-h-screen">
+    <div className="container mx-auto md:px-12 pt-24 min-h-screen">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Kolom Kiri - Gambar dan Informasi Utama */}
         <div className="lg:col-span-2">
@@ -85,7 +85,7 @@ const DetailLapangan = async ({
               <BreadcrumbItem>{courtDetails.title}</BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem className="text-gray-800 font-semibold">
-                {lapangan.name} ({lapangan.type})
+                {court.name} ({court.surfaceType})
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -94,12 +94,12 @@ const DetailLapangan = async ({
             <courtDetails.icon className="h-5 w-5" />
             <div className="flex items-center gap-2">
               <p className="text-2xl sm:text-3xl 2xl:text-3xl font-semibold leading-tight text-slate-800">
-                {courtDetails.title} - {lapangan.name}{" "}
+                {court.name}
                 <span className="text-primary">
-                  {lapangan.type && `(${lapangan.type})`}
+                  {court.surfaceType && `(${court.surfaceType})`}
                 </span>
               </p>
-              {lapangan.available ? (
+              {court.available ? (
                 <Badge className="ml-2 bg-green-500 text-white">Tersedia</Badge>
               ) : (
                 <Badge className="ml-2 bg-red-500">Tidak Tersedia</Badge>
@@ -109,8 +109,8 @@ const DetailLapangan = async ({
 
           <div className="relative w-full h-96 rounded-lg overflow-hidden mb-6">
             <Image
-              src={lapangan.image}
-              alt={lapangan.name}
+              src={court.image}
+              alt={court.name}
               fill
               className="object-cover rounded-lg"
             />
@@ -122,13 +122,13 @@ const DetailLapangan = async ({
               <TabsTrigger value="jadwal">Jadwal & Harga</TabsTrigger>
             </TabsList>
 
-            <InformationCourt type={type} courtDetails={courtDetails} />
+            <InformationCourt courtDetails={courtDetails} court={court} />
 
-            <ScheduleCourt lapangan={lapangan} scheduleData={scheduleData} />
+            <ScheduleCourt court={court} scheduleData={scheduleData} />
           </Tabs>
         </div>
 
-        <SideBooking lapangan={lapangan} />
+        <SideBooking court={court} />
       </div>
     </div>
   );

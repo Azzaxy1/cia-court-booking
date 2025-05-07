@@ -27,7 +27,7 @@ const SelectCourt = ({ courts }: Props) => {
         </h2>
         <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courtFutsal.map((court) => (
-            <CourtCard key={court.id} court={court} type="Futsal" />
+            <CourtCard key={court.id} court={court} type="futsal" />
           ))}
         </div>
       </TabsContent>
@@ -39,7 +39,7 @@ const SelectCourt = ({ courts }: Props) => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courtBadminton.map((court) => (
-            <CourtCard key={court.id} court={court} type="Badminton" />
+            <CourtCard key={court.id} court={court} type="badminton" />
           ))}
         </div>
       </TabsContent>
@@ -51,7 +51,7 @@ const SelectCourt = ({ courts }: Props) => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courtTableTennis.map((court) => (
-            <CourtCard key={court.id} court={court} type="TenisMeja" />
+            <CourtCard key={court.id} court={court} type="tableTennis" />
           ))}
         </div>
       </TabsContent>

@@ -16,4 +16,10 @@ const authSchema = z
     role: true,
   });
 
-export { authSchema };
+const profileSchema = z.object({
+  name: z.string().min(3, "Nama harus lebih dari 3 karakter"),
+  phone: z.string().min(10, "No telepon tidak valid"),
+  email: z.string().email("Email tidak valid"),
+});
+
+export { authSchema, profileSchema };

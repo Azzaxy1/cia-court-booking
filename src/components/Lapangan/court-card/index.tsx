@@ -1,24 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { formatRupiah } from "@/lib/utils";
-import { CourtReal, CourtType } from "@/types/court/Court";
+import { CourtReal } from "@/types/court/Court";
 import { Clock } from "lucide-react";
 // import { Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const CourtCard = ({ court, type }: { court: CourtReal; type: CourtType }) => {
+interface Props {
+  court: CourtReal;
+  type: "futsal" | "badminton" | "tableTennis";
+}
+
+const CourtCard = ({ court, type }: Props) => {
   // Map the sport type to a readable Indonesian name
   const sportTypeNames: {
-    [key in CourtType]: string;
+    [key in "futsal" | "badminton" | "tableTennis"]: string;
   } = {
-    Futsal: "Futsal",
-    Badminton: "Badminton",
-    TenisMeja: "Tenis Meja",
+    futsal: "Futsal",
+    badminton: "Badminton",
+    tableTennis: "Tenis Meja",
   };
 
-  const minPrice = Math.min(...court.prices.map((price) => price.price));
-  const maxPrice = Math.max(...court.prices.map((price) => price.price));
+  const minPrice = Math.min(
+    ...(court?.prices ?? []).map((price) => price?.price)
+  );
+  const maxPrice = Math.max(
+    ...(court?.prices ?? []).map((price) => price?.price)
+  );
 
   const priceRange =
     minPrice === maxPrice

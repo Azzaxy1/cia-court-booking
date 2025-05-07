@@ -6,16 +6,40 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { Court } from "@/types/court";
-import { Award, Calendar, DollarSign } from "lucide-react";
+import { formatRupiah } from "@/lib/utils";
+import { CourtReal } from "@/types/court";
+import { Calendar, DollarSign } from "lucide-react";
 import React from "react";
 
 interface ScheduleCourtProps {
-  lapangan: Court;
+  court: CourtReal;
   scheduleData: { day: string; slots: string[] }[];
 }
 
-const ScheduleCourt = ({ lapangan, scheduleData }: ScheduleCourtProps) => {
+const ScheduleCourt = ({ court, scheduleData }: ScheduleCourtProps) => {
+  const rangeMinPriceWeekday = Math.min(
+    ...(
+      court?.prices?.filter((price) => price.dayType === "Weekday") ?? []
+    ).map((price) => price?.price)
+  );
+
+  const rangeMaxPriceWeekday = Math.max(
+    ...(
+      court?.prices?.filter((price) => price.dayType === "Weekday") ?? []
+    ).map((price) => price?.price)
+  );
+
+  const rangeMinPriceWeekend = Math.min(
+    ...(
+      court?.prices?.filter((price) => price.dayType === "Weekend") ?? []
+    ).map((price) => price?.price)
+  );
+
+  const rangeMaxPriceWeekend = Math.max(
+    ...(
+      court?.prices?.filter((price) => price.dayType === "Weekend") ?? []
+    ).map((price) => price?.price)
+  );
   return (
     <TabsContent value="jadwal" className="space-y-4">
       <Card>
@@ -29,10 +53,11 @@ const ScheduleCourt = ({ lapangan, scheduleData }: ScheduleCourtProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-teal-50 p-4 rounded-lg">
               <h4 className="font-semibold text-teal-800 mb-2">
-                Harga Standar
+                Harga Hari Kerja
               </h4>
               <p className="text-2xl font-bold text-teal-600">
-                {lapangan.price}
+                {formatRupiah(rangeMinPriceWeekday ?? 0)} -{" "}
+                {formatRupiah(rangeMaxPriceWeekday ?? 0)}
               </p>
               <p className="text-sm text-gray-600 mt-1">Senin - Jumat</p>
             </div>
@@ -41,30 +66,11 @@ const ScheduleCourt = ({ lapangan, scheduleData }: ScheduleCourtProps) => {
                 Harga Akhir Pekan
               </h4>
               <p className="text-2xl font-bold text-teal-600">
-                {lapangan.price.replace(
-                  /Rp\.\s(\d+)/,
-                  (_, price) =>
-                    `Rp. ${Math.floor(parseInt(price) * 1.2).toLocaleString(
-                      "id-ID"
-                    )}`
-                )}
+                {formatRupiah(rangeMinPriceWeekend ?? 0)} -{" "}
+                {formatRupiah(rangeMaxPriceWeekend ?? 0)}
               </p>
               <p className="text-sm text-gray-600 mt-1">Sabtu - Minggu</p>
             </div>
-          </div>
-
-          <div className="mt-6">
-            <h4 className="font-semibold text-lg mb-2">Paket Khusus</h4>
-            <ul className="space-y-2">
-              <li className="flex items-center gap-2">
-                <Award className="h-4 w-4 text-yellow-500" />
-                <span>Paket 5 Jam: Diskon 10%</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Award className="h-4 w-4 text-yellow-500" />
-                <span>Paket Bulanan: Diskon 20%</span>
-              </li>
-            </ul>
           </div>
         </CardContent>
       </Card>

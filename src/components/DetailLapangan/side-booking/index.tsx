@@ -8,12 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Court } from "@/types/court";
+import { CourtReal } from "@/types/court";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
 
-const SideBooking = ({ lapangan }: { lapangan: Court }) => {
+interface Props {
+  court: CourtReal;
+}
+
+const SideBooking = ({ court }: Props) => {
   const router = useRouter();
 
   const handleBooking = () => {
@@ -27,7 +31,7 @@ const SideBooking = ({ lapangan }: { lapangan: Court }) => {
         <CardHeader>
           <CardTitle>Pesan Lapangan</CardTitle>
           <CardDescription>
-            {lapangan.available
+            {court.available
               ? "Tersedia untuk pemesanan"
               : "Saat ini sedang tidak tersedia"}
           </CardDescription>
@@ -35,32 +39,16 @@ const SideBooking = ({ lapangan }: { lapangan: Court }) => {
         <CardContent>
           <div className="mb-4">
             <h3 className="text-xl font-bold text-teal-600">
-              {lapangan.price}
+              Rp. 14.000 <span className="text-sm text-gray-500">/per jam</span>
             </h3>
-            <p className="text-sm text-gray-500">per jam</p>
-          </div>
-
-          <div className="space-y-3 mb-6">
-            {/* <div className="flex justify-between">
-                  <span>Fasilitas</span>
-                  <span className="font-medium">Premium</span>
-                </div> */}
-            <div className="flex justify-between">
-              <span>Peralatan</span>
-              <span className="font-medium">Tersedia</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Kebersihan</span>
-              <span className="font-medium">Dibersihkan Setiap Hari</span>
-            </div>
           </div>
 
           <Button
             onClick={handleBooking}
             className="w-full mb-3"
-            disabled={!lapangan.available}
+            disabled={!court.available}
           >
-            {lapangan.available ? "Pesan Sekarang" : "Tidak Tersedia"}
+            {court.available ? "Pesan Sekarang" : "Tidak Tersedia"}
           </Button>
         </CardContent>
         <CardFooter className="flex-col items-start">

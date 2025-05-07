@@ -16,6 +16,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { BsFillCartXFill } from "react-icons/bs";
 
+export const dynamic = "force-dynamic";
+
 const ProfilePage = async () => {
   const session = await getServerSession(authOptions);
 
@@ -82,7 +84,7 @@ const ProfilePage = async () => {
                   </CardHeader>
 
                   {/* Edit Profile Form */}
-                  <EditProfileForm />
+                  <EditProfileForm user={session.user} />
                 </Card>
               </div>
             </TabsContent>
