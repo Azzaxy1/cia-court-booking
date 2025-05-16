@@ -67,10 +67,10 @@ model Court {
   surfaceType FutsalSurface?
   prices      CourtPrice[]
   capacity    Int
-  available   Boolean
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   Booking     Booking[]
+  Schedule    Schedule[]
 }
 
 model CourtPrice {
@@ -116,6 +116,20 @@ model Transaction {
   updatedAt     DateTime      @updatedAt
 
   booking Booking @relation(fields: [bookingId], references: [id])
+}
+
+model Schedule {
+  id        String   @id @default(cuid())
+  courtId   String
+  date      DateTime
+  timeSlot  String
+  available Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  court Court @relation(fields: [courtId], references: [id])
+
+  @@index([courtId, date, timeSlot])
 }
 
 enum Role {
