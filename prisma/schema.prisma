@@ -85,35 +85,43 @@ model CourtPrice {
 }
 
 model Booking {
-  id            String        @id @default(cuid())
-  userId        String
-  courtId       String
-  startTime     DateTime
-  endTime       DateTime
-  courtType     CourtType
-  duration      Int
-  date          DateTime
-  paymentMethod PaymentMethod
-  isConfirmed   Boolean       @default(false)
-  amount        Int
-  status        BookingStatus @default(Pending)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id              String        @id @default(cuid())
+  userId          String
+  courtId         String
+  startTime       DateTime
+  endTime         DateTime
+  courtType       CourtType
+  duration        Int
+  date            DateTime
+  paymentMethod   PaymentMethod
+  isConfirmed     Boolean       @default(false)
+  amount          Int
+  status          BookingStatus @default(Pending)
+  rescheduleFrom  DateTime?
+  rescheduleCount Int           @default(0)
+  cancelReason    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   user        User          @relation(fields: [userId], references: [id])
   court       Court         @relation(fields: [courtId], references: [id])
   Transaction Transaction[]
+  Schedule    Schedule[]
 }
 
 model Transaction {
-  id            String        @id @default(cuid())
-  bookingId     String
-  paymentMethod PaymentMethod
-  transactionId String        @unique
-  amount        Int
-  status        BookingStatus
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id              String        @id @default(cuid())
+  bookingId       String
+  paymentMethod   PaymentMethod
+  transactionId   String        @unique
+  amount          Int
+  midtransToken   String?
+  midtransOrderId String?
+  paymentUrl      String?
+  status          BookingStatus
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  expiredAt       DateTime?
 
   booking Booking @relation(fields: [bookingId], references: [id])
 }
@@ -121,13 +129,15 @@ model Transaction {
 model Schedule {
   id        String   @id @default(cuid())
   courtId   String
+  bookingId String?
   date      DateTime
   timeSlot  String
   available Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  court Court @relation(fields: [courtId], references: [id])
+  court   Court    @relation(fields: [courtId], references: [id])
+  booking Booking? @relation(fields: [bookingId], references: [id])
 
   @@index([courtId, date, timeSlot])
 }

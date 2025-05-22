@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-    "prisma": {
+  "prisma": {
     "seed": "node prisma/seed.js"
-    },
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -41,6 +41,7 @@
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.479.0",
+    "midtrans-client": "^1.4.2",
     "next": "15.1.7",
     "next-auth": "^4.24.11",
     "next-themes": "^0.4.5",
@@ -69,4 +70,3 @@
     "typescript": "^5.8.3"
   }
 }
-
