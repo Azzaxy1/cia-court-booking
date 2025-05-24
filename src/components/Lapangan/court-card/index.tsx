@@ -46,11 +46,6 @@ const CourtCard = ({ court, type }: Props) => {
             className="object-cover object-center w-full h-full"
           />
         </div>
-        {!court.available && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <span className="text-white font-bold text-lg">Tidak Tersedia</span>
-          </div>
-        )}
       </div>
       <CardContent className="p-4">
         <h3 className="text-lg font-semibold">
@@ -65,20 +60,14 @@ const CourtCard = ({ court, type }: Props) => {
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between">
-        {court.available ? (
-          <Link
-            href={`/lapangan/${type}/${court.id}`}
-            className="w-full text-white"
-          >
-            <Button variant="default" className="w-full text-white">
-              Lihat Detail
-            </Button>
-          </Link>
-        ) : (
-          <Button variant="outline" className="w-full text-gray-700" disabled>
-            Tidak Tersedia
+        <Link
+          href={`/lapangan/${type}/${court.id}`}
+          className="w-full text-white"
+        >
+          <Button variant="default" className="w-full text-white">
+            Lihat Detail
           </Button>
-        )}
+        </Link>
       </CardFooter>
     </Card>
   );
