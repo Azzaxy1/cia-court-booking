@@ -12,7 +12,6 @@ export interface Court {
   type?: string;
   image: string;
   price: string;
-  available: boolean;
 }
 
 export interface CourtReal {
@@ -28,7 +27,6 @@ export interface CourtReal {
         timeSlot: TimeSlot;
         price: number;
       }[];
-  available: boolean;
   description: string;
   capacity: number;
   createdAt: Date;
