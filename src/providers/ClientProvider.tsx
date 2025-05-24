@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { usePathname } from "next/navigation";
@@ -12,10 +12,12 @@ import { Toaster } from "react-hot-toast";
 import { SessionProvider } from "next-auth/react";
 
 const ClientProvider = ({ children }: { children: React.ReactNode }) => {
-  const queryClient = new QueryClient();
+  const [mounted, setMounted] = useState(false);
+  const [queryClient] = useState(() => new QueryClient());
   const pathname = usePathname();
 
   useEffect(() => {
+    setMounted(true);
     Aos.init({
       duration: 800,
       once: true,
@@ -25,6 +27,10 @@ const ClientProvider = ({ children }: { children: React.ReactNode }) => {
   const hideNavbarFooter = ["/login", "/register", "/admin"].some((path) =>
     pathname.startsWith(path)
   );
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <SessionProvider>

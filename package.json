@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "prisma": {
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seed.js",
+    "migrate": "npx prisma migrate dev"
   },
   "scripts": {
     "dev": "next dev",
@@ -70,3 +71,4 @@
     "typescript": "^5.8.3"
   }
 }
+

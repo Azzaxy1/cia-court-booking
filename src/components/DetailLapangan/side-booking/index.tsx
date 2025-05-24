@@ -9,10 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useSchedule } from "@/contexts/ScheduleContext";
+import { formatRupiah } from "@/lib/utils";
 import { paymentMidtrans } from "@/services/mainService";
 import { CourtReal } from "@/types/court";
 import { useMutation } from "@tanstack/react-query";
-// import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { FaSpinner } from "react-icons/fa";
@@ -29,7 +31,11 @@ interface Props {
 }
 
 const SideBooking = ({ court }: Props) => {
-  console.log(court);
+  const { selectedSchedule } = useSchedule();
+  const { data: session } = useSession();
+  console.log(selectedSchedule);
+
+  console.log(selectedSchedule);
 
   const clientKey = process.env.MIDTRANS_CLIENT_KEY as string;
 
@@ -77,15 +83,20 @@ const SideBooking = ({ court }: Props) => {
   });
 
   const handleBooking = async () => {
+    if (!selectedSchedule) {
+      toast.error("Silakan pilih jadwal terlebih dahulu");
+      return;
+    }
+
     try {
       mutate({
         orderId: `order-${Date.now()}`,
-        amount: 150000,
+        amount: selectedSchedule?.price,
         customerDetails: {
-          first_name: "Azis",
-          last_name: "Abdurrahman",
-          email: "azis@gmail.com",
-          phone: "08123456789",
+          first_name: session?.user?.name ?? "",
+          last_name: "",
+          email: session?.user?.email ?? "",
+          phone: session?.user?.phone ?? "",
         },
       });
     } catch (error) {
@@ -105,8 +116,13 @@ const SideBooking = ({ court }: Props) => {
         <CardContent>
           <div className="mb-4">
             <h3 className="text-xl font-bold text-teal-600">
-              Rp. 150.000{" "}
+              {formatRupiah(selectedSchedule?.price ?? 0)}
               <span className="text-sm text-gray-500">/per jam</span>
+              {!selectedSchedule && (
+                <span className="text-sm inline-block mt-2 text-gray-500">
+                  Pilih jadwal terlebih dahulu untuk melihat harga
+                </span>
+              )}
             </h3>
           </div>
 

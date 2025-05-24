@@ -8,12 +8,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { schedule } from "@/lib/dummy/detailCourt";
 import { formatRupiah } from "@/lib/utils";
 import { CourtReal } from "@/types/court";
 import { Calendar as CalenderIcon, DollarSign } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
+import { Schedule } from "@/app/generated/prisma";
+import { getCourtSchedule } from "@/services/mainService";
+import { useQuery } from "@tanstack/react-query";
+import { useSchedule } from "@/contexts/ScheduleContext";
 
 interface Props {
   court: CourtReal;
@@ -21,28 +24,61 @@ interface Props {
 
 const ScheduleCourt = ({ court }: Props) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const { selectedSchedule, setSelectedSchedule } = useSchedule();
+
+  const handleScheduleClick = (schedule: Schedule) => {
+    if (schedule.available) {
+      setSelectedSchedule(schedule);
+    }
+  };
+
+  const { data: scheduleData, isLoading } = useQuery({
+    queryKey: ["schedules", court.id, selectedDate],
+    queryFn: async () => {
+      if (!selectedDate) return [];
+      const formattedDate = selectedDate.toISOString().split("T")[0];
+      const res = await getCourtSchedule(court.id, formattedDate);
+      return res.data;
+    },
+    enabled: !!selectedDate,
+  });
+
+  useEffect(() => {
+    if (scheduleData) {
+      setSchedules(scheduleData);
+    }
+  }, [scheduleData]);
+
+  // Get booking status for time slot
+  const getTimeSlotStatus = (time: string) => {
+    const schedule = schedules.find((s) => s.timeSlot === time);
+    if (!schedule) return "available";
+    if (!schedule.available) return "booked";
+    return "available";
+  };
 
   const rangeMinPriceWeekday = Math.min(
     ...(
-      court?.prices?.filter((price) => price.dayType === "Weekday") ?? []
+      court?.Schedule?.filter((price) => price.dayType === "Weekday") ?? []
     ).map((price) => price?.price)
   );
 
   const rangeMaxPriceWeekday = Math.max(
     ...(
-      court?.prices?.filter((price) => price.dayType === "Weekday") ?? []
+      court?.Schedule?.filter((price) => price.dayType === "Weekday") ?? []
     ).map((price) => price?.price)
   );
 
   const rangeMinPriceWeekend = Math.min(
     ...(
-      court?.prices?.filter((price) => price.dayType === "Weekend") ?? []
+      court?.Schedule?.filter((price) => price.dayType === "Weekend") ?? []
     ).map((price) => price?.price)
   );
 
   const rangeMaxPriceWeekend = Math.max(
     ...(
-      court?.prices?.filter((price) => price.dayType === "Weekend") ?? []
+      court?.Schedule?.filter((price) => price.dayType === "Weekend") ?? []
     ).map((price) => price?.price)
   );
 
@@ -103,20 +139,34 @@ const ScheduleCourt = ({ court }: Props) => {
             />
           </div>
 
-          {selectedDate ? (
+          {isLoading ? (
+            <div className="text-center py-4">
+              <p className="text-gray-500">Memuat jadwal...</p>
+            </div>
+          ) : selectedDate ? (
             <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
-              {schedule.map((time) => (
-                <div
-                  key={time}
-                  className={`text-center py-1 text-sm rounded ${
-                    Math.random() > 0.3
-                      ? "bg-green-100 text-green-800 cursor-pointer hover:bg-green-200"
-                      : "bg-gray-100 text-gray-400"
-                  }`}
-                >
-                  {time}
-                </div>
-              ))}
+              {schedules.map((schedule) => {
+                const status = getTimeSlotStatus(schedule.timeSlot);
+                const isSelected = selectedSchedule?.id === schedule.id;
+                return (
+                  <div
+                    key={schedule.id}
+                    onClick={() => handleScheduleClick(schedule)}
+                    className={`text-center py-1 text-sm rounded cursor-pointer transition-colors ${
+                      isSelected
+                        ? "bg-teal-500 text-white"
+                        : status === "available"
+                        ? "bg-green-100 text-green-800 hover:bg-green-200"
+                        : "bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    {schedule.timeSlot}
+                    <div className="text-xs text-gray-500">
+                      {formatRupiah(schedule.price)}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <p className="text-gray-500 text-center mt-4">

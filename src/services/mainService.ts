@@ -21,3 +21,8 @@ export const paymentMidtrans = async (paymentDetail: PaymentDetail) => {
   const data = await res.data;
   return data;
 };
+
+export const getCourtSchedule = async (courtId: string, date: string) => {
+  const res = await axios.get(`/api/courts/${courtId}/schedule?date=${date}`);
+  return res;
+};

@@ -23,10 +23,11 @@ const CourtCard = ({ court, type }: Props) => {
   };
 
   const minPrice = Math.min(
-    ...(court?.prices ?? []).map((price) => price?.price)
+    ...(court?.Schedule ?? []).map((schedule) => schedule?.price)
   );
+
   const maxPrice = Math.max(
-    ...(court?.prices ?? []).map((price) => price?.price)
+    ...(court?.Schedule ?? []).map((schedule) => schedule?.price)
   );
 
   const priceRange =

@@ -65,7 +65,6 @@ model Court {
   image       String
   description String
   surfaceType FutsalSurface?
-  prices      CourtPrice[]
   capacity    Int
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
@@ -73,16 +72,16 @@ model Court {
   Schedule    Schedule[]
 }
 
-model CourtPrice {
-  id        String   @id @default(cuid())
-  court     Court    @relation(fields: [courtId], references: [id])
-  courtId   String
-  dayType   DayType
-  timeSlot  TimeSlot
-  price     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+// model CourtPrice {
+//   id        String   @id @default(cuid())
+//   court     Court    @relation(fields: [courtId], references: [id])
+//   courtId   String
+//   dayType   DayType
+//   timeSlot  TimeSlot
+//   price     Int
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
 
 model Booking {
   id              String        @id @default(cuid())
@@ -132,6 +131,8 @@ model Schedule {
   bookingId String?
   date      DateTime
   timeSlot  String
+  price     Int
+  dayType   DayType
   available Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

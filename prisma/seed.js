@@ -7,7 +7,6 @@ async function main() {
   await prisma.transaction.deleteMany();
   await prisma.booking.deleteMany();
   await prisma.schedule.deleteMany();
-  await prisma.courtPrice.deleteMany();
   await prisma.court.deleteMany();
   await prisma.session.deleteMany();
   await prisma.account.deleteMany();
@@ -55,18 +54,6 @@ async function main() {
       description:
         "Lapangan Futsal 1 adalah lapangan futsal dengan permukaan rumput yang nyaman dan berkualitas tinggi.",
       capacity: 10,
-      prices: {
-        weekday: {
-          pagi: 100000,
-          siang: 130000,
-          malam: 165000,
-        },
-        weekend: {
-          pagi: 130000,
-          siang: 160000,
-          malam: 165000,
-        },
-      },
     },
     {
       name: "Lapangan Futsal 2",
@@ -77,18 +64,6 @@ async function main() {
       description:
         "Lapangan Futsal 2 adalah lapangan futsal dengan permukaan interlok yang nyaman dan berkualitas tinggi.",
       capacity: 10,
-      prices: {
-        weekday: {
-          pagi: 85000,
-          siang: 105000,
-          malam: 145000,
-        },
-        weekend: {
-          pagi: 95000,
-          siang: 140000,
-          malam: 145000,
-        },
-      },
     },
     {
       name: "Lapangan Futsal 3",
@@ -99,18 +74,6 @@ async function main() {
       description:
         "Lapangan Futsal 3 adalah lapangan futsal dengan permukaan rumput yang nyaman dan berkualitas tinggi.",
       capacity: 10,
-      prices: {
-        weekday: {
-          pagi: 90000,
-          siang: 115000,
-          malam: 155000,
-        },
-        weekend: {
-          pagi: 115000,
-          siang: 150000,
-          malam: 155000,
-        },
-      },
     },
     {
       name: "Lapangan Futsal 4",
@@ -121,18 +84,6 @@ async function main() {
       description:
         "Lapangan Futsal 4 adalah lapangan futsal dengan permukaan semen yang nyaman dan berkualitas tinggi.",
       capacity: 10,
-      prices: {
-        weekday: {
-          pagi: 70000,
-          siang: 90000,
-          malam: 120000,
-        },
-        weekend: {
-          pagi: 85000,
-          siang: 110000,
-          malam: 125000,
-        },
-      },
     },
     {
       name: "Lapangan Futsal 5",
@@ -143,18 +94,6 @@ async function main() {
       description:
         "Lapangan Futsal 5 adalah lapangan futsal dengan permukaan semen yang nyaman dan berkualitas tinggi.",
       capacity: 10,
-      prices: {
-        weekday: {
-          pagi: 70000,
-          siang: 90000,
-          malam: 120000,
-        },
-        weekend: {
-          pagi: 85000,
-          siang: 110000,
-          malam: 125000,
-        },
-      },
     },
     {
       name: "Lapangan Futsal 6",
@@ -165,61 +104,11 @@ async function main() {
       description:
         "Lapangan Futsal 6 adalah lapangan futsal dengan permukaan semen yang nyaman dan berkualitas tinggi.",
       capacity: 10,
-      prices: {
-        weekday: {
-          pagi: 70000,
-          siang: 90000,
-          malam: 120000,
-        },
-        weekend: {
-          pagi: 85000,
-          siang: 110000,
-          malam: 125000,
-        },
-      },
     },
   ];
 
-  // Fungsi untuk membuat harga lapangan
-  async function createCourtPrices(court, prices) {
-    return {
-      create: [
-        {
-          dayType: "Weekday",
-          timeSlot: "Pagi",
-          price: prices.weekday.pagi,
-        },
-        {
-          dayType: "Weekday",
-          timeSlot: "Siang",
-          price: prices.weekday.siang,
-        },
-        {
-          dayType: "Weekday",
-          timeSlot: "Malam",
-          price: prices.weekday.malam,
-        },
-        {
-          dayType: "Weekend",
-          timeSlot: "Pagi",
-          price: prices.weekend.pagi,
-        },
-        {
-          dayType: "Weekend",
-          timeSlot: "Siang",
-          price: prices.weekend.siang,
-        },
-        {
-          dayType: "Weekend",
-          timeSlot: "Malam",
-          price: prices.weekend.malam,
-        },
-      ],
-    };
-  }
-
   // Seed Futsal Courts
-  let firstCourt; // Deklarasi variabel untuk menyimpan referensi lapangan pertama
+  let firstCourt;
   for (const courtData of futsalCourts) {
     const court = await prisma.court.create({
       data: {
@@ -229,32 +118,266 @@ async function main() {
         image: courtData.image,
         description: courtData.description,
         capacity: courtData.capacity,
-        prices: await createCourtPrices(courtData, courtData.prices),
       },
     });
     console.log(`Created court: ${court.name}`);
 
-    // Simpan referensi ke lapangan pertama
     if (!firstCourt) {
       firstCourt = court;
     }
+
+    // Buat schedule untuk setiap court
+    const timeSlots = [
+      "07:00",
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
+    ];
+    const today = new Date();
+
+    // Buat schedule untuk 7 hari ke depan
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+
+      for (const timeSlot of timeSlots) {
+        // Tentukan harga berdasarkan waktu dan hari
+        let price = 100000; // harga default
+        if (isWeekend) {
+          price = 130000; // harga weekend
+        }
+        if (timeSlot >= "17:00") {
+          price += 30000; // tambahan harga malam
+        }
+
+        await prisma.schedule.create({
+          data: {
+            courtId: court.id,
+            date: date,
+            timeSlot: timeSlot,
+            price: price,
+            dayType: isWeekend ? "Weekend" : "Weekday",
+            available: true,
+          },
+        });
+      }
+    }
   }
 
-  // Seed Schedule menggunakan firstCourt.id
-  const schedule = await prisma.schedule.create({
-    data: {
-      courtId: firstCourt.id, // Menggunakan ID dari lapangan pertama yang dibuat
-      date: new Date("2024-03-20"),
-      timeSlot: "Pagi",
-      available: true,
+  // Seed Badminton Courts
+  const badmintonCourts = [
+    {
+      name: "Lapangan Badminton 1",
+      type: "Badminton",
+      image:
+        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      description:
+        "Lapangan Badminton 1 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
+      capacity: 4,
     },
-  });
+    {
+      name: "Lapangan Badminton 2",
+      type: "Badminton",
+      image:
+        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      description:
+        "Lapangan Badminton 2 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
+      capacity: 4,
+    },
+    {
+      name: "Lapangan Badminton 3",
+      type: "Badminton",
+      image:
+        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      description:
+        "Lapangan Badminton 3 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
+      capacity: 4,
+    },
+    {
+      name: "Lapangan Badminton 4",
+      type: "Badminton",
+      image:
+        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      description:
+        "Lapangan Badminton 4 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
+      capacity: 4,
+    },
+    {
+      name: "Lapangan Badminton 5",
+      type: "Badminton",
+      image:
+        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      description:
+        "Lapangan Badminton 5 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
+      capacity: 4,
+    },
+    {
+      name: "Lapangan Badminton 6",
+      type: "Badminton",
+      image:
+        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      description:
+        "Lapangan Badminton 6 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
+      capacity: 4,
+    },
+    {
+      name: "Lapangan Badminton 7",
+      type: "Badminton",
+      image:
+        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      description:
+        "Lapangan Badminton 7 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
+      capacity: 4,
+    },
+  ];
 
-  // Seed Booking menggunakan firstCourt.id
+  // Create badminton courts and their schedules
+  for (const courtData of badmintonCourts) {
+    const court = await prisma.court.create({
+      data: courtData,
+    });
+
+    // Create schedules for each badminton court
+    for (let i = 0; i < 7; i++) {
+      // Buat schedule untuk setiap court
+      const timeSlots = [
+        "07:00",
+        "08:00",
+        "09:00",
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00",
+        "14:00",
+        "15:00",
+        "16:00",
+        "17:00",
+        "18:00",
+        "19:00",
+        "20:00",
+        "21:00",
+      ];
+      const today = new Date();
+
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+
+      for (const timeSlot of timeSlots) {
+        let price = 20000; // Default price
+        if (timeSlot >= "17:00") {
+          price = 30000; // Night price
+        } else if (timeSlot >= "12:00") {
+          price = 25000; // Afternoon price
+        }
+
+        await prisma.schedule.create({
+          data: {
+            courtId: court.id,
+            date: date,
+            timeSlot: timeSlot,
+            price: price,
+            dayType: isWeekend ? "Weekend" : "Weekday",
+            available: true,
+          },
+        });
+      }
+    }
+  }
+
+  // Seed Table Tennis Courts
+  const tableTennisCourts = [
+    {
+      name: "Lapangan Tenis Meja 1",
+      type: "TenisMeja",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKHRUU9ivOFc3ofK0kfEYAt2aDqOBpl1R08A&s",
+      description:
+        "Lapangan Tenis Meja 1 adalah lapangan tenis meja yang nyaman dan berkualitas tinggi.",
+      capacity: 2,
+    },
+    {
+      name: "Lapangan Tenis Meja 2",
+      type: "TenisMeja",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKHRUU9ivOFc3ofK0kfEYAt2aDqOBpl1R08A&s",
+      description:
+        "Lapangan Tenis Meja 2 adalah lapangan tenis meja yang nyaman dan berkualitas tinggi.",
+      capacity: 2,
+    },
+  ];
+
+  // Create table tennis courts and their schedules
+  for (const courtData of tableTennisCourts) {
+    const court = await prisma.court.create({
+      data: courtData,
+    });
+
+    // Create schedules for each table tennis court
+    for (let i = 0; i < 7; i++) {
+      // Buat schedule untuk setiap court
+      const timeSlots = [
+        "07:00",
+        "08:00",
+        "09:00",
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00",
+        "14:00",
+        "15:00",
+        "16:00",
+        "17:00",
+        "18:00",
+        "19:00",
+        "20:00",
+        "21:00",
+      ];
+      const today = new Date();
+
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+
+      for (const timeSlot of timeSlots) {
+        let price = 15000; // Default price
+        if (timeSlot >= "17:00") {
+          price = 25000; // Night price
+        } else if (timeSlot >= "12:00") {
+          price = 20000; // Afternoon price
+        }
+
+        await prisma.schedule.create({
+          data: {
+            courtId: court.id,
+            date: date,
+            timeSlot: timeSlot,
+            price: price,
+            dayType: isWeekend ? "Weekend" : "Weekday",
+            available: true,
+          },
+        });
+      }
+    }
+  }
+
+  // Seed Booking
   const booking = await prisma.booking.create({
     data: {
       userId: user.id,
-      courtId: firstCourt.id, // Menggunakan ID dari lapangan pertama yang dibuat
+      courtId: firstCourt.id,
       startTime: new Date("2024-03-20T08:00:00"),
       endTime: new Date("2024-03-20T09:00:00"),
       courtType: "Futsal",
@@ -264,13 +387,10 @@ async function main() {
       isConfirmed: true,
       amount: 100000,
       status: "Paid",
-      rescheduleFrom: null,
-      rescheduleCount: 0,
-      cancelReason: null,
     },
   });
 
-  // Seed Transaction with Midtrans fields
+  // Seed Transaction
   const transaction = await prisma.transaction.create({
     data: {
       bookingId: booking.id,
@@ -285,59 +405,10 @@ async function main() {
     },
   });
 
-  // Seed Badminton Courts
-  for (let i = 1; i <= 7; i++) {
-    await prisma.court.create({
-      data: {
-        name: `Lapangan Badminton ${i}`,
-        type: "Badminton",
-        image:
-          "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
-        description: `Lapangan Badminton ${i} adalah lapangan badminton yang nyaman dan berkualitas tinggi.`,
-        capacity: 4,
-        prices: {
-          create: [
-            { dayType: "Weekday", timeSlot: "Pagi", price: 20000 },
-            { dayType: "Weekday", timeSlot: "Siang", price: 25000 },
-            { dayType: "Weekday", timeSlot: "Malam", price: 30000 },
-            { dayType: "Weekend", timeSlot: "Pagi", price: 20000 },
-            { dayType: "Weekend", timeSlot: "Siang", price: 25000 },
-            { dayType: "Weekend", timeSlot: "Malam", price: 30000 },
-          ],
-        },
-      },
-    });
-  }
-
-  // Seed Table Tennis Courts
-  for (let i = 1; i <= 2; i++) {
-    await prisma.court.create({
-      data: {
-        name: `Lapangan Tenis Meja ${i}`,
-        type: "TenisMeja",
-        image:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKHRUU9ivOFc3ofK0kfEYAt2aDqOBpl1R08A&s",
-        description: `Lapangan Tenis Meja ${i} adalah lapangan tenis meja yang nyaman dan berkualitas tinggi.`,
-        capacity: 2,
-        prices: {
-          create: [
-            { dayType: "Weekday", timeSlot: "Pagi", price: 15000 },
-            { dayType: "Weekday", timeSlot: "Siang", price: 20000 },
-            { dayType: "Weekday", timeSlot: "Malam", price: 25000 },
-            { dayType: "Weekend", timeSlot: "Pagi", price: 15000 },
-            { dayType: "Weekend", timeSlot: "Siang", price: 20000 },
-            { dayType: "Weekend", timeSlot: "Malam", price: 25000 },
-          ],
-        },
-      },
-    });
-  }
-
   console.log("Seeding completed successfully!");
   console.log("User:", user);
   console.log("Cashier:", cashier);
   console.log("Owner:", owner);
-  console.log("Schedule:", schedule);
   console.log("Booking:", booking);
   console.log("Transaction:", transaction);
 }

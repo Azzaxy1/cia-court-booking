@@ -1,4 +1,5 @@
 import { StaticImageData } from "next/image";
+import { Schedule } from "@/app/generated/prisma";
 
 export type CourtType = "Futsal" | "Badminton" | "TenisMeja";
 type FutsalSurface = "Interlok" | "Rumput" | "Semen";
@@ -20,13 +21,7 @@ export interface CourtReal {
   type: CourtType;
   surfaceType?: FutsalSurface | null;
   image: string | StaticImageData;
-  prices?:
-    | {
-        id: string;
-        dayType: DayType;
-        timeSlot: TimeSlot;
-        price: number;
-      }[];
+  Schedule?: Schedule[];
   description: string;
   capacity: number;
   createdAt: Date;
