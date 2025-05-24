@@ -29,7 +29,7 @@ interface Props {
 }
 
 const SideBooking = ({ court }: Props) => {
-  // const router = useRouter();
+  console.log(court);
 
   const clientKey = process.env.MIDTRANS_CLIENT_KEY as string;
 
@@ -100,11 +100,7 @@ const SideBooking = ({ court }: Props) => {
       <Card className="sticky top-24">
         <CardHeader>
           <CardTitle>Pesan Lapangan</CardTitle>
-          <CardDescription>
-            {court.available
-              ? "Tersedia untuk pemesanan"
-              : "Saat ini sedang tidak tersedia"}
-          </CardDescription>
+          <CardDescription>Tersedia untuk pemesanan</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-4">
@@ -117,11 +113,9 @@ const SideBooking = ({ court }: Props) => {
           <Button
             onClick={handleBooking}
             className="w-full mb-3"
-            disabled={!court.available || isPending}
+            disabled={isPending}
           >
-            {!court.available ? (
-              "Tidak Tersedia"
-            ) : isPending ? (
+            {isPending ? (
               <span className="flex items-center justify-center gap-3">
                 <FaSpinner className="animate-spin mr-2" size={16} />{" "}
                 Memproses...

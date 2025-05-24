@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { courtInfo } from "@/lib/dummy/detailCourt";
 import SideBooking from "@/components/DetailLapangan/side-booking";
@@ -38,6 +37,7 @@ const DetailLapangan = async ({
   const { type, id } = await params;
 
   const court = courts.find((court: CourtReal) => court.id === id);
+  console.log(court);
 
   if (!court) {
     return (
@@ -99,11 +99,6 @@ const DetailLapangan = async ({
                   {court.surfaceType && `(${court.surfaceType})`}
                 </span>
               </p>
-              {court.available ? (
-                <Badge className="ml-2 bg-green-500 text-white">Tersedia</Badge>
-              ) : (
-                <Badge className="ml-2 bg-red-500">Tidak Tersedia</Badge>
-              )}
             </div>
           </h1>
 
