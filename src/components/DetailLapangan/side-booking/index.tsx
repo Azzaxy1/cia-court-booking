@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useSchedule } from "@/contexts/ScheduleContext";
 import { formatRupiah } from "@/lib/utils";
-import { paymentMidtrans } from "@/services/mainService";
+import { createBooking, paymentMidtrans } from "@/services/mainService";
 import { CourtReal } from "@/types/court";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -19,10 +19,17 @@ import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { FaSpinner } from "react-icons/fa";
 
-// Extend the Window interface to include 'snap'
 declare global {
   interface Window {
-    snap?: any;
+    snap?: {
+      pay: (
+        token: string,
+        options: {
+          onSuccess: (result: Record<string, unknown>) => void;
+          onError: (result: Record<string, unknown>) => void;
+        }
+      ) => void;
+    };
   }
 }
 
@@ -33,9 +40,6 @@ interface Props {
 const SideBooking = ({ court }: Props) => {
   const { selectedSchedule } = useSchedule();
   const { data: session } = useSession();
-  console.log(selectedSchedule);
-
-  console.log(selectedSchedule);
 
   const clientKey = process.env.MIDTRANS_CLIENT_KEY as string;
 
@@ -58,27 +62,45 @@ const SideBooking = ({ court }: Props) => {
   const { mutate, isPending } = useMutation({
     mutationFn: paymentMidtrans,
     onSuccess: (data) => {
-      console.log("Payment data:", data);
       const { token } = data;
       if (window.snap) {
         window.snap.pay(token, {
-          onSuccess: function (result: Record<string, unknown>) {
+          onSuccess: () => {
             toast.success("Pesan lapangan berhasil!");
-            console.log("success", result);
           },
-          onPending: function (result: Record<string, unknown>) {
-            console.log("pending", result);
-          },
-          onError: function (result: Record<string, unknown>) {
-            console.log("error", result);
-          },
-          onClose: function () {
-            console.log(
-              "customer closed the popup without finishing the payment"
-            );
+          onError: () => {
+            toast.error("Pesan lapangan gagal!");
           },
         });
       }
+    },
+  });
+
+  const { mutate: mutateBooking, isPending: isPendingBooking } = useMutation({
+    mutationFn: createBooking,
+    onSuccess: (data) => {
+      mutate({
+        orderId: `order-${data?.id}`,
+        amount: selectedSchedule?.price ?? 0,
+        customerDetails: {
+          first_name: session?.user?.name ?? "User",
+          last_name: "",
+          email: session?.user?.email ?? "user@email.com",
+          phone: session?.user?.phone ?? "",
+        },
+        itemDetails: {
+          id: court.id,
+          price: selectedSchedule?.price ?? 0,
+          quantity: 1,
+          name: court.name,
+        },
+        bookingId: data?.id,
+      });
+    },
+    onError: () => {
+      toast.error("Pesan lapangan gagal!", {
+        duration: 3000,
+      });
     },
   });
 
@@ -89,15 +111,11 @@ const SideBooking = ({ court }: Props) => {
     }
 
     try {
-      mutate({
-        orderId: `order-${Date.now()}`,
-        amount: selectedSchedule?.price,
-        customerDetails: {
-          first_name: session?.user?.name ?? "",
-          last_name: "",
-          email: session?.user?.email ?? "",
-          phone: session?.user?.phone ?? "",
-        },
+      mutateBooking({
+        courtId: court.id,
+        scheduleId: selectedSchedule.id,
+        amount: selectedSchedule?.price ?? 0,
+        paymentMethod: "BankTransfer",
       });
     } catch (error) {
       toast.error(
@@ -129,9 +147,9 @@ const SideBooking = ({ court }: Props) => {
           <Button
             onClick={handleBooking}
             className="w-full mb-3"
-            disabled={isPending}
+            disabled={isPending || isPendingBooking}
           >
-            {isPending ? (
+            {isPending || isPendingBooking ? (
               <span className="flex items-center justify-center gap-3">
                 <FaSpinner className="animate-spin mr-2" size={16} />{" "}
                 Memproses...

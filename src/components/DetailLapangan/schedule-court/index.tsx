@@ -37,7 +37,10 @@ const ScheduleCourt = ({ court }: Props) => {
     queryKey: ["schedules", court.id, selectedDate],
     queryFn: async () => {
       if (!selectedDate) return [];
-      const formattedDate = selectedDate.toISOString().split("T")[0];
+      const year = selectedDate.getFullYear();
+      const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
+      const day = selectedDate.getDate().toString().padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
       const res = await getCourtSchedule(court.id, formattedDate);
       return res.data;
     },
@@ -134,8 +137,8 @@ const ScheduleCourt = ({ court }: Props) => {
               selected={selectedDate}
               onSelect={setSelectedDate}
               className="w-full md:w-1/2 mx-auto"
-              disabled={(date) => date < new Date()}
               initialFocus={true}
+              disabled={(date) => date < new Date()}
             />
           </div>
 
@@ -144,30 +147,36 @@ const ScheduleCourt = ({ court }: Props) => {
               <p className="text-gray-500">Memuat jadwal...</p>
             </div>
           ) : selectedDate ? (
-            <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
-              {schedules.map((schedule) => {
-                const status = getTimeSlotStatus(schedule.timeSlot);
-                const isSelected = selectedSchedule?.id === schedule.id;
-                return (
-                  <div
-                    key={schedule.id}
-                    onClick={() => handleScheduleClick(schedule)}
-                    className={`text-center py-1 text-sm rounded cursor-pointer transition-colors ${
-                      isSelected
-                        ? "bg-teal-500 text-white"
-                        : status === "available"
-                        ? "bg-green-100 text-green-800 hover:bg-green-200"
-                        : "bg-gray-100 text-gray-400"
-                    }`}
-                  >
-                    {schedule.timeSlot}
-                    <div className="text-xs text-gray-500">
-                      {formatRupiah(schedule.price)}
+            schedules.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
+                {schedules.map((schedule) => {
+                  const status = getTimeSlotStatus(schedule.timeSlot);
+                  const isSelected = selectedSchedule?.id === schedule.id;
+                  return (
+                    <div
+                      key={schedule.id}
+                      onClick={() => handleScheduleClick(schedule)}
+                      className={`text-center py-1 text-sm rounded cursor-pointer transition-colors ${
+                        isSelected
+                          ? "bg-teal-500 text-white"
+                          : status === "available"
+                          ? "bg-green-100 text-green-800 hover:bg-green-200"
+                          : "bg-gray-100 text-gray-400"
+                      }`}
+                    >
+                      {schedule.timeSlot}
+                      <div className="text-xs text-gray-500">
+                        {formatRupiah(schedule.price)}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-red-500 text-center mt-4">
+                Jadwal belum tersedia untuk tanggal ini.
+              </p>
+            )
           ) : (
             <p className="text-gray-500 text-center mt-4">
               Silakan pilih tanggal untuk melihat jadwal yang tersedia.

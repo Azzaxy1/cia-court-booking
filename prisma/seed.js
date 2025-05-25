@@ -378,8 +378,8 @@ async function main() {
     data: {
       userId: user.id,
       courtId: firstCourt.id,
-      startTime: new Date("2024-03-20T08:00:00"),
-      endTime: new Date("2024-03-20T09:00:00"),
+      startTime: "08:00",
+      endTime: "09:00",
       courtType: "Futsal",
       duration: 1,
       date: new Date("2024-03-20"),

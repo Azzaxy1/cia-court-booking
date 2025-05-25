@@ -1,17 +1,8 @@
 import axios from "axios";
 
-interface PaymentDetail {
-  orderId: string;
-  amount: number;
-  customerDetails: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-  };
-}
-
-export const paymentMidtrans = async (paymentDetail: PaymentDetail) => {
+export const paymentMidtrans = async (
+  paymentDetail: Record<string, string | number | object>
+) => {
   const res = await axios.post("/api/midtrans", paymentDetail, {
     headers: {
       "Content-Type": "application/json",
@@ -25,4 +16,20 @@ export const paymentMidtrans = async (paymentDetail: PaymentDetail) => {
 export const getCourtSchedule = async (courtId: string, date: string) => {
   const res = await axios.get(`/api/courts/${courtId}/schedule?date=${date}`);
   return res;
+};
+
+export const createBooking = async (
+  bookingDetail: Record<string, string | number>
+) => {
+  const res = await axios.post("/api/bookings", bookingDetail, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (res.status !== 200) {
+    throw new Error("Gagal membuat booking");
+  }
+
+  return res.data;
 };

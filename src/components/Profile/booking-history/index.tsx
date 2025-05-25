@@ -1,11 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import {
-  formatRupiah,
-  formatSportType,
-  formattedDate,
-  formattedTime,
-} from "@/lib/utils";
+import { formatRupiah, formatSportType, formattedDate } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
 import {
@@ -27,12 +22,19 @@ const getStatusBadge = (status: BookingStatus) => {
       return <Badge className="bg-green-500 text-white">Selesai</Badge>;
     case "Canceled":
       return <Badge className="bg-red-500 text-white">Dibatalkan</Badge>;
+    case "Pending":
+      return (
+        <Badge className="bg-yellow-500 text-white">Menunggu Konfirmasi</Badge>
+      );
+    case "Refunded":
+      return <Badge className="bg-gray-500 text-white">Dikembalikan</Badge>;
     default:
       return <Badge className="bg-gray-500 text-white">Tidak Diketahui</Badge>;
   }
 };
 
 const BookingHistory = ({ booking }: Props) => {
+  console.log(booking);
   return (
     <Card className="overflow-hidden shadow-lg border border-gray-200">
       <div className="flex flex-col md:flex-row">
@@ -74,8 +76,7 @@ const BookingHistory = ({ booking }: Props) => {
               <p>
                 <span className="font-semibold text-gray-700">Jam:</span>{" "}
                 <span className="text-gray-600">
-                  {formattedTime(booking.startTime)} -{" "}
-                  {formattedTime(booking.endTime)}
+                  {booking.startTime} - {booking.endTime}
                 </span>
               </p>
             </div>

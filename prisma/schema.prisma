@@ -87,8 +87,8 @@ model Booking {
   id              String        @id @default(cuid())
   userId          String
   courtId         String
-  startTime       DateTime
-  endTime         DateTime
+  startTime       String
+  endTime         String
   courtType       CourtType
   duration        Int
   date            DateTime

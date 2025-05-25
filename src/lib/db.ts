@@ -19,9 +19,10 @@ export const getBookingHistory = async (userId: string) => {
           Schedule: true,
         },
       },
+      Transaction: true,
     },
     orderBy: {
-      date: "desc",
+      createdAt: "desc",
     },
   });
 };

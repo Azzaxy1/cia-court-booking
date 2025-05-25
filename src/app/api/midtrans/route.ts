@@ -1,14 +1,19 @@
 import { NextResponse } from "next/server";
 import midtransClient from "midtrans-client";
+import { prisma } from "@/lib/prisma";
 
-const serverKey = process.env.MIDTRANS_SERVER_KEY as string;
+export const serverKey = process.env.MIDTRANS_SERVER_KEY as string;
 
 export async function POST(req: Request) {
   try {
-    const { orderId, amount, customerDetails } = await req.json();
+    const { orderId, amount, customerDetails, bookingId, itemDetails } =
+      await req.json();
 
-    if (!orderId || !amount || !customerDetails) {
-      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    if (!orderId || !amount || !customerDetails || !bookingId || !itemDetails) {
+      return NextResponse.json(
+        { error: "Invalid request, missing required fields" },
+        { status: 400 }
+      );
     }
 
     const snap = new midtransClient.Snap({
@@ -21,15 +26,38 @@ export async function POST(req: Request) {
         order_id: orderId,
         gross_amount: amount,
       },
+      item_details: itemDetails,
       customer_details: customerDetails,
     };
 
     const transaction = await snap.createTransaction(parameter);
-    return NextResponse.json({ token: transaction.token });
-  } catch (error: BaseError) {
-    console.error("Error processing payment:", error, error?.response?.data);
+    await prisma.transaction.create({
+      data: {
+        bookingId,
+        paymentMethod: "BankTransfer",
+        transactionId: transaction.token,
+        amount,
+        midtransToken: transaction.token,
+        midtransOrderId: orderId,
+        paymentUrl: transaction.redirect_url,
+        status: "Pending",
+        expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      },
+    });
+
+    return NextResponse.json({
+      token: transaction.token,
+      redirect_url: transaction.redirect_url,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "400") {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
     return NextResponse.json(
-      { error: error.message || "Failed to process payment" },
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to process payment",
+      },
       { status: 500 }
     );
   }
