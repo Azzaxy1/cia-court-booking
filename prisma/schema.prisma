@@ -72,17 +72,6 @@ model Court {
   Schedule    Schedule[]
 }
 
-// model CourtPrice {
-//   id        String   @id @default(cuid())
-//   court     Court    @relation(fields: [courtId], references: [id])
-//   courtId   String
-//   dayType   DayType
-//   timeSlot  TimeSlot
-//   price     Int
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
-
 model Booking {
   id              String        @id @default(cuid())
   userId          String
@@ -92,7 +81,7 @@ model Booking {
   courtType       CourtType
   duration        Int
   date            DateTime
-  paymentMethod   PaymentMethod
+  paymentMethod   String
   isConfirmed     Boolean       @default(false)
   amount          Int
   status          BookingStatus @default(Pending)
@@ -109,17 +98,17 @@ model Booking {
 }
 
 model Transaction {
-  id              String        @id @default(cuid())
+  id              String    @id @default(cuid())
   bookingId       String
-  paymentMethod   PaymentMethod
-  transactionId   String        @unique
+  paymentMethod   String
+  transactionId   String    @unique
   amount          Int
   midtransToken   String?
   midtransOrderId String?
   paymentUrl      String?
-  status          BookingStatus
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  status          String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
   expiredAt       DateTime?
 
   booking Booking @relation(fields: [bookingId], references: [id])
@@ -177,11 +166,4 @@ enum BookingStatus {
   Paid
   Canceled
   Refunded
-}
-
-enum PaymentMethod {
-  BankTransfer
-  EWallet
-  Cash
-  CreditCard
 }
