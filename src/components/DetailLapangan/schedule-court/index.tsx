@@ -17,6 +17,7 @@ import { Schedule } from "@/app/generated/prisma";
 import { getCourtSchedule } from "@/services/mainService";
 import { useQuery } from "@tanstack/react-query";
 import { useSchedule } from "@/contexts/ScheduleContext";
+import { FaSpinner } from "react-icons/fa";
 
 interface Props {
   court: CourtReal;
@@ -53,7 +54,6 @@ const ScheduleCourt = ({ court }: Props) => {
     }
   }, [scheduleData]);
 
-  // Get booking status for time slot
   const getTimeSlotStatus = (time: string) => {
     const schedule = schedules.find((s) => s.timeSlot === time);
     if (!schedule) return "available";
@@ -136,7 +136,7 @@ const ScheduleCourt = ({ court }: Props) => {
               mode="single"
               selected={selectedDate}
               onSelect={setSelectedDate}
-              className="w-full md:w-1/2 mx-auto"
+              className="w-full md:w-1/2 mx-auto flex justify-center"
               initialFocus={true}
               disabled={(date) => date < new Date()}
             />
@@ -144,7 +144,10 @@ const ScheduleCourt = ({ court }: Props) => {
 
           {isLoading ? (
             <div className="text-center py-4">
-              <p className="text-gray-500">Memuat jadwal...</p>
+              <span className="flex items-center justify-center gap-3">
+                Memuat jadwal
+                <FaSpinner className="animate-spin mr-2" size={16} />
+              </span>
             </div>
           ) : selectedDate ? (
             schedules.length > 0 ? (

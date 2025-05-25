@@ -15,6 +15,7 @@ import { createBooking, paymentMidtrans } from "@/services/mainService";
 import { CourtReal } from "@/types/court";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { FaSpinner } from "react-icons/fa";
@@ -40,6 +41,7 @@ interface Props {
 const SideBooking = ({ court }: Props) => {
   const { selectedSchedule } = useSchedule();
   const { data: session } = useSession();
+  const router = useRouter();
 
   const clientKey = process.env.MIDTRANS_CLIENT_KEY as string;
 
@@ -108,6 +110,10 @@ const SideBooking = ({ court }: Props) => {
     if (!selectedSchedule) {
       toast.error("Silakan pilih jadwal terlebih dahulu");
       return;
+    } else if (!session?.user) {
+      toast.error("Silakan login terlebih dahulu untuk memesan lapangan");
+      router.push("/login");
+      return;
     }
 
     try {
@@ -136,12 +142,12 @@ const SideBooking = ({ court }: Props) => {
             <h3 className="text-xl font-bold text-teal-600">
               {formatRupiah(selectedSchedule?.price ?? 0)}
               <span className="text-sm text-gray-500">/per jam</span>
-              {!selectedSchedule && (
-                <span className="text-sm inline-block mt-2 text-gray-500">
-                  Pilih jadwal terlebih dahulu untuk melihat harga
-                </span>
-              )}
             </h3>
+            {!selectedSchedule && (
+              <span className="text-xs inline-block mt-2 text-red-700">
+                Pilih jadwal terlebih dahulu untuk melihat harga
+              </span>
+            )}
           </div>
 
           <Button

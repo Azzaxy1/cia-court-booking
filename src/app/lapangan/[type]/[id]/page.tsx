@@ -86,7 +86,7 @@ const DetailLapangan = async ({
                 <BreadcrumbItem>{courtDetails.title}</BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem className="text-gray-800 font-semibold">
-                  {court.name} ({court.surfaceType})
+                  {court.name}
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
