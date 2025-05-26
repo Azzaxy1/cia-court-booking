@@ -1,9 +1,9 @@
 import React from "react";
 import SelectCourt from "@/components/Lapangan/select-court";
-import { getAllCourts } from "@/lib/db";
+import { getCourtWithSchedule } from "@/lib/db";
 
 const CourtPage = async () => {
-  const courts = await getAllCourts();
+  const courts = await getCourtWithSchedule();
 
   return (
     <div className="container mx-auto md:px-12 pt-24 pb-10">

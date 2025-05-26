@@ -1,18 +1,22 @@
 import { FaCartShopping } from "react-icons/fa6";
 import React from "react";
 import { PiCourtBasketballFill } from "react-icons/pi";
-import { court } from "@/lib/dummy/court";
-import { ordersData } from "@/lib/dummy/orders";
+// import { court } from "@/lib/dummy/court";
+// import { ordersData } from "@/lib/dummy/orders";
+import { getTotalBooking, getTotalRevenue, getCourts } from "@/lib/db";
+import { FaMoneyBill } from "react-icons/fa";
+import { formatRupiah } from "@/lib/utils";
 
-const Stats = () => {
-  const totalCourts =
-    court.futsal.length + court.badminton.length + court.tableTennis.length;
+const Stats = async () => {
+  const totalBooking = await getTotalBooking();
+  const totalRevenue = await getTotalRevenue();
+  const totalCourts = await getCourts();
 
-  const totalOrderThisMonth = ordersData.filter(
-    (order) =>
-      new Date(order.date).getMonth() === new Date().getMonth() &&
-      new Date(order.date).getFullYear() === new Date().getFullYear()
-  ).length;
+  // const totalOrderThisMonth = ordersData.filter(
+  //   (order) =>
+  //     new Date(order.date).getMonth() === new Date().getMonth() &&
+  //     new Date(order.date).getFullYear() === new Date().getFullYear()
+  // ).length;
 
   return (
     <section className="flex gap-4 mb-4">
@@ -20,7 +24,7 @@ const Stats = () => {
         <PiCourtBasketballFill className="w-[40px] h-[40px]" />
         <div>
           <p className="text-2xl sm:text-3xl 2xl:text-4xl font-bold">
-            {totalCourts}
+            {totalCourts.length}
           </p>
           <p>Jumlah Lapangan</p>
         </div>
@@ -29,9 +33,18 @@ const Stats = () => {
         <FaCartShopping className="w-[40px] h-[40px]" />
         <div>
           <p className="text-2xl sm:text-3xl 2xl:text-4xl font-bold">
-            {totalOrderThisMonth}
+            {totalBooking}
           </p>
           <p>Total Pemesanan</p>
+        </div>
+      </div>
+      <div className="p-4 flex gap-4 items-center bg-red-500 text-white rounded-lg w-1/2">
+        <FaMoneyBill className="w-[40px] h-[40px]" />
+        <div>
+          <p className="text-2xl sm:text-3xl 2xl:text-4xl font-bold">
+            {formatRupiah(totalRevenue)}
+          </p>
+          <p>Total Pendapatan</p>
         </div>
       </div>
     </section>

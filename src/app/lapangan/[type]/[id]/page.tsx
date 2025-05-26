@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import InformationCourt from "@/components/DetailLapangan/information-court";
 import ScheduleCourt from "@/components/DetailLapangan/schedule-court";
-import { getAllCourts } from "@/lib/db";
+import { getCourtWithSchedule } from "@/lib/db";
 import { ScheduleProvider } from "@/contexts/ScheduleContext";
 
 type CourtType = "futsal" | "badminton" | "tableTennis";
@@ -33,7 +33,7 @@ const DetailLapangan = async ({
 }: {
   params: Promise<{ type: string; id: string }>;
 }) => {
-  const courts = await getAllCourts();
+  const courts = await getCourtWithSchedule();
 
   const { type, id } = await params;
 
