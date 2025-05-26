@@ -1,13 +1,18 @@
 import { FaCartShopping } from "react-icons/fa6";
 import React from "react";
 import { PiCourtBasketballFill } from "react-icons/pi";
-import { getTotalBooking, getTotalRevenue, getCourts } from "@/lib/db";
+import {
+  getTotalBookingCurrentMonth,
+  getTotalRevenueCurrentMonth,
+  getCourts,
+} from "@/lib/db";
 import { FaMoneyBill } from "react-icons/fa";
 import { formatRupiah } from "@/lib/utils";
 
 const Stats = async () => {
-  const totalBooking = await getTotalBooking();
-  const totalRevenue = await getTotalRevenue();
+  const totalBooking = await getTotalBookingCurrentMonth();
+  const totalRevenue = await getTotalRevenueCurrentMonth();
+
   const totalCourts = await getCourts();
 
   return (

@@ -31,14 +31,30 @@ export const getBookingHistory = async (userId: string) => {
   });
 };
 
-export const getTotalBooking = async () => {
-  return await prisma.booking.count();
+export const getTotalBookingCurrentMonth = async () => {
+  const currentMonth = new Date().getMonth();
+  const result = await prisma.booking.count({
+    where: {
+      createdAt: {
+        gte: new Date(new Date().getFullYear(), currentMonth, 1),
+        lt: new Date(new Date().getFullYear(), currentMonth + 1, 1),
+      },
+    },
+  });
+  return result;
 };
 
-export const getTotalRevenue = async () => {
+export const getTotalRevenueCurrentMonth = async () => {
+  const currentMonth = new Date().getMonth();
   const result = await prisma.booking.aggregate({
     _sum: { amount: true },
-    where: { status: "Paid" },
+    where: {
+      status: "Paid",
+      createdAt: {
+        gte: new Date(new Date().getFullYear(), currentMonth, 1),
+        lt: new Date(new Date().getFullYear(), currentMonth + 1, 1),
+      },
+    },
   });
 
   return result._sum.amount || 0;
