@@ -1,4 +1,5 @@
 import { PrismaClient } from "../src/app/generated/prisma/index.js";
+import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -17,7 +18,7 @@ async function main() {
     data: {
       name: "Azis",
       email: "azis@gmail.com",
-      password: "azis123",
+      password: await hash("azis123", 10),
       phone: "08123456789",
       role: "CUSTOMER",
     },
@@ -27,7 +28,7 @@ async function main() {
     data: {
       name: "Cashier",
       email: "cashier@gmail.com",
-      password: "cashier123",
+      password: await hash("cashier123", 10),
       phone: "08123456790",
       role: "CASHIER",
     },
@@ -37,7 +38,7 @@ async function main() {
     data: {
       name: "Owner",
       email: "owner@gmail.com",
-      password: "owner123",
+      password: await hash("owner123", 10),
       phone: "08123456791",
       role: "OWNER",
     },
@@ -107,9 +108,41 @@ async function main() {
     },
   ];
 
-  // Seed Futsal Courts
+  // Mapping harga sesuai gambar
+  const priceTable = {
+    weekday: {
+      "07:00-13:00": [100000, 85000, 90000, 70000, 70000, 70000],
+      "14:00-18:00": [130000, 105000, 115000, 90000, 90000, 90000],
+      "19:00-23:00": [165000, 145000, 155000, 120000, 120000, 120000],
+    },
+    weekend: {
+      "07:00-13:00": [130000, 95000, 115000, 85000, 85000, 85000],
+      "14:00-18:00": [160000, 140000, 150000, 110000, 110000, 110000],
+      "19:00-23:00": [165000, 145000, 155000, 125000, 125000, 125000],
+    },
+  };
+
+  // Slot waktu sesuai tarif
+  const slotGroups = [
+    {
+      label: "07:00-13:00",
+      slots: ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00"],
+    },
+    {
+      label: "14:00-18:00",
+      slots: ["14:00", "15:00", "16:00", "17:00", "18:00"],
+    },
+    {
+      label: "19:00-23:00",
+      slots: ["19:00", "20:00", "21:00", "22:00", "23:00"],
+    },
+  ];
+
   let firstCourt;
-  for (const courtData of futsalCourts) {
+
+  // Untuk setiap court futsal
+  for (let courtIdx = 0; courtIdx < futsalCourts.length; courtIdx++) {
+    const courtData = futsalCourts[courtIdx];
     const court = await prisma.court.create({
       data: {
         name: courtData.name,
@@ -120,58 +153,33 @@ async function main() {
         capacity: courtData.capacity,
       },
     });
-    console.log(`Created court: ${court.name}`);
-
-    if (!firstCourt) {
+    if (courtIdx === 0) {
       firstCourt = court;
     }
 
-    // Buat schedule untuk setiap court
-    const timeSlots = [
-      "07:00",
-      "08:00",
-      "09:00",
-      "10:00",
-      "11:00",
-      "12:00",
-      "13:00",
-      "14:00",
-      "15:00",
-      "16:00",
-      "17:00",
-      "18:00",
-      "19:00",
-      "20:00",
-      "21:00",
-    ];
-    const today = new Date();
-
     // Buat schedule untuk 7 hari ke depan
     for (let i = 0; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      const day = date.getDay();
+      const isWeekend = day === 0 || day === 5 || day === 6; // Jumat(5), Sabtu(6), Minggu(0)
+      const dayType = isWeekend ? "Weekend" : "Weekday";
+      const priceSet = isWeekend ? priceTable.weekend : priceTable.weekday;
 
-      for (const timeSlot of timeSlots) {
-        // Tentukan harga berdasarkan waktu dan hari
-        let price = 100000; // harga default
-        if (isWeekend) {
-          price = 130000; // harga weekend
+      for (const group of slotGroups) {
+        const price = priceSet[group.label][courtIdx];
+        for (const timeSlot of group.slots) {
+          await prisma.schedule.create({
+            data: {
+              courtId: court.id,
+              date: date,
+              timeSlot: timeSlot,
+              price: price,
+              dayType: dayType,
+              available: true,
+            },
+          });
         }
-        if (timeSlot >= "17:00") {
-          price += 30000; // tambahan harga malam
-        }
-
-        await prisma.schedule.create({
-          data: {
-            courtId: court.id,
-            date: date,
-            timeSlot: timeSlot,
-            price: price,
-            dayType: isWeekend ? "Weekend" : "Weekday",
-            available: true,
-          },
-        });
       }
     }
   }
@@ -268,6 +276,8 @@ async function main() {
         "19:00",
         "20:00",
         "21:00",
+        "22:00",
+        "23:00",
       ];
       const today = new Date();
 
@@ -277,9 +287,9 @@ async function main() {
 
       for (const timeSlot of timeSlots) {
         let price = 20000; // Default price
-        if (timeSlot >= "17:00") {
+        if (timeSlot >= "19:00") {
           price = 30000; // Night price
-        } else if (timeSlot >= "12:00") {
+        } else if (timeSlot > "13:00") {
           price = 25000; // Afternoon price
         }
 
@@ -344,6 +354,8 @@ async function main() {
         "19:00",
         "20:00",
         "21:00",
+        "22:00",
+        "23:00",
       ];
       const today = new Date();
 
@@ -353,9 +365,9 @@ async function main() {
 
       for (const timeSlot of timeSlots) {
         let price = 15000; // Default price
-        if (timeSlot >= "17:00") {
+        if (timeSlot >= "19:00") {
           price = 25000; // Night price
-        } else if (timeSlot >= "12:00") {
+        } else if (timeSlot > "13:00") {
           price = 20000; // Afternoon price
         }
 
@@ -405,12 +417,15 @@ async function main() {
     },
   });
 
-  console.log("Seeding completed successfully!");
   console.log("User:", user);
   console.log("Cashier:", cashier);
   console.log("Owner:", owner);
   console.log("Booking:", booking);
   console.log("Transaction:", transaction);
+  console.log("Court Futsal Created:", firstCourt);
+  console.log("Badminton Courts:", badmintonCourts);
+  console.log("Table Tennis Courts:", tableTennisCourts);
+  console.log("Seeding completed successfully!");
 }
 
 main()
