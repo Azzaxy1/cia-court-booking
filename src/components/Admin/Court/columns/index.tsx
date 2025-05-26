@@ -8,8 +8,11 @@ import ActionsCell from "../../ActionsCell";
 
 export const columns: ColumnDef<CourtReal>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
+    id: "no",
+    header: "No",
+    cell: ({ row }) => {
+      return <div>{row.index + 1}</div>;
+    },
   },
   {
     accessorKey: "name",
@@ -28,6 +31,8 @@ export const columns: ColumnDef<CourtReal>[] = [
         <Image
           src={court.image}
           alt={court.name}
+          width={100}
+          height={100}
           className="w-16 h-16 object-cover rounded"
         />
       );
@@ -40,29 +45,17 @@ export const columns: ColumnDef<CourtReal>[] = [
   {
     accessorKey: "surfaceType",
     header: "Tipe Permukaan",
-  },
-  {
-    accessorKey: "price",
-    header: "Harga",
     cell: ({ row }) => {
       const court = row.original;
-      const price = court.price;
-      return (
-        <div className="flex flex-col gap-2">
-          <div className="font-semibold">Weekday</div>
-          <div className="flex gap-2">
-            <div>Pagi: {price.Weekday.Pagi}</div>
-            <div>Siang: {price.Weekday.Siang}</div>
-            <div>Malam: {price.Weekday.Malam}</div>
-          </div>
-          <div className="font-semibold">Weekend</div>
-          <div className="flex gap-2">
-            <div>Pagi: {price.Weekend.Pagi}</div>
-            <div>Siang: {price.Weekend.Siang}</div>
-            <div>Malam: {price.Weekend.Malam}</div>
-          </div>
-        </div>
-      );
+      return <div>{court.surfaceType ? court.surfaceType : "-"}</div>;
+    },
+  },
+  {
+    accessorKey: "capacity",
+    header: "Kapasitas",
+    cell: ({ row }) => {
+      const court = row.original;
+      return <div>{court.capacity}</div>;
     },
   },
 

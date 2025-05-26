@@ -9,7 +9,11 @@ export const getCourtWithSchedule = async () => {
 };
 
 export const getCourts = async () => {
-  return await prisma.court.findMany();
+  return await prisma.court.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 };
 
 export const getBookingHistory = async (userId: string) => {

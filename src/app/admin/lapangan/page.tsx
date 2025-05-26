@@ -1,12 +1,13 @@
 import { columns } from "@/components/Admin/Court/columns";
 import { ManageTable } from "@/components/ManageTable";
 import { Button } from "@/components/ui/button";
-import { courtDummy } from "@/lib/dummy/court";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { getCourts } from "@/lib/db";
 
-const ManageCourt = () => {
+const ManageCourt = async () => {
+  const courts = await getCourts();
   return (
     <section className="container mx-auto">
       <h1 className="text-2xl sm:text-2xl 2xl:text-4xl font-semibold leading-tight text-primary">
@@ -21,7 +22,7 @@ const ManageCourt = () => {
             </Button>
           </Link>
         </div>
-        <ManageTable data={courtDummy} columns={columns} />
+        <ManageTable data={courts} columns={columns} />
       </div>
     </section>
   );
