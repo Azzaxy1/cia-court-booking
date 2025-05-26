@@ -1,36 +1,58 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Order } from "@/types/Order";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
+import { Booking } from "@/app/generated/prisma";
 
 import ActionsCell from "../../ActionsCell";
 
-export const columns: ColumnDef<Order>[] = [
+interface BookingWithUser extends Booking {
+  user: {
+    name: string;
+  };
+}
+
+export const columns: ColumnDef<BookingWithUser>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
+    accessorKey: "no",
+    header: "No",
+    cell: ({ row }) => {
+      return <div>{row.index + 1}</div>;
+    },
   },
   {
-    accessorKey: "customer",
+    accessorKey: "user",
     header: "Pelanggan",
+    cell: ({ row }) => {
+      const booking = row.original;
+      return <div>{booking.user.name}</div>;
+    },
   },
   {
-    accessorKey: "fieldType",
-    header: "Lapangan",
+    accessorKey: "courtType",
+    header: "Jenis Lapangan",
   },
   {
     accessorKey: "date",
     header: "Tanggal",
+    cell: ({ row }) => {
+      const date = row.getValue("date") as Date;
+      return <div>{format(date, "d MMMM yyyy", { locale: id })}</div>;
+    },
   },
   {
-    accessorKey: "time",
-    header: "Waktu",
+    accessorKey: "startTime",
+    header: "Waktu Mulai",
+  },
+  {
+    accessorKey: "endTime",
+    header: "Waktu Selesai",
   },
   {
     accessorKey: "duration",
     header: "Durasi",
     cell: ({ row }) => {
-      const orders = row.original;
-      const duration = orders.duration;
+      const duration = row.getValue("duration") as number;
       return <div>{duration} Jam</div>;
     },
   },
@@ -38,10 +60,12 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: "amount",
     header: () => <div className="">Total Harga</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const amount = row.getValue("amount") as number;
       const formatted = new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
       }).format(amount);
       return <div className="font-medium">{formatted}</div>;
     },
@@ -50,8 +74,7 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const orders = row.original;
-      const status = orders.status;
+      const status = row.getValue("status") as string;
       return (
         <div
           className={`text-xs font-semibold inline-block px-2 py-1 rounded-full ${
@@ -73,8 +96,8 @@ export const columns: ColumnDef<Order>[] = [
     id: "actions",
     header: "Aksi",
     cell: ({ row }) => {
-      const orders = row.original;
-      return <ActionsCell id={orders.id} isOrder />;
+      const booking = row.original;
+      return <ActionsCell id={booking.id} isOrder />;
     },
   },
 ];

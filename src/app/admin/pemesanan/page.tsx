@@ -1,12 +1,13 @@
 import React from "react";
-import { ordersData } from "@/lib/dummy/orders";
 import { columns } from "@/components/Admin/Pemesanan/columns";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { ManageTable } from "@/components/ManageTable";
+import { getBookings } from "@/lib/db";
 
-const ManageOrder = () => {
+const ManageOrder = async () => {
+  const bookings = await getBookings();
   return (
     <section className="container mx-auto">
       <h1 className="text-2xl sm:text-2xl 2xl:text-4xl font-semibold leading-tight text-primary">
@@ -21,7 +22,7 @@ const ManageOrder = () => {
             </Button>
           </Link>
         </div>
-        <ManageTable data={ordersData} columns={columns} />
+        <ManageTable data={bookings} columns={columns} />
       </div>
     </section>
   );

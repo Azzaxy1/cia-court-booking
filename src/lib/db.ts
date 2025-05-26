@@ -16,6 +16,17 @@ export const getCourts = async () => {
   });
 };
 
+export const getBookings = async () => {
+  return await prisma.booking.findMany({
+    include: {
+      user: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
 export const getBookingHistory = async (userId: string) => {
   return await prisma.booking.findMany({
     where: {
