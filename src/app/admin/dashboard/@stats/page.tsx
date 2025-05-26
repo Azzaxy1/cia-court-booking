@@ -1,8 +1,6 @@
 import { FaCartShopping } from "react-icons/fa6";
 import React from "react";
 import { PiCourtBasketballFill } from "react-icons/pi";
-// import { court } from "@/lib/dummy/court";
-// import { ordersData } from "@/lib/dummy/orders";
 import { getTotalBooking, getTotalRevenue, getCourts } from "@/lib/db";
 import { FaMoneyBill } from "react-icons/fa";
 import { formatRupiah } from "@/lib/utils";
@@ -11,12 +9,6 @@ const Stats = async () => {
   const totalBooking = await getTotalBooking();
   const totalRevenue = await getTotalRevenue();
   const totalCourts = await getCourts();
-
-  // const totalOrderThisMonth = ordersData.filter(
-  //   (order) =>
-  //     new Date(order.date).getMonth() === new Date().getMonth() &&
-  //     new Date(order.date).getFullYear() === new Date().getFullYear()
-  // ).length;
 
   return (
     <section className="flex gap-4 mb-4">

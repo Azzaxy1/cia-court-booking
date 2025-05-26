@@ -43,3 +43,23 @@ export const getTotalRevenue = async () => {
 
   return result._sum.amount || 0;
 };
+
+export const getCourtStats = async () => {
+  const courts = await prisma.court.findMany({
+    select: { type: true },
+  });
+
+  const stats = {
+    Futsal: 0,
+    Badminton: 0,
+    "Tenis Meja": 0,
+  };
+
+  courts.forEach((court) => {
+    if (court.type === "Futsal") stats.Futsal += 1;
+    else if (court.type === "Badminton") stats.Badminton += 1;
+    else if (court.type === "TenisMeja") stats["Tenis Meja"] += 1;
+  });
+
+  return stats;
+};
