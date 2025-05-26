@@ -38,13 +38,14 @@ interface Order {
   fieldType: string;
 }
 
-interface MonthlyData {
+export interface MonthlyData {
   month: string;
   futsal: number;
   badminton: number;
   tenisMeja: number;
   [key: string]: string | number;
 }
+
 export const generateChartData = (ordersData: Order[]): MonthlyData[] => {
   const monthlyData: { [key: string]: MonthlyData } = {};
 

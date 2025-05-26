@@ -79,3 +79,20 @@ export const getCourtStats = async () => {
 
   return stats;
 };
+
+export const getOrderStats = async () => {
+  const bookings = await prisma.booking.findMany({
+    where: {
+      status: "Paid",
+    },
+    select: {
+      date: true,
+      courtType: true,
+    },
+  });
+
+  return bookings.map((booking) => ({
+    date: booking.date.toISOString(),
+    fieldType: booking.courtType,
+  }));
+};

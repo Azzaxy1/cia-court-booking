@@ -5,7 +5,6 @@ import CourtChartClient from "@/components/Admin/Dashboard/court-chart-client";
 
 const CourtChart = async () => {
   const stats = await getCourtStats();
-  console.log(stats);
 
   const chartData = [
     { name: "Futsal", value: stats.Futsal, fill: "#2563eb" },
