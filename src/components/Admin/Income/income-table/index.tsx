@@ -46,11 +46,19 @@ import {
 import { id } from "date-fns/locale";
 import { jsPDF } from "jspdf";
 import { autoTable } from "jspdf-autotable";
-import { Order } from "@/types/Order";
+import { Transaction } from "@/app/generated/prisma";
+
+interface TransactionWithBooking extends Transaction {
+  booking: {
+    user: {
+      name: string;
+    };
+  };
+}
 
 interface Props {
-  data: Order[];
-  columns: ColumnDef<Order>[];
+  data: TransactionWithBooking[];
+  columns: ColumnDef<TransactionWithBooking>[];
 }
 
 const IncomeTable = ({ data, columns }: Props) => {
@@ -69,21 +77,21 @@ const IncomeTable = ({ data, columns }: Props) => {
       case "this-month":
         return data.filter(
           (item) =>
-            new Date(item.date) >= startOfMonth(now) &&
-            new Date(item.date) <= endOfMonth(now)
+            new Date(item.createdAt) >= startOfMonth(now) &&
+            new Date(item.createdAt) <= endOfMonth(now)
         );
       case "last-month":
         const lastMonth = subMonths(now, 1);
         return data.filter(
           (item) =>
-            new Date(item.date) >= startOfMonth(lastMonth) &&
-            new Date(item.date) <= endOfMonth(lastMonth)
+            new Date(item.createdAt) >= startOfMonth(lastMonth) &&
+            new Date(item.createdAt) <= endOfMonth(lastMonth)
         );
       case "this-year":
         return data.filter(
           (item) =>
-            new Date(item.date) >= startOfYear(now) &&
-            new Date(item.date) <= endOfYear(now)
+            new Date(item.createdAt) >= startOfYear(now) &&
+            new Date(item.createdAt) <= endOfYear(now)
         );
       default:
         return data; // "all" or no filter
@@ -108,7 +116,7 @@ const IncomeTable = ({ data, columns }: Props) => {
   });
 
   // Hitung total pemasukan dari data yang difilter
-  const calculateTotal = (data: Order[]) => {
+  const calculateTotal = (data: TransactionWithBooking[]) => {
     return data.reduce((sum, item) => sum + Number(item.amount), 0);
   };
   const totalIncome = calculateTotal(filteredData);
@@ -118,10 +126,11 @@ const IncomeTable = ({ data, columns }: Props) => {
     const doc = new jsPDF();
     doc.text("Laporan Pemasukan", 14, 10);
     autoTable(doc, {
-      head: [["Pelanggan", "Tanggal", "Jumlah", "Metode Pembayaran"]],
-      body: filteredData.map((item) => [
-        item.customer,
-        format(new Date(item.date), "d MMM yyyy", { locale: id }),
+      head: [["No", "Pelanggan", "Tanggal", "Jumlah", "Metode Pembayaran"]],
+      body: filteredData.map((item, index) => [
+        index + 1,
+        item.booking.user.name,
+        format(new Date(item.createdAt), "d MMM yyyy", { locale: id }),
         new Intl.NumberFormat("id-ID", {
           style: "currency",
           currency: "IDR",

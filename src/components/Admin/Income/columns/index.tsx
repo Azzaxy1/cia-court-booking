@@ -5,18 +5,35 @@ import { ArrowUpDown } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-
 import { ColumnDef } from "@tanstack/react-table";
-import { Order } from "@/types/Order";
+import { Transaction } from "@/app/generated/prisma";
 
-export const columns: ColumnDef<Order>[] = [
+interface TransactionWithBooking extends Transaction {
+  booking: {
+    user: {
+      name: string;
+    };
+  };
+}
+
+export const columns: ColumnDef<TransactionWithBooking>[] = [
   {
-    accessorKey: "customer",
-    header: "Pelanggan",
-    cell: ({ row }) => <div>{row.getValue("customer")}</div>,
+    accessorKey: "no",
+    header: "No",
+    cell: ({ row }) => {
+      return <div>{row.index + 1}</div>;
+    },
   },
   {
-    accessorKey: "date",
+    accessorKey: "booking",
+    header: "Pelanggan",
+    cell: ({ row }) => {
+      const transaction = row.original;
+      return <div>{transaction.booking.user.name}</div>;
+    },
+  },
+  {
+    accessorKey: "createdAt",
     header: ({ column }) => {
       return (
         <Button
@@ -29,13 +46,8 @@ export const columns: ColumnDef<Order>[] = [
       );
     },
     cell: ({ row }) => {
-      // Format tanggal menggunakan date-fns
-      const formattedDate = format(
-        new Date(row.getValue("date")),
-        "d MMM yyyy",
-        { locale: id }
-      );
-      return <div>{formattedDate}</div>;
+      const date = row.getValue("createdAt") as Date;
+      return <div>{format(date, "d MMM yyyy", { locale: id })}</div>;
     },
   },
   {
@@ -52,8 +64,7 @@ export const columns: ColumnDef<Order>[] = [
       );
     },
     cell: ({ row }) => {
-      // Format currency
-      const amount = parseFloat(row.getValue("amount"));
+      const amount = row.getValue("amount") as number;
       const formatted = new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
@@ -68,5 +79,10 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: "paymentMethod",
     header: "Metode Pembayaran",
     cell: ({ row }) => <div>{row.getValue("paymentMethod")}</div>,
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <div>{row.getValue("status")}</div>,
   },
 ];

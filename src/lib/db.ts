@@ -27,6 +27,21 @@ export const getBookings = async () => {
   });
 };
 
+export const getTransactions = async () => {
+  return await prisma.transaction.findMany({
+    include: {
+      booking: {
+        include: {
+          user: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
 export const getBookingHistory = async (userId: string) => {
   return await prisma.booking.findMany({
     where: {
