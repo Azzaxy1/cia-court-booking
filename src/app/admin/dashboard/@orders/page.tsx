@@ -7,12 +7,10 @@ const OrdersChart = async () => {
   const orderStats = await getOrderStats();
   const chartDataOrders = generateChartData(orderStats);
 
-  console.log(chartDataOrders);
-
   const chartConfig = {
     futsal: {
       label: "Futsal",
-      color: "#2563eb",
+      color: "#22c55e",
     },
     badminton: {
       label: "Badminton",

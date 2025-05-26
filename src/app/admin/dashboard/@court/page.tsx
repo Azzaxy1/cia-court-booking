@@ -7,7 +7,7 @@ const CourtChart = async () => {
   const stats = await getCourtStats();
 
   const chartData = [
-    { name: "Futsal", value: stats.Futsal, fill: "#2563eb" },
+    { name: "Futsal", value: stats.Futsal, fill: "#22c55e" },
     { name: "Badminton", value: stats.Badminton, fill: "#60a5fa" },
     { name: "Tenis Meja", value: stats["Tenis Meja"], fill: "#f87171" },
   ];
