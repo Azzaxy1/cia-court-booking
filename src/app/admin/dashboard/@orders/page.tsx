@@ -1,11 +1,11 @@
 import OrderChartClient from "@/components/Admin/Dashboard/order-chart-client";
 import { ChartConfig } from "@/components/ui/chart";
 import { getOrderStats } from "@/lib/db";
-import { generateChartData } from "@/lib/utils";
+import { generateChartOrder } from "@/lib/utils";
 
 const OrdersChart = async () => {
   const orderStats = await getOrderStats();
-  const chartDataOrders = generateChartData(orderStats);
+  const chartDataOrders = generateChartOrder(orderStats);
 
   const chartConfig = {
     futsal: {

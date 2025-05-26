@@ -50,7 +50,7 @@ export const getTotalRevenueCurrentMonth = async () => {
     _sum: { amount: true },
     where: {
       status: "Paid",
-      createdAt: {
+      date: {
         gte: new Date(new Date().getFullYear(), currentMonth, 1),
         lt: new Date(new Date().getFullYear(), currentMonth + 1, 1),
       },
@@ -94,5 +94,23 @@ export const getOrderStats = async () => {
   return bookings.map((booking) => ({
     date: booking.date.toISOString(),
     fieldType: booking.courtType,
+  }));
+};
+
+export const getRevenueStats = async () => {
+  // Ambil semua booking Paid
+  const bookings = await prisma.booking.findMany({
+    where: { status: "Paid" },
+    select: {
+      date: true,
+      courtType: true,
+      amount: true,
+    },
+  });
+
+  return bookings.map((booking) => ({
+    date: booking.date.toISOString(),
+    amount: booking.amount,
+    courtType: booking.courtType,
   }));
 };

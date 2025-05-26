@@ -5,6 +5,7 @@ interface LayoutDashboardProps {
   court: React.ReactNode;
   stats: React.ReactNode;
   orders: React.ReactNode;
+  revenue: React.ReactNode;
 }
 
 export const dynamic = "force-dynamic";
@@ -14,14 +15,16 @@ const LayoutDashboard = ({
   court,
   stats,
   orders,
+  revenue,
 }: LayoutDashboardProps) => {
   return (
     <>
       {children}
       {stats}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 my-4">
-        {court}
         {orders}
+        {revenue}
+        {court}
       </div>
     </>
   );
