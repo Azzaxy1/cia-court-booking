@@ -95,129 +95,129 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
     <div className={cn("flex flex-col gap-6", className)}>
       <Card className="overflow-hidden">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form
-            className={`p-6 md:p-8 ${isLogin ? "order-2" : "order-1"}`}
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className={`flex flex-col ${isLogin ? "gap-6" : "gap-3"}`}>
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">CIA Serang</h1>
-                <p className="text-balance text-muted-foreground">
-                  {isLogin ? "Masuk ke akun Anda" : "Daftarkan akun baru Anda"}
-                </p>
-              </div>
-              {!isLogin && (
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label htmlFor="name">Nama</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="John Doe"
-                      required
-                      {...formRegister("name")}
-                    />
-                    {errors.name && (
-                      <p className="text-red-500 text-sm">
-                        {errors?.name?.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">No Telepon</Label>
-                    <Input
-                      id="phone"
-                      type="text"
-                      placeholder="081234567890"
-                      required
-                      {...formRegister("phone")}
-                    />
-                    {errors.phone && (
-                      <p className="text-red-500 text-sm">
-                        {errors?.phone?.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="example@mail.com"
-                  {...formRegister("email")}
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">
-                    {errors?.email?.message}
+          <div className={`p-6 md:p-8 ${isLogin ? "order-2" : "order-1"}`}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className={`flex flex-col ${isLogin ? "gap-6" : "gap-3"}`}>
+                <div className="flex flex-col items-center text-center">
+                  <h1 className="text-2xl font-bold">CIA Serang</h1>
+                  <p className="text-balance text-muted-foreground">
+                    {isLogin
+                      ? "Masuk ke akun Anda"
+                      : "Daftarkan akun baru Anda"}
                   </p>
-                )}
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="*******"
-                  {...formRegister("password")}
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm">
-                    {errors?.password?.message}
-                  </p>
+                {!isLogin && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="name">Nama</Label>
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="John Doe"
+                        required
+                        {...formRegister("name")}
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm">
+                          {errors?.name?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="phone">No Telepon</Label>
+                      <Input
+                        id="phone"
+                        type="text"
+                        placeholder="081234567890"
+                        required
+                        {...formRegister("phone")}
+                      />
+                      {errors.phone && (
+                        <p className="text-red-500 text-sm">
+                          {errors?.phone?.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 )}
-              </div>
-              {!isLogin && (
-                <Input id="role" type="hidden" {...formRegister("role")} />
-              )}
-              <Button
-                type="submit"
-                className="w-full text-white"
-                disabled={isSubmitting || isPending}
-              >
-                {isSubmitting || isPending ? (
-                  <span className="flex items-center justify-center gap-3">
-                    <FaSpinner className="animate-spin mr-2" size={16} />{" "}
-                    Loading...
-                  </span>
-                ) : isLogin ? (
-                  "Masuk"
-                ) : (
-                  "Daftar"
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="example@mail.com"
+                    {...formRegister("email")}
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm">
+                      {errors?.email?.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="*******"
+                    {...formRegister("password")}
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm">
+                      {errors?.password?.message}
+                    </p>
+                  )}
+                </div>
+                {!isLogin && (
+                  <Input id="role" type="hidden" {...formRegister("role")} />
                 )}
-              </Button>
-
-              <div className="gap-4 w-full">
                 <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleGoogleLogin}
+                  type="submit"
+                  className="w-full text-white"
+                  disabled={isSubmitting || isPending}
                 >
-                  <FaGoogle />
-                  <span>Masuk dengan Google</span>
+                  {isSubmitting || isPending ? (
+                    <span className="flex items-center justify-center gap-3">
+                      <FaSpinner className="animate-spin mr-2" size={16} />{" "}
+                      Loading...
+                    </span>
+                  ) : isLogin ? (
+                    "Masuk"
+                  ) : (
+                    "Daftar"
+                  )}
                 </Button>
               </div>
-              <div className="text-center text-sm">
-                {isLogin ? "Belum" : "Sudah"} punya akun?{" "}
-                <Link
-                  href={isLogin ? "/register" : "/login"}
-                  className="underline underline-offset-4"
-                >
-                  {isLogin ? "Daftar" : "Masuk"} disini
-                </Link>
-              </div>
+            </form>
+            <div className="text-center text-sm text-muted-foreground mt-4">
+              {isLogin ? "Belum" : "Sudah"} punya akun?{" "}
+              <Link
+                href={isLogin ? "/register" : "/login"}
+                className="underline underline-offset-4"
+              >
+                {isLogin ? "Daftar" : "Masuk"} disini
+              </Link>
             </div>
-          </form>
+            <div className="gap-4 w-full mt-4">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={handleGoogleLogin}
+              >
+                <FaGoogle />
+                <span>Masuk dengan Google</span>
+              </Button>
+            </div>
+          </div>
 
           <div className={`hidden bg-primary md:block`}>
             <div className="flex justify-center h-full items-center">
               <Link href="/">
                 <Image
                   src={images.LogoWhite}
-                  alt="Image"
+                  alt="CIA Serang logo"
                   className="inset-0 object-cover dark:brightness-[0.2] dark:grayscale"
                   width={300}
                   height={300}
