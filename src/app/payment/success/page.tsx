@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,39 +13,45 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { getPaymentDetail } from "@/services/mainService";
+import { formatRupiah, formattedDate } from "@/lib/utils";
 
-interface TransactionDetails {
-  orderId: string;
-  amount: string;
-  paymentMethod: string;
-  status: string;
-  date: string;
-}
+// interface TransactionDetails {
+//   orderId: string;
+//   amount: string;
+//   paymentMethod: string;
+//   status: string;
+//   date: string;
+// }
 
 const PaymentSuccess = () => {
   const router = useRouter();
-  const orderId = useSearchParams().get("orderId");
-  const amount = useSearchParams().get("amount");
-  const [transactionDetails, setTransactionDetails] =
-    useState<TransactionDetails | null>(null);
-  const [loading, setLoading] = useState(true);
+  const orderId = useSearchParams().get("order_id");
+  // const amount = useSearchParams().get("amount");
+  // const [transactionDetails, setTransactionDetails] =
+  //   useState<TransactionDetails | null>(null);
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulasi pengambilan data transaksi dari API
-    if (orderId) {
-      // Dalam implementasi nyata, Anda akan memanggil API Anda
-      setTimeout(() => {
-        setTransactionDetails({
-          orderId: "INV-20250312-001",
-          amount: typeof amount === "string" ? amount : "Rp 250.000",
-          date: new Date().toLocaleString("id-ID"),
-          paymentMethod: "Transfer Bank",
-          status: "Berhasil",
-        });
-        setLoading(false);
-      }, 1000);
-    }
-  }, [orderId, amount]);
+  const { data, isLoading } = useQuery({
+    queryKey: ["transactionDetails", orderId],
+    queryFn: () => getPaymentDetail(orderId as string),
+  });
+
+  // useEffect(() => {
+  //   if (orderId) {
+  //     setTimeout(() => {
+  //       setTransactionDetails({
+  //         orderId: "INV-20250312-001",
+  //         amount: typeof amount === "string" ? amount : "Rp 250.000",
+  //         date: new Date().toLocaleString("id-ID"),
+  //         paymentMethod: "Transfer Bank",
+  //         status: "Berhasil",
+  //       });
+  //       setLoading(false);
+  //     }, 1000);
+  //   }
+  // }, [orderId, amount]);
 
   const handleBackToHome = () => {
     router.push("/");
@@ -55,7 +61,7 @@ const PaymentSuccess = () => {
     router.push(`/profile`);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
@@ -85,27 +91,23 @@ const PaymentSuccess = () => {
           <div className="space-y-4">
             <div className="flex justify-between">
               <span className="text-gray-500">ID Pesanan</span>
-              <span className="font-medium">{transactionDetails?.orderId}</span>
+              <span className="font-medium">{data?.orderId}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Total Pembayaran</span>
-              <span className="font-medium">{transactionDetails?.amount}</span>
+              <span className="font-medium">{formatRupiah(data?.amount)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Tanggal</span>
-              <span className="font-medium">{transactionDetails?.date}</span>
+              <span className="font-medium">{formattedDate(data?.date)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Metode Pembayaran</span>
-              <span className="font-medium">
-                {transactionDetails?.paymentMethod}
-              </span>
+              <span className="font-medium">{data?.paymentMethod}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Status</span>
-              <span className="font-medium text-green-600">
-                {transactionDetails?.status}
-              </span>
+              <span className="font-medium text-green-600">{data?.status}</span>
             </div>
           </div>
 

@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       },
       item_details: itemDetails,
       customer_details: customerDetails,
+      finish_redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/success?order_id=${orderId}`,
     };
 
     const transaction = await snap.createTransaction(parameter);
@@ -45,10 +46,14 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({
-      token: transaction.token,
-      redirect_url: transaction.redirect_url,
-    });
+    return NextResponse.json(
+      {
+        order_id: orderId,
+        token: transaction.token,
+        redirect_url: transaction.redirect_url,
+      },
+      { status: 200 }
+    );
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "400") {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });

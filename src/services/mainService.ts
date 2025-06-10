@@ -33,3 +33,13 @@ export const createBooking = async (
 
   return res.data;
 };
+
+export const getPaymentDetail = async (orderId: string) => {
+  const res = await axios.get(`/api/payment/detail?order_id=${orderId}`);
+
+  if (res.status !== 200) {
+    throw new Error("Gagal mendapatkan detail pembayaran");
+  }
+
+  return res.data;
+};
