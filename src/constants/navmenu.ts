@@ -1,14 +1,12 @@
 import { MdHome } from "react-icons/md";
-import {
-  PiCourtBasketballDuotone,
-  PiCourtBasketballFill,
-} from "react-icons/pi";
+import { PiCourtBasketballFill } from "react-icons/pi";
+import { AiFillSchedule } from "react-icons/ai";
+import { IoLogOut } from "react-icons/io5";
 import { FaBuilding } from "react-icons/fa";
 import { IoCart } from "react-icons/io5";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
-import { BiLogOut } from "react-icons/bi";
 
 export const navUser = [
   {
@@ -40,7 +38,12 @@ export const navAdmin = [
   {
     title: "Lapangan",
     url: "/admin/lapangan",
-    icon: PiCourtBasketballDuotone,
+    icon: PiCourtBasketballFill,
+  },
+  {
+    title: "Jadwal",
+    url: "/admin/jadwal",
+    icon: AiFillSchedule,
   },
   {
     title: "Pemesanan",
@@ -60,6 +63,6 @@ export const navAdmin = [
       });
       toast.success("Berhasil keluar dari akun");
     },
-    icon: BiLogOut,
+    icon: IoLogOut,
   },
 ];

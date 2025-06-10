@@ -27,6 +27,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const pageTitles: Record<string, string> = {
     dashboard: "Dashboard",
     lapangan: "Kelola Lapangan",
+    jadwal: "Kelola Jadwal",
     pemesanan: "Kelola Pemesanan",
     pemasukan: "Kelola Pemasukan",
   };
