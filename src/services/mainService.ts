@@ -43,3 +43,11 @@ export const getPaymentDetail = async (orderId: string) => {
 
   return res.data;
 };
+
+export const createCourt = async (formData: FormData) => {
+  const res = await axios.post("/api/admin/court", formData);
+  if (res.status !== 201) {
+    throw new Error("Gagal menambahkan lapangan");
+  }
+  return res.data;
+};

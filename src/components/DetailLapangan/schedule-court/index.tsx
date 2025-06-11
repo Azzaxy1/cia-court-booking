@@ -100,20 +100,32 @@ const ScheduleCourt = ({ court }: Props) => {
               <h4 className="font-semibold text-teal-800 mb-2">
                 Harga Hari Kerja
               </h4>
-              <p className="text-2xl font-bold text-teal-600">
-                {formatRupiah(rangeMinPriceWeekday ?? 0)} -{" "}
-                {formatRupiah(rangeMaxPriceWeekday ?? 0)}
-              </p>
+              {Array.isArray(court?.Schedule) && court.Schedule.length > 0 ? (
+                <p className="text-2xl font-bold text-teal-600">
+                  {formatRupiah(rangeMinPriceWeekday ?? 0)} -{" "}
+                  {formatRupiah(rangeMaxPriceWeekday ?? 0)}
+                </p>
+              ) : (
+                <div className="text-red-700 mt-2 text-sm">
+                  Harga lapangan belum diatur oleh pemilik.
+                </div>
+              )}
               <p className="text-sm text-gray-600 mt-1">Senin - Jumat</p>
             </div>
             <div className="bg-teal-50 p-4 rounded-lg">
               <h4 className="font-semibold text-teal-800 mb-2">
                 Harga Akhir Pekan
               </h4>
-              <p className="text-2xl font-bold text-teal-600">
-                {formatRupiah(rangeMinPriceWeekend ?? 0)} -{" "}
-                {formatRupiah(rangeMaxPriceWeekend ?? 0)}
-              </p>
+              {Array.isArray(court?.Schedule) && court.Schedule.length > 0 ? (
+                <p className="text-2xl font-bold text-teal-600">
+                  {formatRupiah(rangeMinPriceWeekend ?? 0)} -{" "}
+                  {formatRupiah(rangeMaxPriceWeekend ?? 0)}
+                </p>
+              ) : (
+                <div className="text-red-700 mt-2 text-sm">
+                  Harga lapangan belum diatur oleh pemilik.
+                </div>
+              )}
               <p className="text-sm text-gray-600 mt-1">Sabtu - Minggu</p>
             </div>
           </div>

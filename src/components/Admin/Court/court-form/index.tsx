@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import {
@@ -14,6 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectTrigger,
@@ -21,79 +21,83 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { CourtReal, DayType, TimeSlot } from "@/types/court";
+import { CourtReal } from "@/types/court";
 import Image from "next/image";
+import { FaSpinner } from "react-icons/fa";
+import { useMutation } from "@tanstack/react-query";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { courtSchema } from "@/validation";
+import { createCourt } from "@/services/mainService";
+
+type CourtFormType = z.infer<typeof courtSchema>;
 
 interface CourtFormProps {
   isAddForm?: boolean;
   court?: CourtReal;
 }
 
+const fieldTypes = [
+  { label: "Badminton", value: "Badminton" },
+  { label: "Futsal", value: "Futsal" },
+  { label: "Tenis Meja", value: "TenisMeja" },
+];
+const surfaceTypes = ["Semen", "Rumput", "Interlok"];
+
 const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
   const router = useRouter();
+  const [preview, setPreview] = useState<string | null>(null);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    type: "",
-    surfaceType: "",
-    description: "",
-    image: "",
-    available: true,
-    price: {
-      Weekday: { Pagi: "", Siang: "", Malam: "" },
-      Weekend: { Pagi: "", Siang: "", Malam: "" },
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm<CourtFormType>({
+    resolver: zodResolver(courtSchema),
+    defaultValues: {
+      name: court?.name || "",
+      type: court?.type || "",
+      surfaceType: court?.surfaceType || "",
+      description: court?.description || "",
+      image: undefined,
+      capacity: court?.capacity || 0,
     },
   });
 
-  const fieldTypes = ["Badminton", "Futsal", "Tenis Meja"];
-  const surfaceTypes = ["Semen", "Rumput", "Interlok"];
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        image: URL.createObjectURL(file),
-      }));
-    }
-  };
-
-  const handlePriceChange = (day: DayType, time: TimeSlot, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      price: {
-        ...prev.price,
-        [day]: {
-          ...prev.price[day],
-          [time]: value,
-        },
-      },
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      // Simulasi POST ke API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Lapangan ditambahkan:", formData);
-
-      toast.success("Lapangan berhasil ditambahkan!");
+  const mutation = useMutation({
+    mutationFn: createCourt,
+    onSuccess: (data) => {
+      toast.success(data.message || "Lapangan berhasil ditambahkan!");
       router.push("/admin/lapangan");
-    } catch (err) {
-      console.error(err);
-      toast.error("Gagal menambahkan lapangan.");
-    } finally {
-      setIsSubmitting(false);
+    },
+    onError: (err) => {
+      toast.error(err.message || "Gagal menambahkan lapangan.");
+    },
+  });
+
+  const imageFile = watch("image");
+  useEffect(() => {
+    if (imageFile && imageFile instanceof File) {
+      const objectUrl = URL.createObjectURL(imageFile);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
     }
+  }, [imageFile]);
+
+  const onSubmit = (data: CourtFormType) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("type", data.type);
+    if (data.surfaceType) formData.append("surfaceType", data.surfaceType);
+    formData.append("description", data.description);
+    formData.append("image", data.image);
+    formData.append("capacity", data.capacity.toString());
+    mutation.mutate(formData);
   };
 
   return (
@@ -107,49 +111,48 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
         </CardDescription>
       </CardHeader>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="name">Nama Lapangan</Label>
             <Input
               id="name"
-              name="name"
-              value={court?.name || formData.name}
-              onChange={handleInputChange}
-              required
+              {...register("name")}
               placeholder="Nama lapangan"
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label>Jenis Lapangan</Label>
             <Select
-              value={court?.type || formData.type}
-              onValueChange={(value) =>
-                setFormData({ ...formData, type: value })
-              }
+              value={watch("type")}
+              onValueChange={(value) => setValue("type", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Pilih jenis lapangan" />
               </SelectTrigger>
               <SelectContent>
                 {fieldTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {errors.type && (
+              <p className="text-red-500 text-sm">{errors.type.message}</p>
+            )}
           </div>
 
-          {(court?.type === "Futsal" || formData.type === "Futsal") && (
+          {watch("type") === "Futsal" && (
             <div className="space-y-2">
               <Label>Jenis Permukaan</Label>
               <Select
-                value={court?.surfaceType || formData.surfaceType}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, surfaceType: value })
-                }
+                value={watch("surfaceType")}
+                onValueChange={(value) => setValue("surfaceType", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih jenis permukaan" />
@@ -162,76 +165,94 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.surfaceType && (
+                <p className="text-red-500 text-sm">
+                  {errors.surfaceType.message}
+                </p>
+              )}
             </div>
           )}
 
           <div className="space-y-2">
             <Label htmlFor="image">Pilih Gambar</Label>
-            <Input
-              id="image"
+            <Controller
               name="image"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              required
+              control={control}
+              rules={{ required: "Gambar lapangan wajib diisi" }}
+              render={({ field }) => (
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    field.onChange(file);
+                    if (file) {
+                      const objectUrl = URL.createObjectURL(file);
+                      setPreview(objectUrl);
+                    }
+                  }}
+                />
+              )}
             />
-            {(court?.image || formData.image) && (
+            {preview && (
               <Image
-                src={
-                  typeof court?.image === "string"
-                    ? court?.image
-                    : court?.image?.src || formData.image
-                }
+                src={preview}
                 alt="Preview Gambar"
                 width={100}
                 height={100}
                 className="w-full max-w-56 mt-4 rounded-lg border"
               />
             )}
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {["Weekday", "Weekend"].map((day) =>
-              ["Pagi", "Siang", "Malam"].map((time) => (
-                <div key={`${day}-${time}`} className="space-y-2">
-                  <Label>{`${day} - ${time}`}</Label>
-                  <Input
-                    type="number"
-                    value={
-                      court?.price[day as DayType][time as TimeSlot] ||
-                      formData.price[day as DayType][time as TimeSlot]
-                    }
-                    onChange={(e) =>
-                      handlePriceChange(
-                        day as DayType,
-                        time as TimeSlot,
-                        e.target.value
-                      )
-                    }
-                    placeholder="Harga dalam rupiah"
-                    required
-                  />
-                </div>
-              ))
+            {errors.image && (
+              <p className="text-red-500 text-sm">
+                {errors.image.message as string}
+              </p>
             )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description">Deskripsi</Label>
-            <Input
+            <Textarea
               id="description"
-              name="description"
-              value={court?.description || formData.description}
-              onChange={handleInputChange}
-              required
+              {...register("description")}
               placeholder="Deskripsi lapangan"
             />
+            {errors.description && (
+              <p className="text-red-500 text-sm">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="capacity">Kapasitas Lapangan</Label>
+            <Input
+              id="capacity"
+              type="number"
+              {...register("capacity", { valueAsNumber: true })}
+              placeholder="Kapasitas lapangan (misal: 10)"
+            />
+            {errors.capacity && (
+              <p className="text-red-500 text-sm">{errors.capacity.message}</p>
+            )}
           </div>
         </CardContent>
 
         <CardFooter>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Menambahkan..." : "Tambah Lapangan"}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? (
+              <span className="flex items-center justify-center gap-3">
+                <FaSpinner className="animate-spin mr-2" size={16} /> Sedang
+                memproses...
+              </span>
+            ) : (
+              "Simpan Lapangan"
+            )}
           </Button>
         </CardFooter>
       </form>

@@ -55,10 +55,16 @@ const CourtCard = ({ court, type }: Props) => {
             {court.surfaceType && `(${court.surfaceType})`}
           </span>
         </h3>
-        <div className="flex items-center text-gray-600 mt-2">
-          <Clock className="h-4 w-4 mr-1" />
-          <span className="text-sm">{priceRange}</span>
-        </div>
+        {Array.isArray(court?.Schedule) && court.Schedule.length > 0 ? (
+          <div className="flex items-center text-gray-600 mt-2">
+            <Clock className="h-4 w-4 mr-1" />
+            <span className="text-sm">{priceRange}</span>
+          </div>
+        ) : (
+          <div className="text-red-700 mt-2 text-sm">
+            Harga lapangan belum diatur oleh pemilik.
+          </div>
+        )}
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between">
         <Link

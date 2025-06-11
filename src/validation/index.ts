@@ -22,4 +22,15 @@ const profileSchema = z.object({
   email: z.string().email("Email tidak valid"),
 });
 
-export { authSchema, profileSchema };
+const courtSchema = z.object({
+  name: z.string().min(1, "Nama wajib diisi"),
+  type: z.string().min(1, "Jenis wajib diisi"),
+  surfaceType: z.string().optional(),
+  description: z.string().min(1, "Deskripsi wajib diisi"),
+  image: z
+    .instanceof(File)
+    .refine((file) => file && file.size > 0, "Gambar wajib diisi"),
+  capacity: z.coerce.number().min(1, "Kapasitas minimal 1"),
+});
+
+export { authSchema, profileSchema, courtSchema };

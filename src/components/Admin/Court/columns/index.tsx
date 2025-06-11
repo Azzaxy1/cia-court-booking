@@ -1,7 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 
-// import ActionsCell from "../../ActionsCell";
 import { CourtReal } from "@/types/court";
 import Image from "next/image";
 import ActionsCell from "../../ActionsCell";
@@ -16,11 +15,11 @@ export const columns: ColumnDef<CourtReal>[] = [
   },
   {
     accessorKey: "name",
-    header: "Lapangan",
+    header: "Nama Lapangan",
   },
   {
     accessorKey: "type",
-    header: "Tipe",
+    header: "Jenis",
   },
   {
     accessorKey: "image",
