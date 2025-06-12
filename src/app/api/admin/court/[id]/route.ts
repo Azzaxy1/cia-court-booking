@@ -3,10 +3,7 @@ import { prisma } from "@/lib/prisma";
 import fs from "fs";
 import path from "path";
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE({ params }: { params: { id: string } }) {
   try {
     const id = params.id as string;
 
@@ -40,8 +37,9 @@ export async function DELETE(
       );
     }
 
-    await prisma.court.delete({
+    await prisma.court.update({
       where: { id },
+      data: { isDeleted: true },
     });
 
     if (court.image) {

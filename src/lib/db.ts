@@ -13,6 +13,9 @@ export const getCourts = async () => {
     orderBy: {
       createdAt: "desc",
     },
+    where: {
+      isDeleted: false,
+    },
   });
 };
 
@@ -103,6 +106,7 @@ export const getTotalRevenueCurrentMonth = async () => {
 
 export const getCourtStats = async () => {
   const courts = await prisma.court.findMany({
+    where: { isDeleted: false },
     select: { type: true },
   });
 
