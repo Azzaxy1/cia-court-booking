@@ -14,14 +14,18 @@ export async function POST(req: Request) {
     const capacity = Number(formData.get("capacity"));
     const file = formData.get("image") as File;
 
-    // Simpan file ke public/uploads
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-    const filepath = path.join(process.cwd(), "public", "uploads", filename);
+    const imageUrl = `/uploads/court/${filename}`;
+    const filepath = path.join(
+      process.cwd(),
+      "public",
+      "uploads",
+      "court",
+      filename
+    );
     await writeFile(filepath, buffer);
-
-    const imageUrl = `/uploads/${filename}`;
 
     await prisma.court.create({
       data: {
@@ -47,6 +51,65 @@ export async function POST(req: Request) {
         success: false,
         message: "Gagal menambahkan lapangan",
         error: error instanceof Error ? error.message : "Failed to register",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const formData = await req.formData();
+    const id = formData.get("id") as string;
+    const name = formData.get("name") as string;
+    const type = formData.get("type") as string;
+    const surfaceType = formData.get("surfaceType") as string;
+    const description = formData.get("description") as string;
+    const capacity = Number(formData.get("capacity"));
+    const file = formData.get("image") as File;
+
+    let imageUrl: string | undefined;
+
+    if (file) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
+      const filepath = path.join(
+        process.cwd(),
+        "public",
+        "uploads",
+        "court",
+        filename
+      );
+      await writeFile(filepath, buffer);
+      imageUrl = `/uploads/court/${filename}`;
+    }
+
+    await prisma.court.update({
+      where: { id },
+      data: {
+        name,
+        type: type as CourtType,
+        surfaceType: surfaceType as FutsalSurface,
+        description,
+        capacity,
+        image: imageUrl,
+      },
+    });
+
+    return NextResponse.json(
+      { success: true, message: "Lapangan berhasil diperbarui" },
+      { status: 200 }
+    );
+  } catch (error) {
+    if (error instanceof Error && error.message === "400") {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gagal memperbarui lapangan",
+        error: error instanceof Error ? error.message : "Failed to update",
       },
       { status: 500 }
     );

@@ -30,7 +30,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { courtSchema } from "@/validation";
-import { createCourt } from "@/services/mainService";
+import { createCourt } from "@/services/courtService";
 
 type CourtFormType = z.infer<typeof courtSchema>;
 

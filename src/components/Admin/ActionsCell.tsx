@@ -11,14 +11,37 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import AlertModal from "@/components/AlertDialog";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteCourt } from "@/services/courtService";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface ActionsCellProps {
   id: number | string;
   isOrder?: boolean;
+  onDelete?: () => void;
 }
 
 const ActionsCell: React.FC<ActionsCellProps> = ({ id, isOrder }) => {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation({
+    mutationFn: deleteCourt,
+    onSuccess: () => {
+      toast.success(`Lapangan berhasil dihapus,`);
+      router.replace("/admin/lapangan");
+      queryClient.invalidateQueries({ queryKey: ["courts"] });
+    },
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Gagal menghapus lapangan");
+    },
+  });
+
+  const handleDelete = () => {
+    deleteMutation.mutate(id as string);
+  };
 
   return (
     <>
@@ -47,7 +70,11 @@ const ActionsCell: React.FC<ActionsCellProps> = ({ id, isOrder }) => {
         </DropdownMenuContent>
       </DropdownMenu>
       {isModalOpen && (
-        <AlertModal open={isModalOpen} setOpen={setIsModalOpen} />
+        <AlertModal
+          open={isModalOpen}
+          setOpen={setIsModalOpen}
+          onDelete={handleDelete}
+        />
       )}
     </>
   );

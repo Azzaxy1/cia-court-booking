@@ -13,11 +13,6 @@ export const paymentMidtrans = async (
   return data;
 };
 
-export const getCourtSchedule = async (courtId: string, date: string) => {
-  const res = await axios.get(`/api/courts/${courtId}/schedule?date=${date}`);
-  return res;
-};
-
 export const createBooking = async (
   bookingDetail: Record<string, string | number>
 ) => {
@@ -41,13 +36,5 @@ export const getPaymentDetail = async (orderId: string) => {
     throw new Error("Gagal mendapatkan detail pembayaran");
   }
 
-  return res.data;
-};
-
-export const createCourt = async (formData: FormData) => {
-  const res = await axios.post("/api/admin/court", formData);
-  if (res.status !== 201) {
-    throw new Error("Gagal menambahkan lapangan");
-  }
   return res.data;
 };

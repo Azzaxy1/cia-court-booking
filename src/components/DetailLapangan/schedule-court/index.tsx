@@ -14,7 +14,7 @@ import { Calendar as CalenderIcon, DollarSign } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Schedule } from "@/app/generated/prisma";
-import { getCourtSchedule } from "@/services/mainService";
+import { getCourtSchedule } from "@/services/courtService";
 import { useQuery } from "@tanstack/react-query";
 import { useSchedule } from "@/contexts/ScheduleContext";
 import { FaSpinner } from "react-icons/fa";

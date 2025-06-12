@@ -12,9 +12,11 @@ import {
 const AlertModal = ({
   open,
   setOpen,
+  onDelete = () => {},
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
+  onDelete?: () => void;
 }) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -29,7 +31,12 @@ const AlertModal = ({
           <AlertDialogCancel onClick={() => setOpen(false)}>
             Batal
           </AlertDialogCancel>
-          <AlertDialogAction onClick={() => setOpen(false)}>
+          <AlertDialogAction
+            className="bg-red-500 hover:bg-red-700"
+            onClick={() => {
+              onDelete();
+            }}
+          >
             Hapus
           </AlertDialogAction>
         </AlertDialogFooter>
