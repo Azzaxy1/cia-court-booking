@@ -5,6 +5,9 @@ export const getCourtWithSchedule = async () => {
     include: {
       Schedule: true,
     },
+    where: {
+      isDeleted: false,
+    },
   });
 };
 

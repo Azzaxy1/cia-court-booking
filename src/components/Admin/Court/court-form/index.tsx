@@ -30,7 +30,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { courtSchema } from "@/validation";
-import { createCourt } from "@/services/courtService";
+import { createCourt, updateCourt } from "@/services/courtService";
 
 type CourtFormType = z.infer<typeof courtSchema>;
 
@@ -48,7 +48,7 @@ const surfaceTypes = ["Semen", "Rumput", "Interlok"];
 
 const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
   const router = useRouter();
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState(court?.image || null);
 
   const {
     register,
@@ -69,7 +69,7 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
     },
   });
 
-  const mutation = useMutation({
+  const createCourtMutation = useMutation({
     mutationFn: createCourt,
     onSuccess: (data) => {
       toast.success(data.message || "Lapangan berhasil ditambahkan!");
@@ -77,6 +77,17 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
     },
     onError: (err) => {
       toast.error(err.message || "Gagal menambahkan lapangan.");
+    },
+  });
+
+  const updateCourtMutation = useMutation({
+    mutationFn: updateCourt,
+    onSuccess: (data) => {
+      toast.success(data.message || "Lapangan berhasil diperbarui!");
+      router.push("/admin/lapangan");
+    },
+    onError: (err) => {
+      toast.error(err.message || "Gagal memperbarui lapangan.");
     },
   });
 
@@ -95,9 +106,20 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
     formData.append("type", data.type);
     if (data.surfaceType) formData.append("surfaceType", data.surfaceType);
     formData.append("description", data.description);
-    formData.append("image", data.image);
     formData.append("capacity", data.capacity.toString());
-    mutation.mutate(formData);
+
+    if (data.image instanceof File) {
+      formData.append("image", data.image);
+    } else if (court?.image && typeof court.image === "string") {
+      formData.append("image", court.image);
+    }
+
+    if (isAddForm) {
+      createCourtMutation.mutate(formData);
+    } else {
+      formData.append("id", court?.id || "");
+      updateCourtMutation.mutate(formData);
+    }
   };
 
   return (
@@ -243,9 +265,11 @@ const CourtForm = ({ isAddForm, court }: CourtFormProps) => {
           <Button
             type="submit"
             className="w-full"
-            disabled={mutation.isPending}
+            disabled={
+              createCourtMutation.isPending || updateCourtMutation.isPending
+            }
           >
-            {mutation.isPending ? (
+            {createCourtMutation.isPending || updateCourtMutation.isPending ? (
               <span className="flex items-center justify-center gap-3">
                 <FaSpinner className="animate-spin mr-2" size={16} /> Sedang
                 memproses...

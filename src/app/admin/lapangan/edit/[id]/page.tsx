@@ -1,15 +1,17 @@
-"use client";
-
 import React from "react";
 import CourtForm from "@/components/Admin/Court/court-form";
 import BackButton from "@/components/BackButton";
-import { courtDummy } from "@/lib/dummy/court";
-import { useParams } from "next/navigation";
+import { getCourts } from "@/lib/db";
 
-const EditCourtPage = () => {
-  const { id } = useParams();
+const EditCourtPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const { id } = await params;
+  const courts = await getCourts();
 
-  const court = courtDummy.find((court) => court.id === Number(id));
+  const court = courts.find((court) => court.id === id);
 
   return (
     <div className="container mx-auto pb-8">

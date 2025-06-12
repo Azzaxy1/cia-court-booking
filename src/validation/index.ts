@@ -27,10 +27,13 @@ const courtSchema = z.object({
   type: z.string().min(1, "Jenis wajib diisi"),
   surfaceType: z.string().optional(),
   description: z.string().min(1, "Deskripsi wajib diisi"),
-  image: z
-    .instanceof(File)
-    .refine((file) => file && file.size > 0, "Gambar wajib diisi"),
-  capacity: z.coerce.number().min(1, "Kapasitas minimal 1"),
+  image: z.union([
+    z
+      .instanceof(File)
+      .refine((file) => file && file.size > 0, "Gambar wajib diisi"),
+    z.string().url().optional(),
+  ]),
+  capacity: z.number().min(1, "Kapasitas wajib diisi"),
 });
 
 export { authSchema, profileSchema, courtSchema };

@@ -8,6 +8,15 @@ export const createCourt = async (formData: FormData) => {
   return res.data;
 };
 
+export const updateCourt = async (formData: FormData) => {
+  const res = await axios.put("/api/admin/court", formData);
+  if (res.status !== 200) {
+    throw new Error("Gagal memperbarui lapangan");
+  }
+
+  return res.data;
+};
+
 export const deleteCourt = async (courtId: string) => {
   const res = await axios.delete(`/api/admin/court/${courtId}`);
   if (res.status !== 200) {

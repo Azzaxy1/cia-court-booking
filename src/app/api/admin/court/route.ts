@@ -66,11 +66,11 @@ export async function PUT(req: Request) {
     const surfaceType = formData.get("surfaceType") as string;
     const description = formData.get("description") as string;
     const capacity = Number(formData.get("capacity"));
-    const file = formData.get("image") as File;
+    const file = formData.get("image");
 
     let imageUrl: string | undefined;
 
-    if (file) {
+    if (file instanceof File && file.size > 0) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
       const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
@@ -83,6 +83,8 @@ export async function PUT(req: Request) {
       );
       await writeFile(filepath, buffer);
       imageUrl = `/uploads/court/${filename}`;
+    } else if (typeof file === "string" && file.startsWith("/uploads/court/")) {
+      imageUrl = file;
     }
 
     await prisma.court.update({
