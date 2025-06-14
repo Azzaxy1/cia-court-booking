@@ -36,4 +36,20 @@ const courtSchema = z.object({
   capacity: z.number().min(1, "Kapasitas wajib diisi"),
 });
 
-export { authSchema, profileSchema, courtSchema };
+const scheduleSchema = z.object({
+  courtId: z.string().min(1, "ID lapangan wajib diisi"),
+  days: z
+    .number()
+    .min(1, "Jumlah hari harus lebih dari 0")
+    .max(30, "Maksimal 30 hari"),
+  dayType: z.enum(["Weekday", "Weekend"], {
+    errorMap: () => ({ message: "Tipe hari tidak valid" }),
+  }),
+  timePreset: z.enum(["pagi", "siang", "malam"], {
+    errorMap: () => ({ message: "Preset waktu tidak valid" }),
+  }),
+  price: z.number().min(0, "Harga harus lebih dari atau sama dengan 0"),
+  available: z.boolean().optional(),
+});
+
+export { authSchema, profileSchema, courtSchema, scheduleSchema };

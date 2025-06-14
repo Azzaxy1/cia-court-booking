@@ -164,7 +164,7 @@ const ScheduleTable = ({ data, columns }: Props) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Tidak ada data
+                  Tidak ada data yang tersedia.
                 </TableCell>
               </TableRow>
             )}

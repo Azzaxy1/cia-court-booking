@@ -82,7 +82,7 @@ const ActionsCell: React.FC<ActionsCellProps> = ({
               isOrder
                 ? `/admin/pemesanan/edit/${id}`
                 : isSchedule
-                ? `/admin/jadwal/edit/${id}`
+                ? `/admin/jadwal/${id}`
                 : `/admin/lapangan/edit/${id}`
             }
             className="cursor-pointer"

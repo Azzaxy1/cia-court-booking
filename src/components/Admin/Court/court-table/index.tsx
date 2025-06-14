@@ -18,6 +18,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Court } from "@/app/generated/prisma";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CourtTableProps {
   data: Court[];
@@ -25,8 +39,10 @@ interface CourtTableProps {
 }
 
 const CourtTable = ({ data, columns }: CourtTableProps) => {
-  const [pageIndex, setPageIndex] = useState(0);
-  const pageSize = 10;
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const table = useReactTable({
     data,
@@ -34,18 +50,9 @@ const CourtTable = ({ data, columns }: CourtTableProps) => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     state: {
-      pagination: {
-        pageIndex,
-        pageSize,
-      },
+      pagination,
     },
-    onPaginationChange: (updater) => {
-      const newState =
-        typeof updater === "function"
-          ? updater({ pageIndex, pageSize })
-          : updater;
-      setPageIndex(newState.pageIndex);
-    },
+    onPaginationChange: setPagination,
   });
 
   return (
@@ -91,38 +98,85 @@ const CourtTable = ({ data, columns }: CourtTableProps) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No data
+                  Tidak ada data yang tersedia.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between py-2">
-        <span className="text-sm text-gray-500">
-          Page {pageIndex + 1} of {table.getPageCount()}
-        </span>
-        <div className="space-x-2">
+      <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            size="sm"
-            onClick={() => setPageIndex((prev) => Math.max(prev - 1, 0))}
+            onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            <ChevronsLeft className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
-            size="sm"
-            onClick={() =>
-              setPageIndex((prev) =>
-                Math.min(prev + 1, table.getPageCount() - 1)
-              )
-            }
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            <ChevronRight className="h-4 w-4" />
           </Button>
+          <Button
+            variant="outline"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+        </div>
+
+        <div className="flex items-center justify-start gap-2">
+          <span className="text-gray-500">Halaman:</span>
+          <Input
+            type="number"
+            value={pagination.pageIndex + 1}
+            className="w-16"
+            onChange={(e) =>
+              setPagination((prev) => ({
+                ...prev,
+                pageIndex: Number(e.target.value) - 1,
+              }))
+            }
+            min={1}
+            max={table.getPageCount()}
+          />
+          <span className="text-gray-500">
+            dari {table.getPageCount()} halaman
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-gray-500">Tampilkan:</span>
+          <Select
+            onValueChange={(value) =>
+              setPagination((prev) => ({
+                ...prev,
+                pageSize: Number(value),
+              }))
+            }
+          >
+            <SelectTrigger className="w-[80px]">
+              <SelectValue placeholder={pagination.pageSize} />
+            </SelectTrigger>
+            <SelectContent>
+              {[10, 20, 50, 100].map((size) => (
+                <SelectItem key={size} value={size.toString()}>
+                  {size}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </section>

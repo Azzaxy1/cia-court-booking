@@ -8,12 +8,13 @@ type Props = {
 };
 
 const SelectCourt = ({ courts }: Props) => {
+  console.log("Available courts:", courts);
   const courtFutsal = courts.filter((court) => court.type === "Futsal");
   const courtBadminton = courts.filter((court) => court.type === "Badminton");
   const courtTableTennis = courts.filter((court) => court.type === "TenisMeja");
 
   return (
-    <Tabs defaultValue="futsal" className="w-full">
+    <Tabs defaultValue="futsal" className="w-full min-h-screen">
       <TabsList className="grid grid-cols-1 md:grid-cols-3 mb-16 md:mb-8">
         <TabsTrigger value="futsal">Lapangan Futsal</TabsTrigger>
         <TabsTrigger value="badminton">Lapangan Badminton</TabsTrigger>
@@ -26,9 +27,13 @@ const SelectCourt = ({ courts }: Props) => {
           Pilihan Lapangan <span className="text-primary">Futsal</span>
         </h2>
         <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courtFutsal.map((court) => (
-            <CourtCard key={court.id} court={court} type="futsal" />
-          ))}
+          {courtFutsal.length > 0 ? (
+            courtFutsal.map((court) => (
+              <CourtCard key={court.id} court={court} type="futsal" />
+            ))
+          ) : (
+            <p className="text-gray-500">Tidak ada lapangan futsal tersedia.</p>
+          )}
         </div>
       </TabsContent>
 
@@ -38,9 +43,15 @@ const SelectCourt = ({ courts }: Props) => {
           Pilihan Lapangan <span className="text-primary">Badminton</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courtBadminton.map((court) => (
-            <CourtCard key={court.id} court={court} type="badminton" />
-          ))}
+          {courtBadminton.length > 0 ? (
+            courtBadminton.map((court) => (
+              <CourtCard key={court.id} court={court} type="badminton" />
+            ))
+          ) : (
+            <p className="text-gray-500">
+              Tidak ada lapangan badminton tersedia.
+            </p>
+          )}
         </div>
       </TabsContent>
 
@@ -50,9 +61,15 @@ const SelectCourt = ({ courts }: Props) => {
           Pilihan Lapangan <span className="text-primary">Tenis Meja</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courtTableTennis.map((court) => (
-            <CourtCard key={court.id} court={court} type="tableTennis" />
-          ))}
+          {courtTableTennis.length > 0 ? (
+            courtTableTennis.map((court) => (
+              <CourtCard key={court.id} court={court} type="tableTennis" />
+            ))
+          ) : (
+            <p className="text-gray-500">
+              Tidak ada lapangan tenis meja tersedia.
+            </p>
+          )}
         </div>
       </TabsContent>
     </Tabs>

@@ -1,5 +1,5 @@
 import React from "react";
-import BulkGenerateForm from "@/components/Admin/Schedule/bulk-generate-form";
+import BulkGenerateForm from "@/components/Admin/Schedule/schedule-form";
 import { getCourts } from "@/lib/db";
 import BackButton from "@/components/BackButton";
 
@@ -10,7 +10,7 @@ const AddSchedules = async () => {
     <section className="container  mx-auto pb-8">
       <BackButton />
 
-      <BulkGenerateForm courts={courts} />
+      <BulkGenerateForm courts={courts} isAddForm />
     </section>
   );
 };
