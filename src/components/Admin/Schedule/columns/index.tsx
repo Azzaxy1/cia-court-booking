@@ -3,6 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Schedule, Court } from "@/app/generated/prisma";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import ActionsCell from "../../ActionsCell";
 
 type ScheduleWithCourt = Schedule & { court: Court };
 
@@ -43,5 +44,12 @@ export const columns: ColumnDef<ScheduleWithCourt>[] = [
     header: "Status",
     cell: ({ row }) => (row.original.available ? "Tersedia" : "Terisi"),
   },
-  // Tambahkan kolom aksi jika perlu
+  {
+    id: "actions",
+    header: "Aksi",
+    cell: ({ row }) => {
+      const shcedule = row.original;
+      return <ActionsCell id={shcedule.id} />;
+    },
+  },
 ];
