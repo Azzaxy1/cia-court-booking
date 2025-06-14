@@ -48,8 +48,8 @@ export const columns: ColumnDef<ScheduleWithCourt>[] = [
     id: "actions",
     header: "Aksi",
     cell: ({ row }) => {
-      const shcedule = row.original;
-      return <ActionsCell id={shcedule.id} />;
+      const schedule = row.original;
+      return <ActionsCell id={schedule.id} isSchedule />;
     },
   },
 ];

@@ -15,18 +15,25 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCourt } from "@/services/courtService";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { deleteSchedule } from "@/services/scheduleService";
 
 interface ActionsCellProps {
   id: number | string;
   isOrder?: boolean;
   onDelete?: () => void;
+  isSchedule?: boolean;
 }
 
-const ActionsCell: React.FC<ActionsCellProps> = ({ id, isOrder }) => {
+const ActionsCell: React.FC<ActionsCellProps> = ({
+  id,
+  isOrder,
+  isSchedule,
+}) => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
-  const deleteMutation = useMutation({
+
+  const deleteCourtMutation = useMutation({
     mutationFn: deleteCourt,
     onSuccess: () => {
       toast.success(`Lapangan berhasil dihapus,`);
@@ -39,8 +46,25 @@ const ActionsCell: React.FC<ActionsCellProps> = ({ id, isOrder }) => {
     },
   });
 
+  const deleteScheduleMutation = useMutation({
+    mutationFn: deleteSchedule,
+    onSuccess: () => {
+      toast.success(`Jadwal berhasil dihapus,`);
+      router.replace("/admin/jadwal");
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
+    },
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Gagal menghapus jadwal");
+    },
+  });
+
   const handleDelete = () => {
-    deleteMutation.mutate(id as string);
+    if (isSchedule) {
+      deleteScheduleMutation.mutate(id as string);
+    } else {
+      deleteCourtMutation.mutate(id as string);
+    }
   };
 
   return (
@@ -54,9 +78,14 @@ const ActionsCell: React.FC<ActionsCellProps> = ({ id, isOrder }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
           <Link
-            href={` ${
-              isOrder ? "/admin/pemesanan" : "/admin/lapangan"
-            }/edit/${id}`}
+            href={
+              isOrder
+                ? `/admin/pemesanan/edit/${id}`
+                : isSchedule
+                ? `/admin/jadwal/edit/${id}`
+                : `/admin/lapangan/edit/${id}`
+            }
+            className="cursor-pointer"
           >
             <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
           </Link>
