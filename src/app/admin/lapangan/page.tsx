@@ -1,10 +1,10 @@
 import { columns } from "@/components/Admin/Court/columns";
-import { ManageTable } from "@/components/ManageTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { getCourts } from "@/lib/db";
+import CourtTable from "@/components/Admin/Court/court-table";
 
 const ManageCourt = async () => {
   const courts = await getCourts();
@@ -22,7 +22,7 @@ const ManageCourt = async () => {
             </Button>
           </Link>
         </div>
-        <ManageTable data={courts} columns={columns} />
+        <CourtTable data={courts} columns={columns} />
       </div>
     </section>
   );

@@ -17,11 +17,11 @@ import {
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { CourtReal } from "@/types/court";
+import { Court } from "@/app/generated/prisma";
 
 interface CourtTableProps {
-  data: CourtReal[];
-  columns: ColumnDef<CourtReal>[];
+  data: Court[];
+  columns: ColumnDef<Court>[];
 }
 
 const CourtTable = ({ data, columns }: CourtTableProps) => {

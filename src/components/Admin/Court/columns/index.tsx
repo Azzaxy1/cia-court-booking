@@ -1,11 +1,11 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { CourtReal } from "@/types/court";
 import Image from "next/image";
 import ActionsCell from "../../ActionsCell";
+import { Court } from "@/app/generated/prisma";
 
-export const columns: ColumnDef<CourtReal>[] = [
+export const columns: ColumnDef<Court>[] = [
   {
     id: "no",
     header: "No",
