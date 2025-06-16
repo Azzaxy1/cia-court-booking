@@ -34,7 +34,6 @@ const getStatusBadge = (status: BookingStatus) => {
 };
 
 const BookingHistory = ({ booking }: Props) => {
-  console.log(booking);
   return (
     <Card className="overflow-hidden shadow-lg border border-gray-200">
       <div className="flex flex-col md:flex-row">

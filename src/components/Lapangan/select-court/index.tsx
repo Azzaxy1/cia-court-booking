@@ -8,7 +8,6 @@ type Props = {
 };
 
 const SelectCourt = ({ courts }: Props) => {
-  console.log("Available courts:", courts);
   const courtFutsal = courts.filter((court) => court.type === "Futsal");
   const courtBadminton = courts.filter((court) => court.type === "Badminton");
   const courtTableTennis = courts.filter((court) => court.type === "TenisMeja");

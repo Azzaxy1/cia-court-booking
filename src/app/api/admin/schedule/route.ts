@@ -50,3 +50,56 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }
+
+export async function PUT(req: Request) {
+  try {
+    const { id, courtId, date, timeSlot, price, dayType } = await req.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID jadwal tidak ditemukan" },
+        { status: 400 }
+      );
+    }
+
+    const existing = await prisma.schedule.findFirst({
+      where: {
+        courtId,
+        timeSlot,
+        date,
+        NOT: { id },
+      },
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Jadwal untuk tanggal ${date
+            .toISOString()
+            .slice(0, 10)} dan slot ${timeSlot} sudah ada.`,
+        },
+        { status: 400 }
+      );
+    }
+
+    const updatedSchedule = await prisma.schedule.update({
+      where: { id },
+      data: {
+        courtId,
+        date,
+        timeSlot,
+        price,
+        dayType,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Jadwal berhasil diperbarui",
+      schedule: updatedSchedule,
+    });
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
+}

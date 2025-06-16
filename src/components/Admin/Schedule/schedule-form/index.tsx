@@ -24,19 +24,27 @@ import { z } from "zod";
 import { scheduleSchema } from "@/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { createSchedule, updateSchedule } from "@/services/scheduleService";
+import {
+  SchedulePayload,
+  createSchedule,
+  updateSchedule,
+} from "@/services/scheduleService";
 import { useRouter } from "next/navigation";
 
 type ScheduleFormType = z.infer<typeof scheduleSchema>;
 
-export interface CourtwithSchedule extends Court {
+type CourtWithSchedule = Court & {
   Schedule: Schedule[];
-}
+};
 
+type ScheduleWithCourt = Schedule & {
+  Court: Court;
+};
 interface Props {
-  courts: CourtwithSchedule[];
+  courts?: CourtWithSchedule[];
   id?: string;
   isAddForm?: boolean;
+  schedule?: ScheduleWithCourt;
 }
 
 const TIME_PRESETS = {
@@ -45,11 +53,13 @@ const TIME_PRESETS = {
   malam: ["19:00", "20:00", "21:00", "22:00", "23:00"],
 };
 
-const ScheduleForm = ({ courts, id, isAddForm }: Props) => {
+const ScheduleForm = ({ courts, id, isAddForm, schedule }: Props) => {
   const router = useRouter();
-  const court = courts.find((court) => court.id === id);
 
-  console.log("Court:", court);
+  const getNameCourtById = (courtId: string | undefined) => {
+    const court = courts?.find((court) => court.id === courtId);
+    return court ? court.name : "Lapangan tidak ditemukan";
+  };
 
   const {
     register,
@@ -60,8 +70,8 @@ const ScheduleForm = ({ courts, id, isAddForm }: Props) => {
   } = useForm<ScheduleFormType>({
     resolver: zodResolver(scheduleSchema),
     defaultValues: {
-      courtId: id || "",
-      days: 7,
+      courtId: isAddForm ? "" : getNameCourtById(id) || "",
+      days: 1,
       price: 100000,
       dayType: "Weekday",
       timePreset: "pagi",
@@ -71,7 +81,6 @@ const ScheduleForm = ({ courts, id, isAddForm }: Props) => {
   const createScheduleMutation = useMutation({
     mutationFn: createSchedule,
     onSuccess: (data) => {
-      console.log("Schedule created:", data);
       toast.success(
         "Berhasil membuat jadwal baru sebanyak " + data.count + " slot!"
       );
@@ -89,7 +98,7 @@ const ScheduleForm = ({ courts, id, isAddForm }: Props) => {
       scheduleData,
     }: {
       scheduleId: string;
-      scheduleData: Record<string, string | number | string[]>;
+      scheduleData: SchedulePayload;
     }) => updateSchedule(scheduleId, scheduleData),
     onSuccess: () => {
       toast.success("Jadwal berhasil diperbarui!");
@@ -97,7 +106,7 @@ const ScheduleForm = ({ courts, id, isAddForm }: Props) => {
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err.response?.data?.message || "Gagal memperbarui jadwal");
+      toast.error(err.response?.data?.message || "Gagal memperbarui");
     },
   });
 
@@ -113,20 +122,20 @@ const ScheduleForm = ({ courts, id, isAddForm }: Props) => {
     if (isAddForm) {
       createScheduleMutation.mutate(payload);
     } else {
-      if (id) {
+      if (id && schedule) {
         updateScheduleMutation.mutate({
           scheduleId: id,
-          scheduleData: payload,
+          scheduleData: {
+            ...payload,
+            date: schedule.date.toISOString(),
+            timeSlot: schedule.timeSlot,
+          },
         });
       } else {
         toast.error("ID jadwal tidak ditemukan");
       }
     }
   };
-
-  // const handleSelectChange = (name: string, value: string) => {
-
-  // };
 
   return (
     <Card className="max-w-2xl mx-auto">
@@ -155,7 +164,7 @@ const ScheduleForm = ({ courts, id, isAddForm }: Props) => {
                 <SelectValue placeholder="Pilih lapangan" />
               </SelectTrigger>
               <SelectContent>
-                {courts.map((court) => (
+                {courts?.map((court) => (
                   <SelectItem key={court.id} value={court.id}>
                     {court.name}
                   </SelectItem>
@@ -180,7 +189,6 @@ const ScheduleForm = ({ courts, id, isAddForm }: Props) => {
                 max={30}
                 onChange={(e) => {
                   const value = Number(e.target.value);
-                  console.log("Days changed:", value);
                   setValue("days", value);
                 }}
                 required
@@ -266,7 +274,7 @@ const ScheduleForm = ({ courts, id, isAddForm }: Props) => {
             <div className="text-sm space-y-1">
               <p>
                 • Lapangan:{" "}
-                {courts.find((c) => c.id === watch("courtId"))?.name ||
+                {courts?.find((c) => c.id === watch("courtId"))?.name ||
                   "Belum dipilih"}
               </p>
               <p>• Jumlah hari: {watch("days")} hari</p>

@@ -1,5 +1,15 @@
 import axios from "axios";
 
+export type SchedulePayload = {
+  courtId: string;
+  days?: number;
+  date?: string;
+  timeSlot: string[] | string;
+  price: number;
+  dayType: string;
+  id?: string;
+};
+
 export const deleteSchedule = async (scheduleId: string) => {
   const res = await axios.delete(`/api/admin/schedule/${scheduleId}`);
   if (res.status !== 200) {
@@ -8,9 +18,7 @@ export const deleteSchedule = async (scheduleId: string) => {
   return res.data;
 };
 
-export const createSchedule = async (
-  scheduleData: Record<string, string | number | object>
-) => {
+export const createSchedule = async (scheduleData: SchedulePayload) => {
   const res = await axios.post("/api/admin/schedule", scheduleData, {
     headers: {
       "Content-Type": "application/json",
@@ -24,7 +32,7 @@ export const createSchedule = async (
 
 export const updateSchedule = async (
   scheduleId: string,
-  scheduleData: Record<string, string | number | string[] | object[]>
+  scheduleData: SchedulePayload
 ) => {
   const res = await axios.put(
     `/api/admin/schedule/${scheduleId}`,
