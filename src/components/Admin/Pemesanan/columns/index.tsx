@@ -6,8 +6,11 @@ import { Booking } from "@/app/generated/prisma";
 
 import ActionsCell from "../../ActionsCell";
 
-interface BookingWithUser extends Booking {
+export interface BookingWithUser extends Booking {
   user: {
+    name: string;
+  };
+  court: {
     name: string;
   };
 }
@@ -29,6 +32,14 @@ export const columns: ColumnDef<BookingWithUser>[] = [
     },
   },
   {
+    accessorKey: "court",
+    header: "Lapangan",
+    cell: ({ row }) => {
+      const booking = row.original;
+      return <div>{booking.court.name}</div>;
+    },
+  },
+  {
     accessorKey: "courtType",
     header: "Jenis Lapangan",
   },
@@ -43,10 +54,6 @@ export const columns: ColumnDef<BookingWithUser>[] = [
   {
     accessorKey: "startTime",
     header: "Waktu Mulai",
-  },
-  {
-    accessorKey: "endTime",
-    header: "Waktu Selesai",
   },
   {
     accessorKey: "duration",

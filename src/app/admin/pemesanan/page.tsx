@@ -1,28 +1,74 @@
 import React from "react";
 import { columns } from "@/components/Admin/Pemesanan/columns";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { ManageTable } from "@/components/ManageTable";
 import { getBookings } from "@/lib/db";
+import OrderTable from "@/components/Admin/Pemesanan/order-table";
+import { ColumnDef } from "@tanstack/react-table";
+import { Booking, BookingStatus, Court, User } from "@/app/generated/prisma"; // Import Court dan User
 
-const ManageOrder = async () => {
-  const bookings = await getBookings();
+interface ManageOrderProps {
+  searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
+}
+
+export type BookingWithRelations = Booking & {
+  user: User;
+  court: Court;
+};
+
+const ManageOrder = async ({ searchParams }: ManageOrderProps) => {
+  const search = await searchParams;
+
+  const urlSearchParams = new URLSearchParams(
+    Object.entries(search).reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = Array.isArray(value) ? value[0] : value;
+      }
+      return acc;
+    }, {} as Record<string, string>)
+  );
+
+  const filters: {
+    userId?: string;
+    courtId?: string;
+    date?: Date;
+    status?: BookingStatus;
+    search?: string;
+  } = {};
+
+  if (urlSearchParams.get("user")) {
+    filters.userId = urlSearchParams.get("user") as string;
+  }
+  if (urlSearchParams.get("courtId")) {
+    filters.courtId = urlSearchParams.get("courtId") as string;
+  }
+  if (urlSearchParams.get("date")) {
+    filters.date = new Date(urlSearchParams.get("date") as string);
+  }
+  if (urlSearchParams.get("status")) {
+    filters.status = urlSearchParams.get("status") as BookingStatus;
+  }
+  if (urlSearchParams.get("search")) {
+    filters.search = urlSearchParams.get("search") as string;
+  }
+
+  const filtersForDb = {
+    ...filters,
+    date: filters.date?.toISOString(),
+  };
+
+  const bookings = await getBookings(filtersForDb);
+
   return (
     <section className="container mx-auto">
       <h1 className="text-2xl sm:text-2xl 2xl:text-4xl font-semibold leading-tight text-primary">
         Kelola Pemesanan
       </h1>
       <div className="mt-2 w-full">
-        <div className="flex justify-end mb-4">
-          <Link href="/admin/pemesanan/tambah">
-            <Button className="bg-primary">
-              <Plus size={16} />
-              Tambah
-            </Button>
-          </Link>
-        </div>
-        <ManageTable data={bookings} columns={columns} />
+        <OrderTable
+          data={bookings as BookingWithRelations[]}
+          columns={columns as ColumnDef<BookingWithRelations>[]}
+        />
       </div>
     </section>
   );

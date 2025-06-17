@@ -1,4 +1,13 @@
+import { Prisma, BookingStatus } from "@/app/generated/prisma";
 import { prisma } from "./prisma";
+
+interface GetBookingsFilters {
+  userId?: string;
+  status?: string;
+  courtId?: string;
+  date?: string;
+  search?: string;
+}
 
 export const getCourtWithSchedule = async () => {
   return await prisma.court.findMany({
@@ -21,11 +30,49 @@ export const getCourts = async () => {
     },
   });
 };
+export const getBookings = async (filters?: GetBookingsFilters) => {
+  const where: Prisma.BookingWhereInput = {};
 
-export const getBookings = async () => {
+  if (filters?.userId) where.userId = filters.userId;
+  if (filters?.status && filters.status !== "all") {
+    where.status = filters.status as BookingStatus;
+  }
+  if (filters?.courtId && filters.courtId !== "all") {
+    where.courtId = filters.courtId;
+  }
+  if (filters?.date) where.date = filters.date;
+  if (filters?.search) {
+    where.OR = [
+      {
+        user: {
+          name: {
+            contains: filters.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        court: {
+          name: {
+            contains: filters.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        paymentMethod: {
+          contains: filters.search,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
   return await prisma.booking.findMany({
+    where,
     include: {
       user: true,
+      court: true,
     },
     orderBy: {
       createdAt: "desc",
