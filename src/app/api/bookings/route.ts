@@ -61,44 +61,52 @@ export async function POST(req: Request) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const booking = await prisma.booking.create({
-      data: {
-        userId,
-        courtId,
-        startTime: startTime || schedule.timeSlot,
-        duration: duration || 1,
-        endTime:
-          endTime ||
-          (parseInt(schedule.timeSlot) + 1).toString().padStart(2, "0") + ":00",
-        courtType: courtType || schedule.court.type,
-        date: date ? toUTCDateOnly(date) : toUTCDateOnly(schedule.date),
-        paymentMethod: paymentMethod || "Cash",
-        amount,
-        status: status || "Pending",
-      },
-    });
 
-    await prisma.schedule.update({
-      where: { id: scheduleId },
-      data: {
-        available: false,
-        bookingId: booking.id,
-      },
-    });
-
-    if (!session) {
-      await prisma.transaction.create({
+    const result = await prisma.$transaction(async (tx) => {
+      const booking = await tx.booking.create({
         data: {
-          bookingId: booking.id,
-          transactionId: "cash-" + Date.now(),
+          userId,
+          courtId,
+          startTime: startTime || schedule.timeSlot,
+          duration: duration || 1,
+          endTime:
+            endTime ||
+            (parseInt(schedule.timeSlot) + 1).toString().padStart(2, "0") +
+              ":00",
+          courtType: courtType || schedule.court.type,
+          date: date ? toUTCDateOnly(date) : toUTCDateOnly(schedule.date),
+          paymentMethod: paymentMethod || "Cash",
           amount,
-          paymentMethod: "Cash",
-          status: "Paid",
+          status: status || "Pending",
         },
       });
-    }
 
-    return NextResponse.json(booking);
+      // Create transaction record
+      await tx.transaction.create({
+        data: {
+          bookingId: booking.id,
+          transactionId: `TRX-${Date.now()}-${Math.floor(
+            Math.random() * 10000
+          )}`,
+          amount,
+          paymentMethod: paymentMethod || "Cash",
+          status: status === "Paid" ? "Paid" : "Pending",
+        },
+      });
+
+      // Update schedule
+      await tx.schedule.update({
+        where: { id: scheduleId },
+        data: {
+          available: false,
+          bookingId: booking.id,
+        },
+      });
+
+      return booking;
+    });
+
+    return NextResponse.json(result);
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "400") {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });

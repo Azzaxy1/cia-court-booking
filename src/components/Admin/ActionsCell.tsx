@@ -16,6 +16,7 @@ import { deleteCourt } from "@/services/courtService";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { deleteSchedule } from "@/services/scheduleService";
+import { deleteBooking } from "@/services/mainService";
 
 interface ActionsCellProps {
   id: number | string;
@@ -35,8 +36,8 @@ const ActionsCell: React.FC<ActionsCellProps> = ({
 
   const deleteCourtMutation = useMutation({
     mutationFn: deleteCourt,
-    onSuccess: () => {
-      toast.success(`Lapangan berhasil dihapus,`);
+    onSuccess: (data) => {
+      toast.success(data.message || "Lapangan berhasil dihapus!");
       router.replace("/admin/lapangan");
       queryClient.invalidateQueries({ queryKey: ["courts"] });
     },
@@ -48,8 +49,8 @@ const ActionsCell: React.FC<ActionsCellProps> = ({
 
   const deleteScheduleMutation = useMutation({
     mutationFn: deleteSchedule,
-    onSuccess: () => {
-      toast.success(`Jadwal berhasil dihapus,`);
+    onSuccess: (data) => {
+      toast.success(data.message || "Jadwal berhasil dihapus!");
       router.replace("/admin/jadwal");
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
     },
@@ -59,9 +60,24 @@ const ActionsCell: React.FC<ActionsCellProps> = ({
     },
   });
 
+  const deleteOrderMutation = useMutation({
+    mutationFn: deleteBooking,
+    onSuccess: (data) => {
+      toast.success(data.message || "Pemesanan berhasil dihapus!");
+      router.replace("/admin/pemesanan");
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+    },
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Gagal menghapus pemesanan");
+    },
+  });
+
   const handleDelete = () => {
     if (isSchedule) {
       deleteScheduleMutation.mutate(id as string);
+    } else if (isOrder) {
+      deleteOrderMutation.mutate(id as string);
     } else {
       deleteCourtMutation.mutate(id as string);
     }

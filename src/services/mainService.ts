@@ -45,6 +45,16 @@ export const updateBooking = async (
   return res.data;
 };
 
+export const deleteBooking = async (id: string) => {
+  const res = await axios.delete(`/api/bookings/${id}`);
+
+  if (res.status !== 200) {
+    throw new Error("Gagal menghapus booking");
+  }
+
+  return res.data;
+};
+
 export const getPaymentDetail = async (orderId: string) => {
   const res = await axios.get(`/api/payment/detail?order_id=${orderId}`);
 
