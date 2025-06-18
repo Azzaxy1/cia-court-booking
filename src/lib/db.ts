@@ -73,6 +73,7 @@ export const getBookings = async (filters?: GetBookingsFilters) => {
     include: {
       user: true,
       court: true,
+      Schedule: true,
     },
     orderBy: {
       createdAt: "desc",

@@ -1,20 +1,23 @@
-"use client";
-
-import { useParams } from "next/navigation";
 import OrderForm from "@/components/Admin/Pemesanan/order-form";
-import { ordersData } from "@/lib/dummy/orders";
 import BackButton from "@/components/BackButton";
+import { getBookings, getCourtWithSchedule } from "@/lib/db";
 
-const EditOrderPage = () => {
-  const { id } = useParams();
+const EditOrderPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const { id } = await params;
+  const bookings = await getBookings();
+  const courts = await getCourtWithSchedule();
 
-  const order = ordersData.find((order) => order.id === id);
+  const order = bookings.find((order) => order.id === id);
 
   return (
     <div className="container mx-auto pb-8">
       <BackButton />
 
-      <OrderForm order={order} />
+      <OrderForm order={order} courts={courts} />
     </div>
   );
 };

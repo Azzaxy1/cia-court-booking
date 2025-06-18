@@ -27,7 +27,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { orderSchema } from "@/validation";
-import { createBooking } from "@/services/mainService";
+import { createBooking, updateBooking } from "@/services/mainService";
 import toast from "react-hot-toast";
 import { Booking, Court, Schedule, User } from "@/app/generated/prisma";
 
@@ -40,15 +40,16 @@ type CourtWithSchedule = Court & {
 export interface BookingWithUser extends Booking {
   user: User;
   court: Court;
+  Schedule: Schedule[];
 }
 
 interface Props {
-  courts: CourtWithSchedule[];
+  courts?: CourtWithSchedule[];
   isAddForm?: boolean;
-  orders?: BookingWithUser[];
+  order?: BookingWithUser;
 }
 
-const OrderForm = ({ courts, isAddForm, orders }: Props) => {
+const OrderForm = ({ courts, isAddForm, order }: Props) => {
   const router = useRouter();
 
   const {
@@ -56,14 +57,22 @@ const OrderForm = ({ courts, isAddForm, orders }: Props) => {
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
     setValue,
   } = useForm({
     resolver: zodResolver(orderSchema),
     defaultValues: {
-      customerName: "",
-      courtId: "",
-      selectedDate: undefined,
-      selectedSchedule: null,
+      customerName: order?.user?.name || "",
+      courtId: order?.court?.id || "",
+      selectedDate: order?.date ? new Date(order.date) : undefined,
+      selectedSchedule: order?.Schedule?.[0]
+        ? {
+            id: order.Schedule[0].id,
+            timeSlot: order.Schedule[0].timeSlot,
+            price: order.Schedule[0].price,
+            available: order.Schedule[0].available,
+          }
+        : undefined,
     },
   });
 
@@ -88,7 +97,7 @@ const OrderForm = ({ courts, isAddForm, orders }: Props) => {
     enabled: !!watch("courtId") && !!watch("selectedDate"),
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: createMutate, isPending: isCreatePending } = useMutation({
     mutationFn: createBooking,
     onSuccess: () => {
       toast.success("Pemesanan berhasil dibuat");
@@ -100,8 +109,31 @@ const OrderForm = ({ courts, isAddForm, orders }: Props) => {
     },
   });
 
+  const { mutate: updateMutate, isPending: isUpdatePending } = useMutation({
+    mutationFn: updateBooking,
+    onSuccess: (data) => {
+      toast.success("Pemesanan berhasil diperbarui");
+      reset({
+        customerName: data.user.name,
+        courtId: data.courtId,
+        selectedDate: new Date(data.date),
+        selectedSchedule: {
+          id: data.scheduleId,
+          timeSlot: data.startTime,
+          price: data.amount,
+          available: true,
+        },
+      });
+      router.push("/admin/pemesanan");
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const onSubmit = async (data: OrderFormType) => {
-    mutate({
+    const bookingData = {
       scheduleId: data.selectedSchedule?.id ?? "",
       customerName: data.customerName,
       courtId: data.courtId,
@@ -121,7 +153,17 @@ const OrderForm = ({ courts, isAddForm, orders }: Props) => {
       startTime: data.selectedSchedule?.timeSlot ?? "",
       duration: 1,
       status: "Paid",
-    });
+    };
+
+    if (isAddForm) {
+      createMutate(bookingData);
+    } else {
+      if (!order?.id) {
+        toast.error("ID pemesanan tidak ditemukan");
+        return;
+      }
+      updateMutate({ ...bookingData, id: order.id });
+    }
   };
 
   return (
@@ -135,6 +177,11 @@ const OrderForm = ({ courts, isAddForm, orders }: Props) => {
             ? "Isi form berikut untuk membuat pemesanan baru."
             : "Edit detail pemesanan yang sudah ada."}
         </CardDescription>
+        {!isAddForm && order?.status === "Paid" && (
+          <div className="text-yellow-600 bg-yellow-50 p-2 rounded-md">
+            Pemesanan ini sudah dibayar dan tidak dapat diubah
+          </div>
+        )}
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
@@ -162,7 +209,7 @@ const OrderForm = ({ courts, isAddForm, orders }: Props) => {
                 <SelectValue placeholder="Pilih lapangan" />
               </SelectTrigger>
               <SelectContent>
-                {courts.map((court) => (
+                {courts?.map((court) => (
                   <SelectItem key={court.id} value={court.id}>
                     {court.name}
                   </SelectItem>
@@ -224,18 +271,22 @@ const OrderForm = ({ courts, isAddForm, orders }: Props) => {
           <Button
             type="submit"
             disabled={
-              isPending ||
+              isCreatePending ||
+              isUpdatePending ||
               !watch("customerName") ||
               !watch("courtId") ||
-              !watch("selectedSchedule")
+              !watch("selectedSchedule") ||
+              (!isAddForm && order?.status === "Paid")
             }
           >
-            {isPending ? (
+            {isCreatePending || isUpdatePending ? (
               <span className="flex items-center gap-2">
                 <FaSpinner className="animate-spin" /> Memproses...
               </span>
-            ) : (
+            ) : isAddForm ? (
               "Simpan Pemesanan"
+            ) : (
+              "Update Pemesanan"
             )}
           </Button>
         </CardFooter>

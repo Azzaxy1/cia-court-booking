@@ -29,6 +29,22 @@ export const createBooking = async (
   return res.data;
 };
 
+export const updateBooking = async (
+  data: Record<string, string | number | null | boolean>
+) => {
+  const res = await axios.put(`/api/bookings/${data.id}`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (res.status !== 200) {
+    throw new Error("Gagal mengupdate booking");
+  }
+
+  return res.data;
+};
+
 export const getPaymentDetail = async (orderId: string) => {
   const res = await axios.get(`/api/payment/detail?order_id=${orderId}`);
 
