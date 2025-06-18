@@ -65,12 +65,9 @@ const SideBooking = ({ court }: Props) => {
     mutationFn: paymentMidtrans,
     onSuccess: (data) => {
       const { token } = data;
-      console.log("Data dari Midtrans:", data);
       if (window.snap) {
         window.snap.pay(token, {
           onSuccess: (data) => {
-            console.log("Payment Success:", data);
-
             // Snap Redirect: langsung arahkan ke halaman pembayaran Midtrans
             router.push((data as { redirect_url: string }).redirect_url);
           },

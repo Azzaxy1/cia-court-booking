@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -13,346 +15,228 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardFooter,
+  CardDescription,
 } from "@/components/ui/card";
-
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { id } from "date-fns/locale";
-import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
+import { FaSpinner } from "react-icons/fa";
+import { getCourtSchedule } from "@/services/courtService";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { orderSchema } from "@/validation";
+import { createBooking } from "@/services/mainService";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
-import { Order } from "@/types/Order";
+import { Booking, Court, Schedule, User } from "@/app/generated/prisma";
 
-const OrderForm = ({
-  isAddForm,
-  order,
-}: {
+type OrderFormType = z.infer<typeof orderSchema>;
+
+type CourtWithSchedule = Court & {
+  Schedule: Schedule[];
+};
+
+export interface BookingWithUser extends Booking {
+  user: User;
+  court: Court;
+}
+
+interface Props {
+  courts: CourtWithSchedule[];
   isAddForm?: boolean;
-  order?: Order;
-}) => {
+  orders?: BookingWithUser[];
+}
+
+const OrderForm = ({ courts, isAddForm, orders }: Props) => {
   const router = useRouter();
 
-  // Opsi untuk dropdown
-  const fieldTypes = ["Badminton", "Futsal", "Tenis Meja"];
-  const durationOptions = [1, 2, 3, 4];
-  const statusOptions = ["Pending", "Paid", "Cancelled"];
-  const timeSlots = [
-    "08:00",
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-    "20:00",
-    "21:00",
-    "22:00",
-  ];
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    customer: "",
-    fieldType: "",
-    date: "",
-    startTime: "",
-    duration: "",
-    amount: "",
-    status: "Pending",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm({
+    resolver: zodResolver(orderSchema),
+    defaultValues: {
+      customerName: "",
+      courtId: "",
+      selectedDate: undefined,
+      selectedSchedule: null,
+    },
   });
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
-  const handleInputChange = (e: {
-    target: { name: string; value: string };
-  }) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const { data: schedules = [], isLoading } = useQuery<Schedule[]>({
+    queryKey: [
+      "schedules",
+      watch("courtId"),
+      watch("selectedDate")?.toISOString(),
+    ],
+    queryFn: async () => {
+      if (!watch("courtId") || !watch("selectedDate")) return [];
+      const selectedDate = watch("selectedDate");
+      if (!selectedDate) return [];
 
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+      const year = selectedDate.getFullYear();
+      const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
+      const day = selectedDate.getDate().toString().padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+      const res = await getCourtSchedule(watch("courtId"), formattedDate);
+      return res.data;
+    },
+    enabled: !!watch("courtId") && !!watch("selectedDate"),
+  });
 
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      setSelectedDate(date);
-      setFormData({
-        ...formData,
-        date: format(date, "yyyy-MM-dd"),
-      });
-    }
-  };
-
-  const calculateEndTime = (startTime: string, duration: string) => {
-    if (!startTime || !duration) return "";
-
-    const [hours, minutes] = startTime.split(":").map(Number);
-    const endHour = hours + parseInt(duration);
-
-    return `${endHour.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  const calculatePrice = (fieldType: string, duration: string) => {
-    if (!fieldType || !duration) return "";
-
-    let basePrice = 0;
-    switch (fieldType) {
-      case "Badminton":
-        basePrice = 60000;
-        break;
-      case "Futsal":
-        basePrice = 100000;
-        break;
-      case "Tenis Meja":
-        basePrice = 40000;
-        break;
-      default:
-        basePrice = 0;
-    }
-
-    return basePrice * parseInt(duration);
-  };
-
-  // Perbarui harga total ketika field type atau durasi berubah
-  useEffect(() => {
-    if (formData.fieldType && formData.duration) {
-      const price = calculatePrice(formData.fieldType, formData.duration);
-      setFormData((prev) => ({
-        ...prev,
-        amount: price.toString(),
-      }));
-    }
-  }, [formData.fieldType, formData.duration]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      // Simulasi pengiriman data ke API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Dalam implementasi nyata, Anda akan mengirim data ke API
-      console.log("Data pemesanan yang dikirim:", {
-        ...formData,
-        id: `TRX${Math.floor(Math.random() * 1000)
-          .toString()
-          .padStart(3, "0")}`,
-        time: `${formData.startTime} - ${calculateEndTime(
-          formData.startTime,
-          formData.duration
-        )}`,
-        paymentMethod: "Cash",
-      });
-
-      toast.success("Pemesanan berhasil ditambahkan");
-
-      // Redirect ke halaman daftar pemesanan
+  const { mutate, isPending } = useMutation({
+    mutationFn: createBooking,
+    onSuccess: () => {
+      toast.success("Pemesanan berhasil dibuat");
       router.push("/admin/pemesanan");
-    } catch (error) {
-      console.error("Error submitting order:", error);
-      toast.error("Gagal menambahkan pemesanan");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
-  const startTime = order?.time?.split(" - ")[0];
+  const onSubmit = async (data: OrderFormType) => {
+    mutate({
+      scheduleId: data.selectedSchedule?.id ?? "",
+      customerName: data.customerName,
+      courtId: data.courtId,
+      price: data.selectedSchedule?.price ?? 0,
+      selectedScheduleId: data.selectedSchedule?.id ?? null,
+      selectedDate: data.selectedDate
+        ? `${data.selectedDate.getFullYear()}-${(
+            data.selectedDate.getMonth() + 1
+          )
+            .toString()
+            .padStart(2, "0")}-${data.selectedDate
+            .getDate()
+            .toString()
+            .padStart(2, "0")}`
+        : "",
+      amount: data.selectedSchedule?.price ?? 0,
+      startTime: data.selectedSchedule?.timeSlot ?? "",
+      duration: 1,
+      status: "Paid",
+    });
+  };
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-primary">
-          {isAddForm ? "Tambah Pemesanan Baru" : "Edit Pemesanan"}
+          {isAddForm ? "Tambah Pemesanan" : "Edit Pemesanan"}
         </CardTitle>
         <CardDescription>
-          Isi form berikut untuk {isAddForm ? "menambahkan" : "mengedit"} data
-          pemesanan
+          {isAddForm
+            ? "Isi form berikut untuk membuat pemesanan baru."
+            : "Edit detail pemesanan yang sudah ada."}
         </CardDescription>
       </CardHeader>
-
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-6">
-          {/* Customer */}
-          <div className="space-y-2">
-            <Label htmlFor="customer">Nama Pelanggan</Label>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Nama Lapangan</Label>
             <Input
-              id="customer"
-              name="customer"
+              {...register("customerName", { required: true })}
               placeholder="Masukkan nama pelanggan"
-              value={order?.customer || formData.customer}
-              onChange={handleInputChange}
               required
             />
+            {errors.customerName && (
+              <span className="text-red-500">
+                {errors.customerName.message}
+              </span>
+            )}
           </div>
-
-          {/* Field Type */}
-          <div className="space-y-2">
-            <Label htmlFor="fieldType">Jenis Lapangan</Label>
+          <div>
+            <Label>Lapangan</Label>
             <Select
-              value={order?.fieldType || formData.fieldType}
-              onValueChange={(value) => handleSelectChange("fieldType", value)}
+              value={watch("courtId")}
+              onValueChange={(value) => setValue("courtId", value)}
               required
             >
               <SelectTrigger>
-                <SelectValue placeholder="Pilih jenis lapangan" />
+                <SelectValue placeholder="Pilih lapangan" />
               </SelectTrigger>
               <SelectContent>
-                {fieldTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
+                {courts.map((court) => (
+                  <SelectItem key={court.id} value={court.id}>
+                    {court.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-
-          {/* Date Picker */}
-          <div className="space-y-2">
+          <div>
             <Label>Tanggal</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-left font-normal"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? (
-                    format(selectedDate, "PPP", { locale: id })
-                  ) : (
-                    <span>Pilih tanggal</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => handleDateSelect(date)}
-                  disabled={(date) => date < new Date()}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <Calendar
+              mode="single"
+              selected={watch("selectedDate")}
+              onSelect={(date) => setValue("selectedDate", date)}
+              disabled={(date) => {
+                const now = new Date();
+                now.setHours(0, 0, 0, 0);
+                return date < now;
+              }}
+            />
           </div>
-
-          {/* Time and Duration */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="startTime">Waktu Mulai</Label>
-              <Select
-                value={startTime || formData.startTime}
-                onValueChange={(value) =>
-                  handleSelectChange("startTime", value)
-                }
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih waktu" />
-                </SelectTrigger>
-                <SelectContent>
-                  {timeSlots.map((time) => (
-                    <SelectItem key={time} value={time}>
-                      {time}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="duration">Durasi (jam)</Label>
-              <Select
-                value={isAddForm ? formData.duration : String(order?.duration)}
-                onValueChange={(value) => handleSelectChange("duration", value)}
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih durasi" />
-                </SelectTrigger>
-                <SelectContent>
-                  {durationOptions.map((duration) => (
-                    <SelectItem key={duration} value={duration.toString()}>
-                      {duration} jam
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Total Price and Status */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="amount">Total Harga</Label>
-              <Input
-                id="amount"
-                name="amount"
-                value={
-                  isAddForm
-                    ? formData.amount &&
-                      `Rp ${Number(formData.amount).toLocaleString()}`
-                    : `Rp ${order?.amount}`
-                }
-                readOnly
-                className="bg-gray-50"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={order?.status || formData.status}
-                defaultValue="Pending"
-                onValueChange={(value) => handleSelectChange("status", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div>
+            <Label>Jadwal</Label>
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <FaSpinner className="animate-spin" /> Memuat jadwal...
+              </div>
+            ) : schedules.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {schedules.map((schedule) => (
+                  <Button
+                    key={schedule.id}
+                    type="button"
+                    variant={
+                      watch("selectedSchedule")?.id === schedule.id
+                        ? "default"
+                        : schedule.available
+                        ? "outline"
+                        : "secondary"
+                    }
+                    disabled={!schedule.available}
+                    onClick={() => setValue("selectedSchedule", schedule)}
+                  >
+                    {schedule.timeSlot} <br />
+                    <span className="text-xs text-gray-500">
+                      Rp {schedule.price.toLocaleString("id-ID")}
+                    </span>
+                  </Button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-red-500">Tidak ada jadwal tersedia</div>
+            )}
           </div>
         </CardContent>
-
-        <CardFooter className="flex justify-end space-x-4">
+        <CardFooter className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Batal
           </Button>
           <Button
             type="submit"
-            className="bg-primary hover:bg-primary/90"
-            disabled={isSubmitting}
+            disabled={
+              isPending ||
+              !watch("customerName") ||
+              !watch("courtId") ||
+              !watch("selectedSchedule")
+            }
           >
-            {isSubmitting ? "Menyimpan..." : "Simpan"}
+            {isPending ? (
+              <span className="flex items-center gap-2">
+                <FaSpinner className="animate-spin" /> Memproses...
+              </span>
+            ) : (
+              "Simpan Pemesanan"
+            )}
           </Button>
         </CardFooter>
       </form>

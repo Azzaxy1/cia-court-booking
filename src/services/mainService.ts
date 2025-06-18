@@ -14,7 +14,7 @@ export const paymentMidtrans = async (
 };
 
 export const createBooking = async (
-  bookingDetail: Record<string, string | number>
+  bookingDetail: Record<string, string | number | null | boolean>
 ) => {
   const res = await axios.post("/api/bookings", bookingDetail, {
     headers: {

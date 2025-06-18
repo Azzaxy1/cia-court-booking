@@ -1,7 +1,7 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import { formatInTimeZone } from "date-fns-tz";
 import { Booking } from "@/app/generated/prisma";
 
 import ActionsCell from "../../ActionsCell";
@@ -48,7 +48,15 @@ export const columns: ColumnDef<BookingWithUser>[] = [
     header: "Tanggal",
     cell: ({ row }) => {
       const date = row.getValue("date") as Date;
-      return <div>{format(date, "d MMMM yyyy", { locale: id })}</div>;
+      const formattedDate = formatInTimeZone(
+        date,
+        "Asia/Jakarta",
+        "dd MMMM yyyy",
+        {
+          locale: id,
+        }
+      );
+      return <div>{formattedDate}</div>;
     },
   },
   {

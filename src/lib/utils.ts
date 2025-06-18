@@ -19,6 +19,12 @@ export const formattedTime = (date: Date) => {
   return format(date, "HH:mm", { locale: id });
 };
 
+export const toUTCDateOnly = (dateInput: string | Date) => {
+  const d =
+    typeof dateInput === "string" ? new Date(dateInput) : new Date(dateInput);
+  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+};
+
 // Format nama sport
 export const formatSportType = (type: string) => {
   switch (type) {

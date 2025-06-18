@@ -150,7 +150,11 @@ const ScheduleCourt = ({ court }: Props) => {
               onSelect={setSelectedDate}
               className="w-full md:w-1/2 mx-auto flex justify-center"
               initialFocus={true}
-              disabled={(date) => date < new Date()}
+              disabled={(date) => {
+                const now = new Date();
+                now.setHours(0, 0, 0, 0);
+                return date < now;
+              }}
             />
           </div>
 

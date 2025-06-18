@@ -52,4 +52,21 @@ const scheduleSchema = z.object({
   available: z.boolean().optional(),
 });
 
-export { authSchema, profileSchema, courtSchema, scheduleSchema };
+const orderSchema = z.object({
+  customerName: z.string().min(1, "Nama pelanggan wajib diisi"),
+  courtId: z.string().min(1, "ID lapangan wajib diisi"),
+  selectedDate: z.date().optional(),
+  selectedSchedule: z
+    .object({
+      id: z.string(),
+      timeSlot: z.string(),
+      price: z.number(),
+      available: z.boolean(),
+    })
+    .nullable(),
+  date: z.date().optional(),
+  scheduleId: z.string().optional(),
+  timeSlot: z.string().optional(),
+});
+
+export { authSchema, profileSchema, courtSchema, scheduleSchema, orderSchema };
