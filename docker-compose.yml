@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=azzaxy1"
+      - "POSTGRES_DB=cia_court_booking"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      DATABASE_URL: "postgresql://postgres:azzaxy1@db:5432/cia_court_booking"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
