@@ -162,7 +162,7 @@ const SideBooking = ({ court }: Props) => {
                 Memproses...
               </span>
             ) : (
-              "Pesan Sekarang"
+              "Bayar Sekarang"
             )}
           </Button>
         </CardContent>

@@ -43,14 +43,14 @@ const ProfilePage = async () => {
         <div className="lg:col-span-2">
           <Tabs defaultValue="bookings" className="w-full">
             <TabsList className="grid grid-cols-2 mb-6">
-              <TabsTrigger value="bookings">Pemesanan</TabsTrigger>
+              <TabsTrigger value="bookings">Riwayat Pembayaran</TabsTrigger>
               <TabsTrigger value="profile">Edit Profil</TabsTrigger>
             </TabsList>
 
-            {/* Tab Pemesanan */}
+            {/* Tab Pembayaran */}
             <TabsContent value="bookings">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Riwayat Pemesanan</h2>
+                <h2 className="text-2xl font-bold">Riwayat Pembayaran</h2>
                 {/* <Button variant="outline" size="sm">
                   <History className="h-4 w-4 mr-2" /> Lihat Semua
                 </Button> */}
@@ -65,7 +65,7 @@ const ProfilePage = async () => {
                   <div className="flex flex-col items-center justify-center py-36">
                     <BsFillCartXFill className="h-20 w-20 text-gray-400 mb-4" />
                     <p className="text-gray-500">
-                      Tidak ada pemesanan yang ditemukan
+                      Tidak ada pembayaran yang ditemukan
                     </p>
                   </div>
                 )}

@@ -17,7 +17,7 @@ export const navUser = [
   },
   {
     id: 2,
-    title: "Booking Lapangan",
+    title: "Daftar Lapangan",
     link: "/lapangan",
     icon: PiCourtBasketballFill,
   },

@@ -26,7 +26,7 @@ interface Props {
 const RevenueChartClient = ({ chartConfig, chartDataRevenue }: Props) => {
   return (
     <div className="p-4 border rounded-lg">
-      <h2 className="text-lg font-semibold mb-6">Total Pendapatan</h2>
+      <h2 className="text-lg font-semibold mb-6">Total Pemasukan</h2>
       <ResponsiveContainer width="100%" height={300}>
         <ChartContainer config={chartConfig} className="h-[200px] w-full">
           <BarChart accessibilityLayer data={chartDataRevenue}>

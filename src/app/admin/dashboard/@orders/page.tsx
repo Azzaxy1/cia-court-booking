@@ -5,6 +5,7 @@ import { generateChartOrder } from "@/lib/utils";
 
 const OrdersChart = async () => {
   const orderStats = await getOrderStats();
+  console.log("orderStats", orderStats);
   const chartDataOrders = generateChartOrder(orderStats);
 
   const chartConfig = {
