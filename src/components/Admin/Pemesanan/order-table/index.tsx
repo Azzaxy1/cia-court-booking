@@ -40,6 +40,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { debounce } from "lodash";
 import { PiCourtBasketball } from "react-icons/pi";
 import { BookingWithRelations } from "@/app/admin/pemesanan/page";
+import { useSession } from "next-auth/react";
 
 interface Props {
   data: BookingWithRelations[];
@@ -49,6 +50,7 @@ interface Props {
 const OrderTable = ({ data, columns }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
 
   const initialSearch = searchParams.get("search") || "";
   const initialCourt = searchParams.get("court") || "all";
@@ -195,12 +197,14 @@ const OrderTable = ({ data, columns }: Props) => {
           </div>
         </div>
 
-        <Link href="/admin/pemesanan/tambah">
-          <Button className="bg-primary">
-            <Plus size={16} />
-            Tambah Pemesanan
-          </Button>
-        </Link>
+        {session?.user?.role === "CASHIER" && (
+          <Link href="/admin/pemesanan/tambah">
+            <Button className="bg-primary">
+              <Plus size={16} />
+              Tambah Pemesanan
+            </Button>
+          </Link>
+        )}
       </div>
 
       <div className="rounded-md border">

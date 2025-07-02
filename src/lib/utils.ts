@@ -53,7 +53,6 @@ export interface MonthlyData {
 }
 
 export const generateChartOrder = (ordersData: Order[]): MonthlyData[] => {
-  console.log("ordersData", ordersData);
   const monthlyData: { [key: string]: MonthlyData } = {};
 
   const now = new Date();

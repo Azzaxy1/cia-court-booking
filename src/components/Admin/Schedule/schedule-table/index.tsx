@@ -38,6 +38,7 @@ import {
 
 import { Court, Schedule } from "@/app/generated/prisma";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 interface ScheduleWithCourt extends Schedule {
   court: Court;
@@ -56,6 +57,7 @@ const ScheduleTable = ({ data, columns }: Props) => {
     pageSize: 10,
   });
   const [selectedCourt, setSelectedCourt] = useState("all");
+  const { data: session } = useSession();
 
   const filteredData = useMemo(() => {
     if (selectedCourt === "all") {
@@ -114,13 +116,14 @@ const ScheduleTable = ({ data, columns }: Props) => {
             </SelectContent>
           </Select>
         </div>
-
-        <Link href="/admin/jadwal/tambah">
-          <Button className="bg-primary">
-            <Plus size={16} />
-            Tambah Jadwal
-          </Button>
-        </Link>
+        {session?.user?.role === "CASHIER" && (
+          <Link href="/admin/jadwal/tambah">
+            <Button className="bg-primary">
+              <Plus size={16} />
+              Tambah Jadwal
+            </Button>
+          </Link>
+        )}
       </div>
 
       <div className="rounded-md border">

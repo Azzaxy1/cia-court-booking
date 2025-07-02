@@ -25,9 +25,6 @@ interface Props {
 }
 
 const OrderChartClient = ({ chartConfig, chartDataOrders }: Props) => {
-  console.log("chartDataOrders", chartDataOrders);
-  console.log("chartConfig", chartConfig);
-
   return (
     <div className="p-4 border rounded-lg">
       <h2 className="text-lg font-semibold mb-6">Total Pemesanan</h2>

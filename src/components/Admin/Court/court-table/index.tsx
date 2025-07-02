@@ -9,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -32,17 +31,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getColumns } from "../columns";
 
 interface CourtTableProps {
   data: Court[];
-  columns: ColumnDef<Court>[];
+  role: string;
 }
 
-const CourtTable = ({ data, columns }: CourtTableProps) => {
+const CourtTable = ({ data, role }: CourtTableProps) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
+  const columns = getColumns(role);
 
   const table = useReactTable({
     data,
