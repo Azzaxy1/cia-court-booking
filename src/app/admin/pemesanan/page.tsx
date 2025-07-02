@@ -1,8 +1,6 @@
 import React from "react";
-import { columns } from "@/components/Admin/Pemesanan/columns";
 import { getBookings } from "@/lib/db";
 import OrderTable from "@/components/Admin/Pemesanan/order-table";
-import { ColumnDef } from "@tanstack/react-table";
 import { Booking, BookingStatus, Court, User } from "@/app/generated/prisma"; // Import Court dan User
 
 interface ManageOrderProps {
@@ -65,10 +63,7 @@ const ManageOrder = async ({ searchParams }: ManageOrderProps) => {
         Kelola Pemesanan
       </h1>
       <div className="mt-2 w-full">
-        <OrderTable
-          data={bookings as BookingWithRelations[]}
-          columns={columns as ColumnDef<BookingWithRelations>[]}
-        />
+        <OrderTable data={bookings as BookingWithRelations[]} />
       </div>
     </section>
   );

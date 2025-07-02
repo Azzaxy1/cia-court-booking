@@ -1,7 +1,6 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -39,6 +38,7 @@ import {
 import { Court, Schedule } from "@/app/generated/prisma";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { getColumns } from "../columns";
 
 interface ScheduleWithCourt extends Schedule {
   court: Court;
@@ -46,10 +46,9 @@ interface ScheduleWithCourt extends Schedule {
 
 interface Props {
   data: ScheduleWithCourt[];
-  columns: ColumnDef<ScheduleWithCourt>[];
 }
 
-const ScheduleTable = ({ data, columns }: Props) => {
+const ScheduleTable = ({ data }: Props) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filtering, setFiltering] = useState("");
   const [pagination, setPagination] = useState({
@@ -58,6 +57,7 @@ const ScheduleTable = ({ data, columns }: Props) => {
   });
   const [selectedCourt, setSelectedCourt] = useState("all");
   const { data: session } = useSession();
+  const columns = getColumns(session?.user?.role || "ADMIN"); // Provide a default string if role is undefined
 
   const filteredData = useMemo(() => {
     if (selectedCourt === "all") {

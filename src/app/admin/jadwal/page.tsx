@@ -1,5 +1,3 @@
-import { columns } from "@/components/Admin/Schedule/columns";
-
 import { getAllSchedules } from "@/lib/db";
 import ScheduleTable from "@/components/Admin/Schedule/schedule-table";
 
@@ -13,7 +11,7 @@ const ManageSchedule = async () => {
       </h1>
       <div className="mt-2 w-full">
         <div className="flex justify-end mb-4"></div>
-        <ScheduleTable data={schedules} columns={columns} />
+        <ScheduleTable data={schedules} />
       </div>
     </section>
   );

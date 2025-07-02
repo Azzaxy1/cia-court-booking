@@ -1,7 +1,6 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -41,16 +40,17 @@ import { debounce } from "lodash";
 import { PiCourtBasketball } from "react-icons/pi";
 import { BookingWithRelations } from "@/app/admin/pemesanan/page";
 import { useSession } from "next-auth/react";
+import { getColumns } from "../columns";
 
 interface Props {
   data: BookingWithRelations[];
-  columns: ColumnDef<BookingWithRelations>[];
 }
 
-const OrderTable = ({ data, columns }: Props) => {
+const OrderTable = ({ data }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
+  const columns = getColumns(session?.user?.role || "ADMIN");
 
   const initialSearch = searchParams.get("search") || "";
   const initialCourt = searchParams.get("court") || "all";
