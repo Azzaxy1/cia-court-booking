@@ -180,10 +180,10 @@ const OrderTable = ({ data }: Props) => {
           <div className="flex items-center gap-2">
             <Input
               type="text"
-              placeholder="Cari..."
+              placeholder="Cari nama atau lapangan"
               value={filtering}
               onChange={handleSearchChange}
-              className="w-full max-w-xs"
+              className="w-full max-w-sm"
             />
             <Button
               variant="outline"
