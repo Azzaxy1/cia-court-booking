@@ -18,9 +18,11 @@ import {
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/Admin/Footer";
+import { useSession } from "next-auth/react";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   const path = pathname.split("/").pop();
 
@@ -53,6 +55,18 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
+            <div className="ml-auto flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">
+                Masuk sebagai{" "}
+                <span className="font-semibold text-primary">
+                  {session?.user?.role === "OWNER"
+                    ? "Pemilik"
+                    : session?.user?.role === "CASHIER"
+                    ? "Kasir"
+                    : "Admin"}
+                </span>
+              </p>
+            </div>
           </header>
           <div className="flex flex-col gap-4 p-4">{children}</div>
         </SidebarInset>
