@@ -29,7 +29,13 @@ import { z } from "zod";
 import { orderSchema } from "@/validation";
 import { createBooking, updateBooking } from "@/services/mainService";
 import toast from "react-hot-toast";
-import { Booking, Court, Schedule, User } from "@/app/generated/prisma";
+import {
+  Booking,
+  BookingStatus,
+  Court,
+  Schedule,
+  User,
+} from "@/app/generated/prisma";
 
 type OrderFormType = z.infer<typeof orderSchema>;
 
@@ -52,6 +58,8 @@ interface Props {
 const OrderForm = ({ courts, isAddForm, order }: Props) => {
   const router = useRouter();
 
+  console.log("OrderForm rendered", order);
+
   const {
     register,
     handleSubmit,
@@ -73,6 +81,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
             available: order.Schedule[0].available,
           }
         : undefined,
+      status: order?.status || "Paid",
     },
   });
 
@@ -263,6 +272,29 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
               <div className="text-red-500">Tidak ada jadwal tersedia</div>
             )}
           </div>
+          {!isAddForm && order?.status !== "Paid" && (
+            <div>
+              <Label>Status</Label>
+              <Select
+                value={watch("status")}
+                onValueChange={(value) =>
+                  setValue("status", value as BookingStatus)
+                }
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(BookingStatus).map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </CardContent>
         <CardFooter className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => router.back()}>

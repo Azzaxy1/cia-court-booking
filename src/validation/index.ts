@@ -67,6 +67,9 @@ const orderSchema = z.object({
   date: z.date().optional(),
   scheduleId: z.string().optional(),
   timeSlot: z.string().optional(),
+  status: z.enum(["Paid", "Pending", "Canceled", "Refunded"], {
+    errorMap: () => ({ message: "Status tidak valid" }),
+  }),
 });
 
 export { authSchema, profileSchema, courtSchema, scheduleSchema, orderSchema };
