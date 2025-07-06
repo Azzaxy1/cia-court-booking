@@ -104,7 +104,7 @@ const LoginAdminForm = ({ className }: Props) => {
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-3">
                       <FaSpinner className="animate-spin mr-2" size={16} />{" "}
-                      Loading...
+                      Memproses...
                     </span>
                   ) : (
                     "Login"

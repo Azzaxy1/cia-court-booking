@@ -181,7 +181,7 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
                   {isSubmitting || isPending ? (
                     <span className="flex items-center justify-center gap-3">
                       <FaSpinner className="animate-spin mr-2" size={16} />{" "}
-                      Loading...
+                      Memproses...
                     </span>
                   ) : isLogin ? (
                     "Masuk"
