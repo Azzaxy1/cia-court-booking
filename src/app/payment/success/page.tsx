@@ -74,7 +74,6 @@ const PaymentSuccess = () => {
               <span className="text-gray-500">Total Pembayaran</span>
               <span className="font-medium">{formatRupiah(data?.amount)}</span>
             </div>
-            {/* Buatkan tanggal */}
             <div className="flex justify-between">
               <span className="text-gray-500">Tanggal Pembayaran</span>
               <span className="font-medium">
