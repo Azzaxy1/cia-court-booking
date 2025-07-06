@@ -15,6 +15,13 @@ export async function GET(req: Request) {
 
   const transaction = await prisma.transaction.findFirst({
     where: { midtransOrderId: orderId },
+    include: {
+      booking: {
+        include: {
+          court: true,
+        },
+      },
+    },
   });
 
   if (!transaction) {
@@ -32,5 +39,6 @@ export async function GET(req: Request) {
     paymentMethod: transaction.paymentMethod,
     status: transaction.status,
     date: transaction.createdAt.toISOString(),
+    courtName: transaction.booking.court.name,
   });
 }

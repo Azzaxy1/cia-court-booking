@@ -50,7 +50,7 @@ const PaymentSuccess = () => {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center bg-green-50 rounded-t-lg pb-6">
           <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircle className="h-10 w-10 text-green-500" />
+            <CheckCircle className="h-10 w-10 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold text-green-700">
             Pembayaran Berhasil!
@@ -67,9 +67,25 @@ const PaymentSuccess = () => {
               <span className="font-medium">{data?.orderId}</span>
             </div>
             <div className="flex justify-between">
+              <span className="text-gray-500">Nama Lapangan</span>
+              <span className="font-medium">{data?.courtName}</span>
+            </div>
+            <div className="flex justify-between">
               <span className="text-gray-500">Total Pembayaran</span>
               <span className="font-medium">{formatRupiah(data?.amount)}</span>
             </div>
+            {/* Buatkan tanggal */}
+            <div className="flex justify-between">
+              <span className="text-gray-500">Tanggal Pembayaran</span>
+              <span className="font-medium">
+                {new Date(data?.date).toLocaleDateString("id-ID", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+            </div>
+
             <div className="flex justify-between">
               <span className="text-gray-500">Metode Pembayaran</span>
               <span className="font-medium">{data?.paymentMethod}</span>
@@ -101,7 +117,7 @@ const PaymentSuccess = () => {
             Kembali ke Beranda
           </Button>
           <Button
-            className="w-full bg-green-600 hover:bg-green-700"
+            className="w-full bg-primary hover:bg-green-700"
             onClick={handleViewOrder}
           >
             Lihat Pesanan
