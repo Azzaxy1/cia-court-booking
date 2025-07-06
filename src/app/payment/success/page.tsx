@@ -47,7 +47,7 @@ const PaymentSuccess = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen md:pt-24 md:pb-10 bg-gray-50 p-4">
-      <Card className="w-full max-w-md shadow-lg">
+      <Card className="w-full max-w-lg shadow-lg">
         <CardHeader className="text-center bg-green-50 rounded-t-lg pb-6">
           <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
             <CheckCircle className="h-10 w-10 text-primary" />
