@@ -28,7 +28,6 @@ export async function POST(req: Request) {
       },
       item_details: itemDetails,
       customer_details: customerDetails,
-      finish_redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/success?order_id=${orderId}`,
     };
 
     const transaction = await snap.createTransaction(parameter);
@@ -51,6 +50,8 @@ export async function POST(req: Request) {
         order_id: orderId,
         token: transaction.token,
         redirect_url: transaction.redirect_url,
+        status: transaction.status,
+        payment_type: transaction.payment_type,
       },
       { status: 200 }
     );

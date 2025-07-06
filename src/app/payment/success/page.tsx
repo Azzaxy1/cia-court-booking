@@ -15,43 +15,16 @@ import { Separator } from "@/components/ui/separator";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getPaymentDetail } from "@/services/mainService";
-import { formatRupiah, formattedDate } from "@/lib/utils";
-
-// interface TransactionDetails {
-//   orderId: string;
-//   amount: string;
-//   paymentMethod: string;
-//   status: string;
-//   date: string;
-// }
+import { formatRupiah } from "@/lib/utils";
 
 const PaymentSuccess = () => {
   const router = useRouter();
   const orderId = useSearchParams().get("order_id");
-  // const amount = useSearchParams().get("amount");
-  // const [transactionDetails, setTransactionDetails] =
-  //   useState<TransactionDetails | null>(null);
-  // const [loading, setLoading] = useState(true);
 
   const { data, isLoading } = useQuery({
     queryKey: ["transactionDetails", orderId],
     queryFn: () => getPaymentDetail(orderId as string),
   });
-
-  // useEffect(() => {
-  //   if (orderId) {
-  //     setTimeout(() => {
-  //       setTransactionDetails({
-  //         orderId: "INV-20250312-001",
-  //         amount: typeof amount === "string" ? amount : "Rp 250.000",
-  //         date: new Date().toLocaleString("id-ID"),
-  //         paymentMethod: "Transfer Bank",
-  //         status: "Berhasil",
-  //       });
-  //       setLoading(false);
-  //     }, 1000);
-  //   }
-  // }, [orderId, amount]);
 
   const handleBackToHome = () => {
     router.push("/");
@@ -98,16 +71,14 @@ const PaymentSuccess = () => {
               <span className="font-medium">{formatRupiah(data?.amount)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Tanggal</span>
-              <span className="font-medium">{formattedDate(data?.date)}</span>
-            </div>
-            <div className="flex justify-between">
               <span className="text-gray-500">Metode Pembayaran</span>
               <span className="font-medium">{data?.paymentMethod}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Status</span>
-              <span className="font-medium text-green-600">{data?.status}</span>
+              <span className="font-medium text-green-600">
+                {data?.status === "settlement" ? "Paid" : data.status}
+              </span>
             </div>
           </div>
 

@@ -65,11 +65,12 @@ const SideBooking = ({ court }: Props) => {
     mutationFn: paymentMidtrans,
     onSuccess: (data) => {
       const { token } = data;
+      console.log("DATA", data);
       if (window.snap) {
         window.snap.pay(token, {
           onSuccess: (data) => {
-            // Snap Redirect: langsung arahkan ke halaman pembayaran Midtrans
-            router.push((data as { redirect_url: string }).redirect_url);
+            console.log("DATA ON SUCCESS", data);
+            router.push(`/payment/success?order_id=${data.order_id}`);
           },
           onError: () => {
             toast.error("Pesan lapangan gagal!");
