@@ -5,13 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, Phone, User } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { MdEmail } from "react-icons/md";
 import { signOut, useSession } from "next-auth/react";
 
 const SideProfile = () => {
   const { data: session } = useSession();
+  const [imageError, setImageError] = useState(false);
+  console.log("Session Data:", session?.user);
 
   const handleLogout = async () => {
     try {
@@ -31,20 +33,38 @@ const SideProfile = () => {
           </div>
         </CardHeader>
         <CardContent className="flex flex-col items-center pb-6">
-          <Avatar className="h-24 w-24 mb-4">
-            <AvatarImage
-              src={session?.user.image || ""}
-              alt={session?.user.name || "Avatar"}
-            />
+          <Avatar className="h-24 w-24 mb-4  shadow-lg">
+            {!imageError && session?.user?.image ? (
+              <AvatarImage
+                src={session.user.image}
+                alt={session?.user?.name || "User Avatar"}
+                className="object-cover"
+                onError={() => {
+                  setImageError(true);
+                }}
+                onLoad={() => {
+                  console.log(
+                    "Image loaded successfully:",
+                    session?.user?.image
+                  );
+                }}
+              />
+            ) : null}
             <AvatarFallback className="text-2xl bg-blue-100 text-blue-600">
-              {(session?.user?.name || "")
+              {(session?.user?.name || "U")
                 .split(" ")
                 .map((n) => n[0])
-                .join("")}
+                .join("")
+                .toUpperCase()
+                .slice(0, 2)}
             </AvatarFallback>
           </Avatar>
-          <h2 className="text-xl font-bold mb-1">{session?.user.name}</h2>
-          <p className="text-gray-500 mb-4">{session?.user.email}</p>
+          <h2 className="text-xl font-bold mb-1 text-center">
+            {session?.user.name}
+          </h2>
+          <p className="text-gray-500 mb-4 text-center">
+            {session?.user.email}
+          </p>
           <Link href="/login" className="w-full">
             <Button variant="outline" className="w-full" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" /> Keluar
