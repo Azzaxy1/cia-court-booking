@@ -2,8 +2,8 @@ import AuthForm from "@/components/Auth/AuthForm";
 
 const RegisterPage = () => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-muted p-6 md:p-10">
-      <div className="w-full max-w-sm md:max-w-3xl">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-6xl">
         <AuthForm />
       </div>
     </div>
