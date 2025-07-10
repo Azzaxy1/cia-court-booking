@@ -81,19 +81,6 @@ export async function POST(req: Request) {
         },
       });
 
-      // Create transaction record
-      await tx.transaction.create({
-        data: {
-          bookingId: booking.id,
-          transactionId: `TRX-${Date.now()}-${Math.floor(
-            Math.random() * 10000
-          )}`,
-          amount,
-          paymentMethod: paymentMethod || "Cash",
-          status: status === "Paid" ? "Paid" : "Pending",
-        },
-      });
-
       // Update schedule
       await tx.schedule.update({
         where: { id: scheduleId },

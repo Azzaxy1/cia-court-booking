@@ -1,10 +1,13 @@
 import React from "react";
 import { columns } from "@/components/Admin/Income/columns";
-import { getTransactions } from "@/lib/db";
+import { getTransactionsWithDetails, getCourtsForFilter } from "@/lib/db";
 import IncomeTable from "@/components/Admin/Income/income-table";
 
 const ManageIncome = async () => {
-  const transactions = await getTransactions();
+  const [transactions, courts] = await Promise.all([
+    getTransactionsWithDetails(),
+    getCourtsForFilter(),
+  ]);
 
   return (
     <section className="container mx-auto">
@@ -13,7 +16,7 @@ const ManageIncome = async () => {
       </h1>
       <div className="mt-2 w-full">
         <div className="flex justify-end mb-4"></div>
-        <IncomeTable data={transactions} columns={columns} />
+        <IncomeTable data={transactions} columns={columns} courts={courts} />
       </div>
     </section>
   );

@@ -42,7 +42,7 @@ const Location = () => {
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   Jam Operasional
                 </h3>
-                <p className="text-gray-600">Setiap Hari: 07.00 - 23.00</p>
+                <p className="text-gray-600">Setiap Hari: 07.00 - 24.00</p>
               </div>
             </div>
 

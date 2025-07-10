@@ -81,11 +81,15 @@ export const getBookings = async (filters?: GetBookingsFilters) => {
   });
 };
 
-export const getTransactions = async () => {
+export const getTransactionsWithDetails = async () => {
   return await prisma.transaction.findMany({
+    where: {
+      status: { in: ["settlement", "capture", "paid"] },
+    },
     include: {
       booking: {
         include: {
+          court: true,
           user: true,
         },
       },
@@ -93,6 +97,18 @@ export const getTransactions = async () => {
     orderBy: {
       createdAt: "desc",
     },
+  });
+};
+
+export const getCourtsForFilter = async () => {
+  return await prisma.court.findMany({
+    where: { isDeleted: false },
+    select: {
+      id: true,
+      name: true,
+      type: true,
+    },
+    orderBy: { name: "asc" },
   });
 };
 

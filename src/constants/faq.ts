@@ -27,6 +27,6 @@ export const faqData = [
     id: 6,
     question: "Apakah lapangan tersedia 24 jam?",
     answer:
-      "Lapangan kami beroperasi dari pukul 07.00 hingga 23.00 di setiap harinya.",
+      "Lapangan kami beroperasi dari pukul 07.00 hingga 24.00 di setiap harinya.",
   },
 ] as const;

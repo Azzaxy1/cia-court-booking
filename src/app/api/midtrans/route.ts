@@ -16,6 +16,25 @@ export async function POST(req: Request) {
       );
     }
 
+    const existingTransaction = await prisma.transaction.findFirst({
+      where: {
+        OR: [{ bookingId }, { midtransOrderId: orderId }],
+      },
+    });
+
+    if (existingTransaction) {
+      return NextResponse.json(
+        {
+          order_id: existingTransaction.midtransOrderId,
+          token: existingTransaction.midtransToken,
+          redirect_url: existingTransaction.paymentUrl,
+          status: existingTransaction.status,
+          payment_type: existingTransaction.paymentMethod,
+        },
+        { status: 200 }
+      );
+    }
+
     const snap = new midtransClient.Snap({
       isProduction: false,
       serverKey,
@@ -35,7 +54,7 @@ export async function POST(req: Request) {
       data: {
         bookingId,
         paymentMethod: "BankTransfer",
-        transactionId: transaction.token,
+        transactionId: `TRX-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         amount,
         midtransToken: transaction.token,
         midtransOrderId: orderId,

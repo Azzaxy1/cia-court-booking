@@ -8,12 +8,27 @@ import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { Transaction } from "@/app/generated/prisma";
 
-interface TransactionWithBooking extends Transaction {
+export interface TransactionWithBooking extends Transaction {
   booking: {
+    date: string | null | Date;
+    startTime: string;
+    endTime: string;
+    courtType: string;
     user: {
       name: string;
     };
+    court: {
+      id: string;
+      name: string;
+      type: string;
+    };
   };
+}
+
+export interface CourtFilter {
+  id: string;
+  name: string;
+  type: string;
 }
 
 export const columns: ColumnDef<TransactionWithBooking>[] = [
@@ -25,15 +40,34 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     },
   },
   {
-    accessorKey: "booking",
+    accessorKey: "booking.user.name",
     header: "Pelanggan",
     cell: ({ row }) => {
-      const transaction = row.original;
-      return <div>{transaction.booking.user.name}</div>;
+      return <div>{row.original.booking.user.name}</div>;
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "booking.court.name",
+    header: "Lapangan",
+    cell: ({ row }) => {
+      return <div>{row.original.booking.court.name}</div>;
+    },
+  },
+  {
+    accessorKey: "booking.courtType",
+    header: "Tipe Lapangan",
+    cell: ({ row }) => {
+      const type = row.original.booking.courtType;
+      const typeMap = {
+        Futsal: "Futsal",
+        Badminton: "Badminton",
+        TenisMeja: "Tenis Meja",
+      };
+      return <div>{typeMap[type as keyof typeof typeMap] || type}</div>;
+    },
+  },
+  {
+    accessorKey: "booking.date",
     header: ({ column }) => {
       return (
         <Button
@@ -46,8 +80,23 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
       );
     },
     cell: ({ row }) => {
-      const date = row.getValue("createdAt") as Date;
-      return <div>{format(date, "d MMM yyyy", { locale: id })}</div>;
+      const booking = row.original.booking;
+      const date = booking?.date ? new Date(booking.date) : null;
+      return (
+        <div>{date ? format(date, "d MMM yyyy", { locale: id }) : "-"}</div>
+      );
+    },
+  },
+  {
+    accessorKey: "booking.timeSlot",
+    header: "Jam Bermain",
+    cell: ({ row }) => {
+      const { startTime, endTime } = row.original.booking;
+      return (
+        <div>
+          {startTime} - {endTime}
+        </div>
+      );
     },
   },
   {
@@ -83,6 +132,21 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <div>{row.getValue("status")}</div>,
+    cell: ({ row }) => {
+      const status = row.getValue("status") as string;
+      const statusMap = {
+        settlement: "Paid",
+        capture: "Paid",
+        paid: "Paid",
+        pending: "Pending",
+        expire: "Expired",
+        cancel: "Canceled",
+      };
+      return (
+        <div className="capitalize">
+          {statusMap[status as keyof typeof statusMap] || status}
+        </div>
+      );
+    },
   },
 ];

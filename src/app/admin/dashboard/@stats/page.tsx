@@ -41,7 +41,7 @@ const Stats = async () => {
           <p className="text-2xl sm:text-3xl 2xl:text-4xl font-bold">
             {formatRupiah(totalRevenue)}
           </p>
-          <p>Total Pendapatan</p>
+          <p>Total Pemasukan</p>
         </div>
       </div>
     </section>

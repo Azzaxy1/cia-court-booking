@@ -189,7 +189,7 @@ const courtInfo = {
       "Area Ganti dan Istirahat",
       "Skor Elektronik",
     ],
-    openHours: "07:00 - 23:00",
+    openHours: "07:00 - 24:00",
   },
   badminton: {
     title: "Lapangan Badminton",
@@ -201,7 +201,7 @@ const courtInfo = {
       "Net Standar BWF",
       "Area Istirahat",
     ],
-    openHours: "07:00 - 23:00",
+    openHours: "07:00 - 24:00",
   },
   tableTennis: {
     title: "Lapangan Tenis Meja",
@@ -213,7 +213,7 @@ const courtInfo = {
       "Ruangan Berpendingin",
       "Perlengkapan Tersedia",
     ],
-    openHours: "07:00 - 23:00",
+    openHours: "07:00 - 24:00",
   },
 };
 
