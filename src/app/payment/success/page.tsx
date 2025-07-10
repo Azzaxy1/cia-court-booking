@@ -1,7 +1,7 @@
 "use client";
 
 // import { useEffect, useState } from "react";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,15 +16,49 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getPaymentDetail } from "@/services/mainService";
 import { formatRupiah } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const PaymentSuccess = () => {
   const router = useRouter();
   const orderId = useSearchParams().get("order_id");
+  const [emailSent, setEmailSent] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(true);
 
   const { data, isLoading } = useQuery({
     queryKey: ["transactionDetails", orderId],
     queryFn: () => getPaymentDetail(orderId as string),
   });
+
+  useEffect(() => {
+    const sendConfirmationEmail = async () => {
+      try {
+        setIsProcessing(true);
+
+        const response = await axios.post("/api/send-payment-email", {
+          orderId,
+          bookingData: data,
+        });
+
+        if (response.status === 200) {
+          setEmailSent(true);
+        }
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Gagal mengirim email konfirmasi. Silakan coba lagi."
+        );
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
+    if (orderId && data && !emailSent) {
+      sendConfirmationEmail();
+    }
+  }, [orderId, data, emailSent]);
 
   const handleBackToHome = () => {
     router.push("/");
@@ -58,6 +92,25 @@ const PaymentSuccess = () => {
           <CardDescription className="text-green-600">
             Transaksi Anda telah berhasil diproses
           </CardDescription>
+
+          {/* Email status indicator */}
+          <div className="mt-4">
+            {isProcessing ? (
+              <div className="flex items-center justify-center gap-2 text-sm text-blue-600">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                <span>Mengirim konfirmasi email...</span>
+              </div>
+            ) : emailSent ? (
+              <div className="flex items-center justify-center gap-2 text-sm text-green-600">
+                <Mail className="h-4 w-4" />
+                <span>Konfirmasi telah dikirim ke email Anda</span>
+              </div>
+            ) : (
+              <div className="text-sm text-orange-600">
+                Email konfirmasi gagal dikirim
+              </div>
+            )}
+          </div>
         </CardHeader>
 
         <CardContent className="pt-6">

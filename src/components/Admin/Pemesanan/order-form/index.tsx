@@ -195,7 +195,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
           <div>
-            <Label>Nama Lapangan</Label>
+            <Label>Nama Pelanggan</Label>
             <Input
               {...register("customerName", { required: true })}
               placeholder="Masukkan nama pelanggan"
