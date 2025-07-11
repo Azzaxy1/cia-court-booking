@@ -125,16 +125,62 @@ export const getCourtsForFilter = async () => {
     orderBy: { name: "asc" },
   });
 };
-
 export const getAllSchedules = async () => {
   return await prisma.schedule.findMany({
     include: {
-      court: true,
+      court: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+        },
+      },
     },
-    orderBy: {
-      date: "asc",
-    },
+    orderBy: [{ date: "asc" }, { timeSlot: "asc" }],
   });
+};
+
+export const getScheduleStats = async () => {
+  const now = new Date();
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+  const endOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1
+  );
+
+  const [total, available, todaySchedules, weekSchedules] = await Promise.all([
+    prisma.schedule.count(),
+    prisma.schedule.count({ where: { available: true } }),
+    prisma.schedule.count({
+      where: {
+        date: {
+          gte: startOfToday,
+          lt: endOfToday,
+        },
+      },
+    }),
+    prisma.schedule.count({
+      where: {
+        date: {
+          gte: startOfToday,
+          lt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
+        },
+      },
+    }),
+  ]);
+
+  return {
+    total,
+    available,
+    occupied: total - available,
+    todaySchedules,
+    weekSchedules,
+  };
 };
 
 export const getBookingHistory = async (userId: string) => {
