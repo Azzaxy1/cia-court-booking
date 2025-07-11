@@ -87,14 +87,22 @@ export const generateChartOrder = (ordersData: Order[]): MonthlyData[] => {
       return;
 
     const fieldMap: { [key: string]: keyof MonthlyData } = {
+      Futsal: "futsal",
       futsal: "futsal",
+      Badminton: "badminton",
       badminton: "badminton",
+      TenisMeja: "tenisMeja",
+      "Tenis Meja": "tenisMeja",
       "tenis meja": "tenisMeja",
+      tenismeja: "tenisMeja",
     };
 
-    const fieldType = fieldMap[order.fieldType.toLowerCase()] || "";
+    const fieldType = fieldMap[order.fieldType] || "";
 
-    if (!fieldType) return;
+    if (!fieldType) {
+      console.warn("Unmapped field type:", order.fieldType);
+      return;
+    }
 
     const key = `${month} ${year}`;
 
@@ -110,7 +118,7 @@ export const generateChartOrder = (ordersData: Order[]): MonthlyData[] => {
     monthlyData[key][fieldType] = (monthlyData[key][fieldType] as number) + 1;
   });
 
-  return lastSixMonths().map(
+  const result = lastSixMonths().map(
     ({ month, year }) =>
       monthlyData[`${month} ${year}`] || {
         month: `${month} ${year}`,
@@ -119,6 +127,8 @@ export const generateChartOrder = (ordersData: Order[]): MonthlyData[] => {
         tenisMeja: 0,
       }
   );
+
+  return result;
 };
 
 interface Revenue {

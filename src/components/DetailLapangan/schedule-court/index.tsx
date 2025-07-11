@@ -18,6 +18,7 @@ import { getCourtSchedule } from "@/services/courtService";
 import { useQuery } from "@tanstack/react-query";
 import { useSchedule } from "@/contexts/ScheduleContext";
 import { FaSpinner } from "react-icons/fa";
+import { id } from "date-fns/locale";
 
 interface Props {
   court: CourtReal;
@@ -149,6 +150,7 @@ const ScheduleCourt = ({ court }: Props) => {
               selected={selectedDate}
               onSelect={setSelectedDate}
               className="w-full md:w-1/2 mx-auto flex justify-center"
+              locale={id}
               initialFocus={true}
               disabled={(date) => {
                 const now = new Date();
