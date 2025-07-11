@@ -1,4 +1,3 @@
-// components/Admin/Pemesanan/order-table/index.tsx
 "use client";
 import React, { useMemo, useState } from "react";
 import {
@@ -193,7 +192,7 @@ const OrderTable = ({ data }: Props) => {
   }, [data]);
 
   const table = useReactTable({
-    data: filteredData, // ✅ GUNAKAN FILTERED DATA
+    data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -244,7 +243,7 @@ const OrderTable = ({ data }: Props) => {
               </label>
               <Input
                 type="text"
-                placeholder="Nama, lapangan, email, atau metode bayar..."
+                placeholder="Nama, lapangan, atau email..."
                 value={filtering}
                 onChange={handleSearchChange}
                 className="w-full"

@@ -1,4 +1,3 @@
-// components/Admin/Pemesanan/columns/index.tsx
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { id } from "date-fns/locale";
@@ -9,7 +8,7 @@ import ActionsCell from "../../ActionsCell";
 export interface BookingWithUser extends Booking {
   user: {
     name: string;
-    email?: string; // ✅ TAMBAH EMAIL
+    email?: string;
   };
   court: {
     name: string;
@@ -29,7 +28,6 @@ export const getColumns = (role: string): ColumnDef<BookingWithUser>[] => {
       cell: ({ row }) => (
         <div>
           <div className="font-medium">{row.original.user.name}</div>
-          {/* ✅ TAMPILKAN EMAIL DI BAWAH NAMA */}
           {row.original.user.email && (
             <div className="text-xs text-gray-500">
               {row.original.user.email}

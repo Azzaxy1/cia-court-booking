@@ -450,13 +450,14 @@ const ScheduleTable = ({ data, scheduleStats }: Props) => {
       </Card>
 
       {/* Search and Actions */}
-      <div className="flex  gap-4">
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4 text-gray-500" />
           <Input
             placeholder="Cari lapangan, waktu, atau tipe hari..."
             value={filtering}
             onChange={(e) => setFiltering(e.target.value)}
+            className="max-w-2xl w-full"
           />
         </div>
 
