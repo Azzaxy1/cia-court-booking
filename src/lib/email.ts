@@ -109,7 +109,7 @@ export const sendPaymentSuccessEmail = async (
                 <p><strong>Informasi Penting:</strong></p>
                 <ul>
                     <li>Silakan datang 15 menit sebelum waktu bermain</li>
-                    <li>Tunjukkan email ini atau ID pesanan kepada petugas</li>
+                    <li>Tunjukkan email ini kepada kasir</li>
                     <li>Hubungi kami di +62 851-8219-8144 jika ada pertanyaan</li>
                 </ul>
                 

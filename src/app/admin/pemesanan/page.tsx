@@ -1,7 +1,7 @@
 import React from "react";
 import { getBookings } from "@/lib/db";
 import OrderTable from "@/components/Admin/Pemesanan/order-table";
-import { Booking, BookingStatus, Court, User } from "@/app/generated/prisma"; // Import Court dan User
+import { Booking, BookingStatus, Court, User } from "@/app/generated/prisma";
 
 interface ManageOrderProps {
   searchParams: Promise<{
@@ -63,7 +63,7 @@ const ManageOrder = async ({ searchParams }: ManageOrderProps) => {
         Kelola Pemesanan
       </h1>
       <div className="mt-2 w-full">
-        <OrderTable data={bookings as BookingWithRelations[]} />
+        <OrderTable data={bookings as unknown as BookingWithRelations[]} />
       </div>
     </section>
   );

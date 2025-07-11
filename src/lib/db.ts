@@ -52,6 +52,14 @@ export const getBookings = async (filters?: GetBookingsFilters) => {
         },
       },
       {
+        user: {
+          email: {
+            contains: filters.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
         court: {
           name: {
             contains: filters.search,
@@ -71,7 +79,13 @@ export const getBookings = async (filters?: GetBookingsFilters) => {
   return await prisma.booking.findMany({
     where,
     include: {
-      user: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
       court: true,
       Schedule: true,
     },
