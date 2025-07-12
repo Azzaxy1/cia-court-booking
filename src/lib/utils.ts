@@ -25,6 +25,14 @@ export const toUTCDateOnly = (dateInput: string | Date) => {
   return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
 };
 
+export const calculateEndTime = (startTime: string, duration: number = 1) => {
+  const [hours, minutes] = startTime.split(":").map(Number);
+  const endHour = hours + duration;
+  return `${endHour.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}`;
+};
+
 // Format nama sport
 export const formatSportType = (type: string) => {
   switch (type) {

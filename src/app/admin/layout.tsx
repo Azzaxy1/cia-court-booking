@@ -31,7 +31,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     lapangan: "Kelola Lapangan",
     jadwal: "Kelola Jadwal",
     pemesanan: "Kelola Pemesanan",
-    pemasukan: "Kelola Pemasukan",
+    pemasukan: "Monitor Pemasukan",
   };
 
   const currentPage = pageTitles[path ?? ""] || "Admin";

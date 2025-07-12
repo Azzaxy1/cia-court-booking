@@ -62,6 +62,9 @@ const ManageOrder = async ({ searchParams }: ManageOrderProps) => {
       <h1 className="text-2xl sm:text-2xl 2xl:text-4xl font-semibold leading-tight text-primary">
         Kelola Pemesanan
       </h1>
+      <p className="text-gray-600 mt-2">
+        Manage dan monitor kelola pemesanan dengan mudah
+      </p>
       <div className="mt-2 w-full">
         <OrderTable data={bookings as unknown as BookingWithRelations[]} />
       </div>

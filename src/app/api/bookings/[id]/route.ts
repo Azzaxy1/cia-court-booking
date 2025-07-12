@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { calculateEndTime } from "@/lib/utils";
 
 export async function PUT(
   request: Request,
@@ -13,6 +14,7 @@ export async function PUT(
       where: { id },
       include: {
         user: true,
+        Schedule: true, // ✅ INCLUDE SCHEDULE LAMA
       },
     });
 
@@ -23,13 +25,30 @@ export async function PUT(
       );
     }
 
-    if (existingBooking.status === "Paid") {
-      return NextResponse.json(
-        { message: "Cannot edit paid booking" },
-        { status: 400 }
-      );
+    const endTime = calculateEndTime(data.startTime, data.duration || 1);
+
+    // ✅ JIKA ADA PERUBAHAN SCHEDULE, HANDLE SCHEDULE LAMA DAN BARU
+    if (data.scheduleId && existingBooking.scheduleId !== data.scheduleId) {
+      // Release schedule lama (jadikan available = true)
+      if (existingBooking.scheduleId) {
+        await prisma.schedule.update({
+          where: { id: existingBooking.scheduleId },
+          data: {
+            available: true, // ✅ JADIKAN AVAILABLE LAGI
+          },
+        });
+      }
+
+      // Book schedule baru (jadikan available = false)
+      await prisma.schedule.update({
+        where: { id: data.scheduleId },
+        data: {
+          available: false, // ✅ JADIKAN TIDAK AVAILABLE
+        },
+      });
     }
 
+    // ✅ UPDATE USER NAME
     await prisma.user.update({
       where: { id: existingBooking.userId },
       data: {
@@ -37,27 +56,45 @@ export async function PUT(
       },
     });
 
+    // ✅ UPDATE BOOKING DENGAN END TIME YANG BENAR
     const updatedBooking = await prisma.booking.update({
       where: { id },
       data: {
-        Schedule: data.scheduleId
-          ? { connect: { id: data.scheduleId } }
-          : undefined,
-        userId: data.userId,
+        Schedule: {
+          connect: { id: data.scheduleId || existingBooking.scheduleId },
+        },
         courtId: data.courtId,
         date: new Date(data.selectedDate),
         startTime: data.startTime,
-        duration: data.duration,
+        endTime: endTime, // ✅ CALCULATED END TIME
+        duration: data.duration || 1,
         amount: data.amount,
         status: data.status,
       },
       include: {
         user: true,
+        court: true,
+        Schedule: true,
       },
     });
 
+    console.log("Updated Booking:", updatedBooking);
+    console.log("New EndTime:", endTime);
+
+    // ✅ UPDATE TRANSACTION STATUS JIKA PERLU
+    if (data.status === "Paid") {
+      await prisma.transaction.updateMany({
+        where: { bookingId: id },
+        data: {
+          status: "paid",
+          paymentMethod: data.paymentMethod || "Cash",
+        },
+      });
+    }
+
     return NextResponse.json(updatedBooking);
   } catch (error) {
+    console.error("Update booking error:", error);
     return NextResponse.json(
       { message: "Internal server error", error: String(error) },
       { status: 500 }
@@ -92,7 +129,7 @@ export async function DELETE(
         { status: 400 }
       );
     }
-    
+
     if (existingBooking.Transaction && existingBooking.Transaction.length > 0) {
       return NextResponse.json(
         {

@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -36,6 +37,7 @@ import {
   Schedule,
   User,
 } from "@/app/generated/prisma";
+import { calculateEndTime } from "@/lib/utils";
 
 type OrderFormType = z.infer<typeof orderSchema>;
 
@@ -57,8 +59,6 @@ interface Props {
 
 const OrderForm = ({ courts, isAddForm, order }: Props) => {
   const router = useRouter();
-
-  console.log("OrderForm rendered", order);
 
   const {
     register,
@@ -142,6 +142,8 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
   });
 
   const onSubmit = async (data: OrderFormType) => {
+    const endTime = calculateEndTime(data.selectedSchedule?.timeSlot || "", 1);
+
     const bookingData = {
       scheduleId: data.selectedSchedule?.id ?? "",
       customerName: data.customerName,
@@ -160,8 +162,9 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
         : "",
       amount: data.selectedSchedule?.price ?? 0,
       startTime: data.selectedSchedule?.timeSlot ?? "",
+      endTime: endTime,
       duration: 1,
-      status: "Paid",
+      status: data.status as BookingStatus,
     };
 
     if (isAddForm) {
@@ -175,6 +178,17 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
     }
   };
 
+  // Tambahkan di OrderForm component untuk debugging
+  console.log("Current order:", order);
+  console.log("Current schedules:", schedules);
+  console.log("Selected schedule:", watch("selectedSchedule"));
+  console.log(
+    "Calculated end time:",
+    watch("selectedSchedule")
+      ? calculateEndTime(watch("selectedSchedule")?.timeSlot ?? "", 1)
+      : "N/A"
+  );
+
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
@@ -186,9 +200,23 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
             ? "Isi form berikut untuk membuat pemesanan baru."
             : "Edit detail pemesanan yang sudah ada."}
         </CardDescription>
-        {!isAddForm && order?.status === "Paid" && (
-          <div className="text-yellow-600 bg-yellow-50 p-2 rounded-md">
-            Pemesanan ini sudah dibayar dan tidak dapat diubah
+        {!isAddForm && order && (
+          <div className="bg-blue-50 p-3 rounded-md">
+            <h4 className="font-medium text-blue-900 mb-2">
+              Pemesanan Saat Ini:
+            </h4>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <span className="text-blue-700">Jadwal Lama:</span>
+                <Badge variant="outline" className="ml-2">
+                  {order.startTime} - {order.endTime}
+                </Badge>
+              </div>
+              <div>
+                <span className="text-blue-700">Lapangan:</span>
+                <span className="ml-2">{order.court.name}</span>
+              </div>
+            </div>
           </div>
         )}
       </CardHeader>
@@ -241,32 +269,67 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
           </div>
           <div>
             <Label>Jadwal</Label>
+            {watch("selectedSchedule") && (
+              <div className="mb-2 p-2 bg-green-50 rounded-md text-white">
+                <span className="text-green-700 text-sm">Jadwal Dipilih: </span>
+                <Badge variant="default">
+                  {watch("selectedSchedule")?.timeSlot} -{" "}
+                  {calculateEndTime(
+                    watch("selectedSchedule")?.timeSlot || "",
+                    1
+                  )}
+                </Badge>
+                <span className="text-green-700 text-sm ml-2">
+                  (Rp {watch("selectedSchedule")?.price.toLocaleString("id-ID")}
+                  )
+                </span>
+              </div>
+            )}
             {isLoading ? (
               <div className="flex items-center gap-2">
                 <FaSpinner className="animate-spin" /> Memuat jadwal...
               </div>
             ) : schedules.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {schedules.map((schedule) => (
-                  <Button
-                    key={schedule.id}
-                    type="button"
-                    variant={
-                      watch("selectedSchedule")?.id === schedule.id
-                        ? "default"
-                        : schedule.available
-                        ? "outline"
-                        : "secondary"
-                    }
-                    disabled={!schedule.available}
-                    onClick={() => setValue("selectedSchedule", schedule)}
-                  >
-                    {schedule.timeSlot} <br />
-                    <span className="text-xs text-gray-500">
-                      Rp {schedule.price.toLocaleString("id-ID")}
-                    </span>
-                  </Button>
-                ))}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {schedules.map((schedule) => {
+                  const isSelected =
+                    watch("selectedSchedule")?.id === schedule.id;
+                  const endTime = calculateEndTime(schedule.timeSlot, 1);
+
+                  return (
+                    <Button
+                      key={schedule.id}
+                      type="button"
+                      variant={
+                        isSelected
+                          ? "default"
+                          : schedule.available
+                          ? "outline"
+                          : "secondary"
+                      }
+                      disabled={!schedule.available && !isSelected} // ✅ ALLOW CURRENT SELECTED EVEN IF NOT AVAILABLE
+                      onClick={() => setValue("selectedSchedule", schedule)}
+                      className="h-auto p-3 flex flex-col items-center"
+                    >
+                      <div className="font-medium">
+                        {schedule.timeSlot} - {endTime}
+                      </div>
+                      <div className="text-xs mt-1">
+                        Rp {schedule.price.toLocaleString("id-ID")}
+                      </div>
+                      {!schedule.available && !isSelected && (
+                        <Badge variant="destructive" className="mt-1 text-xs">
+                          Terbooked
+                        </Badge>
+                      )}
+                      {isSelected && (
+                        <Badge variant="default" className="mt-1 text-xs">
+                          Dipilih
+                        </Badge>
+                      )}
+                    </Button>
+                  );
+                })}
               </div>
             ) : (
               <div className="text-red-500">Tidak ada jadwal tersedia</div>
@@ -307,8 +370,8 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
               isUpdatePending ||
               !watch("customerName") ||
               !watch("courtId") ||
-              !watch("selectedSchedule") ||
-              (!isAddForm && order?.status === "Paid")
+              !watch("selectedSchedule")
+              // (!isAddForm && order?.status === "Paid")
             }
           >
             {isCreatePending || isUpdatePending ? (

@@ -137,6 +137,11 @@ export const getAllSchedules = async () => {
       },
     },
     orderBy: [{ date: "asc" }, { timeSlot: "asc" }],
+    where: {
+      court: {
+        isDeleted: false,
+      },
+    },
   });
 };
 

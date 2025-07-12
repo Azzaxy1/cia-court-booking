@@ -46,9 +46,7 @@ export async function POST(req: Request) {
         user = await prisma.user.create({
           data: {
             name: customerName,
-            email: `${customerName
-              .replace(/\s/g, "")
-              .toLowerCase()}@example.com`,
+            email: `${customerName.replace(/\s/g, "").toLowerCase()}@gmail.com`,
             role: "CUSTOMER",
           },
         });
@@ -80,6 +78,18 @@ export async function POST(req: Request) {
           status: status || "Pending",
         },
       });
+
+      if (session.user.role === "CASHIER") {
+        await tx.transaction.create({
+          data: {
+            bookingId: booking.id,
+            transactionId: `TRX-${Date.now()}`,
+            amount,
+            status: "paid",
+            paymentMethod: paymentMethod || "Cash",
+          },
+        });
+      }
 
       // Update schedule
       await tx.schedule.update({
