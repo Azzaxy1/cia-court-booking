@@ -376,12 +376,14 @@ const CourtTable = ({ data, role }: CourtTableProps) => {
           />
         </div>
 
-        <Link href="/admin/lapangan/tambah">
-          <Button className="bg-primary flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Tambah Lapangan
-          </Button>
-        </Link>
+        {role === "CASHIER" && (
+          <Link href="/admin/lapangan/tambah">
+            <Button className="bg-primary flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Tambah Lapangan
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Enhanced Table */}

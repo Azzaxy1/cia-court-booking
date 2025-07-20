@@ -316,7 +316,7 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
                 <div className="space-y-4">
                   <h2 className="text-3xl font-bold">CIA Serang</h2>
                   <p className="text-lg text-white/90 max-w-md">
-                    Platform terpercaya untuk penyewaan lapangan olahraga di
+                    Tempat terpercaya untuk penyewaan lapangan olahraga di
                     Serang. Booking mudah, bayar praktis!
                   </p>
                 </div>

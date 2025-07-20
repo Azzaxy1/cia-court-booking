@@ -84,7 +84,6 @@ const ScheduleTable = ({ data, scheduleStats }: Props) => {
     pageIndex: 0,
     pageSize: 10,
   });
-  console.log("Schedule data:", data);
 
   const [filters, setFilters] = useState<FilterState>({
     court: "all",
