@@ -128,7 +128,6 @@ const BookingHistoryList = () => {
 
   return (
     <div className="space-y-4">
-      {/* Header dengan informasi total */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Riwayat Pembayaran</h2>
         <p className="text-sm text-gray-500">
@@ -136,14 +135,12 @@ const BookingHistoryList = () => {
         </p>
       </div>
 
-      {/* List of bookings */}
       <div className="space-y-4">
         {bookings.map((booking) => (
           <BookingHistory key={booking.id} booking={booking} />
         ))}
       </div>
 
-      {/* Pagination */}
       <Pagination
         currentPage={pagination.currentPage}
         totalPages={pagination.totalPages}

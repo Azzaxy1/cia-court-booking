@@ -9,6 +9,7 @@ import { IUser } from "@/types/User";
 import { profileSchema } from "@/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -19,6 +20,7 @@ interface Props {
 
 const EditProfileForm = ({ user }: Props) => {
   const queryClient = useQueryClient();
+  const { update } = useSession();
 
   const {
     handleSubmit,
@@ -35,10 +37,12 @@ const EditProfileForm = ({ user }: Props) => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: updateProfile,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["user"] });
-        window.location.reload();
+
+        await update();
+
         toast.success("Profil berhasil diperbarui");
       } else {
         toast.error(data.message || "Gagal memperbarui profil");

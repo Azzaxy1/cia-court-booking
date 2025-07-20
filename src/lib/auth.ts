@@ -53,15 +53,38 @@ export const authOptions: AuthOptions = {
           session.user.role = user.role;
           session.user.id = user.id;
           session.user.phone = user.phone;
+          session.user.name = user.name;
+          session.user.email = user.email;
         }
       }
       return session;
     },
-    async jwt({ token, user }: { token: any; user: any }) {
+    async jwt({
+      token,
+      user,
+      trigger,
+      session,
+    }: {
+      token: any;
+      user: any;
+      trigger?: any;
+      session?: any;
+    }) {
       if (user) {
         token.role = user.role;
         token.sub = user.id;
       }
+
+      if (trigger === "update" && session) {
+        const freshUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+        });
+        if (freshUser) {
+          token.name = freshUser.name;
+          token.phone = freshUser.phone;
+        }
+      }
+
       return token;
     },
   },
