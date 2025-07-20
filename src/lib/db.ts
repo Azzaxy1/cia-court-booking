@@ -188,23 +188,65 @@ export const getScheduleStats = async () => {
   };
 };
 
-export const getBookingHistory = async (userId: string) => {
-  return await prisma.booking.findMany({
-    where: {
-      userId: userId,
-    },
-    include: {
-      court: {
-        include: {
-          Schedule: true,
-        },
+export const getBookingHistory = async (
+  userId: string,
+  page: number = 1,
+  limit: number = 10
+) => {
+  const skip = (page - 1) * limit;
+
+  const [bookings, totalCount] = await Promise.all([
+    prisma.booking.findMany({
+      where: {
+        userId: userId,
       },
-      Transaction: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
+      include: {
+        court: {
+          include: {
+            Schedule: true,
+          },
+        },
+        Transaction: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take: limit,
+    }),
+    prisma.booking.count({
+      where: {
+        userId: userId,
+      },
+    }),
+  ]);
+
+  const bookingsWithCorrectPaymentMethod = bookings.map((booking) => {
+    const latestTransaction =
+      booking.Transaction && booking.Transaction.length > 0
+        ? booking.Transaction[booking.Transaction.length - 1]
+        : null;
+
+    return {
+      ...booking,
+      date: booking.date?.toISOString() || null, // ✅ ENSURE DATE IS STRING
+      paymentMethod:
+        latestTransaction?.paymentMethod || booking.paymentMethod || "Cash",
+    };
   });
+
+  const totalPages = Math.ceil(totalCount / limit);
+
+  return {
+    bookings: bookingsWithCorrectPaymentMethod,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalCount,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
+  };
 };
 
 export const getTotalBookingCurrentMonth = async () => {

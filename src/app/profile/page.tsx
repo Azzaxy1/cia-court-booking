@@ -9,12 +9,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { History } from "lucide-react";
 import SideProfile from "@/components/Profile/side-profile";
-import BookingHistory from "@/components/Profile/booking-history";
+import BookingHistoryList from "@/components/Profile/booking-history-list";
 import EditProfileForm from "@/components/Profile/edit-profile";
-import { getBookingHistory } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { BsFillCartXFill } from "react-icons/bs";
 
 export const dynamic = "force-dynamic";
 
@@ -32,8 +30,6 @@ const ProfilePage = async () => {
     );
   }
 
-  const bookingHistories = await getBookingHistory(session.user.id);
-
   return (
     <div className="container mx-auto md:px-12 pt-28 pb-10">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -49,27 +45,7 @@ const ProfilePage = async () => {
 
             {/* Tab Pembayaran */}
             <TabsContent value="bookings">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Riwayat Pembayaran</h2>
-                {/* <Button variant="outline" size="sm">
-                  <History className="h-4 w-4 mr-2" /> Lihat Semua
-                </Button> */}
-              </div>
-
-              <div className="space-y-4">
-                {bookingHistories.length > 0 ? (
-                  bookingHistories.map((booking) => (
-                    <BookingHistory key={booking.id} booking={booking} />
-                  ))
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-36">
-                    <BsFillCartXFill className="h-20 w-20 text-gray-400 mb-4" />
-                    <p className="text-gray-500">
-                      Tidak ada pembayaran yang ditemukan
-                    </p>
-                  </div>
-                )}
-              </div>
+              <BookingHistoryList />
             </TabsContent>
 
             {/* Tab Profile */}

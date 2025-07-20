@@ -11,12 +11,38 @@ export const formatRupiah = (price: number) => {
   return `Rp. ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
 };
 
-export const formattedDate = (date: Date) => {
-  return format(date, "d MMMM yyyy", { locale: id });
+export const formattedDate = (date: Date | string | null | undefined) => {
+  if (!date) return "-";
+
+  try {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+
+    if (isNaN(dateObj.getTime())) {
+      return "-";
+    }
+
+    return format(dateObj, "d MMMM yyyy", { locale: id });
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return "-";
+  }
 };
 
-export const formattedTime = (date: Date) => {
-  return format(date, "HH:mm", { locale: id });
+export const formattedTime = (date: Date | string | null | undefined) => {
+  if (!date) return "-";
+
+  try {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+
+    if (isNaN(dateObj.getTime())) {
+      return "-";
+    }
+
+    return format(dateObj, "HH:mm", { locale: id });
+  } catch (error) {
+    console.error("Error formatting time:", error);
+    return "-";
+  }
 };
 
 export const toUTCDateOnly = (dateInput: string | Date) => {

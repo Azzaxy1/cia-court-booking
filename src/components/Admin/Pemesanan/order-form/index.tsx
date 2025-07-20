@@ -180,17 +180,6 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
     }
   };
 
-  // Tambahkan di OrderForm component untuk debugging
-  console.log("Current order:", order);
-  console.log("Current schedules:", schedules);
-  console.log("Selected schedule:", watch("selectedSchedule"));
-  console.log(
-    "Calculated end time:",
-    watch("selectedSchedule")
-      ? calculateEndTime(watch("selectedSchedule")?.timeSlot ?? "", 1)
-      : "N/A"
-  );
-
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
@@ -360,25 +349,33 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {watch("status") === "Canceled" && order?.status === "Paid" && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
                   <div className="flex items-center gap-2 text-yellow-800">
                     <span className="text-sm font-medium">⚠️ Peringatan:</span>
                   </div>
                   <p className="text-yellow-700 text-sm mt-1">
-                    Anda akan membatalkan pemesanan yang sudah dibayar. Jadwal akan dibebaskan dan transaksi akan diubah ke status failed.
+                    Anda akan membatalkan pemesanan yang sudah dibayar. Jadwal
+                    akan dibebaskan dan transaksi akan diubah ke status failed.
                   </p>
                 </div>
               )}
-              
+
               {watch("status") === "Paid" && (
                 <div>
                   <Label>Metode Pembayaran</Label>
                   <Select
                     value={watch("paymentMethod") || "Cash"}
                     onValueChange={(value) =>
-                      setValue("paymentMethod", value as "Cash" | "bank_transfer" | "qris" | "credit_card")
+                      setValue(
+                        "paymentMethod",
+                        value as
+                          | "Cash"
+                          | "bank_transfer"
+                          | "qris"
+                          | "credit_card"
+                      )
                     }
                     required
                   >
@@ -387,7 +384,9 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Cash">Cash (Tunai)</SelectItem>
-                      <SelectItem value="bank_transfer">Transfer Bank</SelectItem>
+                      <SelectItem value="bank_transfer">
+                        Transfer Bank
+                      </SelectItem>
                       <SelectItem value="qris">QRIS</SelectItem>
                       <SelectItem value="credit_card">Kartu Kredit</SelectItem>
                     </SelectContent>
