@@ -27,8 +27,31 @@ export async function PUT(
 
     const endTime = calculateEndTime(data.startTime, data.duration || 1);
 
+    if (data.status === "Canceled" && existingBooking.status !== "Canceled") {
+      console.log("CANCELLATION DETECTED - Releasing schedule");
+      // Jika booking dibatalkan, jadikan schedule available lagi
+      if (existingBooking.scheduleId) {
+        console.log("Updating schedule ID:", existingBooking.scheduleId);
+
+        const scheduleUpdate = await prisma.schedule.update({
+          where: { id: existingBooking.scheduleId },
+          data: {
+            available: true, // ✅ JADIKAN AVAILABLE LAGI KARENA DIBATALKAN
+          },
+        });
+      } else {
+        console.log("No scheduleId found on existing booking");
+      }
+    } else {
+      console.log("Cancellation condition not met");
+    }
+
     // ✅ JIKA ADA PERUBAHAN SCHEDULE, HANDLE SCHEDULE LAMA DAN BARU
-    if (data.scheduleId && existingBooking.scheduleId !== data.scheduleId) {
+    if (
+      data.scheduleId &&
+      existingBooking.scheduleId !== data.scheduleId &&
+      data.status !== "Canceled"
+    ) {
       // Release schedule lama (jadikan available = true)
       if (existingBooking.scheduleId) {
         await prisma.schedule.update({
@@ -57,20 +80,26 @@ export async function PUT(
     });
 
     // ✅ UPDATE BOOKING DENGAN END TIME YANG BENAR
+    const bookingUpdateData: any = {
+      courtId: data.courtId,
+      date: new Date(data.selectedDate),
+      startTime: data.startTime,
+      endTime: endTime, // ✅ CALCULATED END TIME
+      duration: data.duration || 1,
+      amount: data.amount,
+      status: data.status,
+    };
+
+    // Hanya update schedule connection jika bukan pembatalan
+    if (data.status !== "Canceled") {
+      bookingUpdateData.Schedule = {
+        connect: { id: data.scheduleId || existingBooking.scheduleId },
+      };
+    }
+
     const updatedBooking = await prisma.booking.update({
       where: { id },
-      data: {
-        Schedule: {
-          connect: { id: data.scheduleId || existingBooking.scheduleId },
-        },
-        courtId: data.courtId,
-        date: new Date(data.selectedDate),
-        startTime: data.startTime,
-        endTime: endTime, // ✅ CALCULATED END TIME
-        duration: data.duration || 1,
-        amount: data.amount,
-        status: data.status,
-      },
+      data: bookingUpdateData,
       include: {
         user: true,
         court: true,
@@ -81,15 +110,71 @@ export async function PUT(
     console.log("Updated Booking:", updatedBooking);
     console.log("New EndTime:", endTime);
 
-    // ✅ UPDATE TRANSACTION STATUS JIKA PERLU
+    // ✅ HANDLE TRANSACTION BERDASARKAN STATUS BOOKING
     if (data.status === "Paid") {
-      await prisma.transaction.updateMany({
+      // Check apakah transaction sudah ada
+      const existingTransaction = await prisma.transaction.findFirst({
         where: { bookingId: id },
-        data: {
-          status: "paid",
-          paymentMethod: data.paymentMethod || "Cash",
-        },
       });
+
+      if (existingTransaction) {
+        // Jika transaction sudah ada, update status
+        await prisma.transaction.update({
+          where: { id: existingTransaction.id },
+          data: {
+            status: "paid",
+            paymentMethod: data.paymentMethod || "Cash",
+            updatedAt: new Date(),
+          },
+        });
+        console.log("Transaction updated to paid");
+      } else {
+        // Jika transaction belum ada, create new transaction
+        await prisma.transaction.create({
+          data: {
+            transactionId: crypto.randomUUID(), // or use any unique ID generator
+            bookingId: id,
+            amount: data.amount,
+            status: "paid",
+            paymentMethod: data.paymentMethod || "Cash",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+        console.log("New transaction created with paid status");
+      }
+    } else if (data.status === "Pending") {
+      // Jika status diubah ke Pending, update transaction jadi pending juga (jika ada)
+      const existingTransaction = await prisma.transaction.findFirst({
+        where: { bookingId: id },
+      });
+
+      if (existingTransaction) {
+        await prisma.transaction.update({
+          where: { id: existingTransaction.id },
+          data: {
+            status: "pending",
+            updatedAt: new Date(),
+          },
+        });
+        console.log("Transaction updated to pending");
+      }
+    } else if (data.status === "Canceled") {
+      // Jika status diubah ke Canceled, update transaction jadi failed (jika ada)
+      const existingTransaction = await prisma.transaction.findFirst({
+        where: { bookingId: id },
+      });
+
+      if (existingTransaction) {
+        await prisma.transaction.update({
+          where: { id: existingTransaction.id },
+          data: {
+            status: "failed",
+            updatedAt: new Date(),
+          },
+        });
+        console.log("Transaction updated to failed");
+      }
     }
 
     return NextResponse.json(updatedBooking);

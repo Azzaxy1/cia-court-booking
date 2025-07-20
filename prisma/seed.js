@@ -385,44 +385,44 @@ async function main() {
     }
   }
 
-  // Seed Booking
-  const booking = await prisma.booking.create({
-    data: {
-      userId: user.id,
-      courtId: firstCourt.id,
-      startTime: "08:00",
-      endTime: "09:00",
-      courtType: "Futsal",
-      duration: 1,
-      date: new Date("2024-03-20"),
-      paymentMethod: "BankTransfer",
-      isConfirmed: true,
-      amount: 100000,
-      status: "Paid",
-    },
-  });
+  // // Seed Booking
+  // const booking = await prisma.booking.create({
+  //   data: {
+  //     userId: user.id,
+  //     courtId: firstCourt.id,
+  //     startTime: "08:00",
+  //     endTime: "09:00",
+  //     courtType: "Futsal",
+  //     duration: 1,
+  //     date: new Date("2024-03-20"),
+  //     paymentMethod: "BankTransfer",
+  //     isConfirmed: true,
+  //     amount: 100000,
+  //     status: "Paid",
+  //   },
+  // });
 
-  // Seed Transaction
-  const transaction = await prisma.transaction.create({
-    data: {
-      bookingId: booking.id,
-      paymentMethod: "BankTransfer",
-      transactionId: "TRX123456",
-      amount: 100000,
-      status: "Paid",
-      midtransToken: "midtrans-token-123",
-      midtransOrderId: "midtrans-order-123",
-      paymentUrl: "https://app.midtrans.com/payment/123",
-      expiredAt: new Date("2024-03-21T08:00:00"),
-    },
-  });
+  // // Seed Transaction
+  // const transaction = await prisma.transaction.create({
+  //   data: {
+  //     bookingId: booking.id,
+  //     paymentMethod: "BankTransfer",
+  //     transactionId: "TRX123456",
+  //     amount: 100000,
+  //     status: "Paid",
+  //     midtransToken: "midtrans-token-123",
+  //     midtransOrderId: "midtrans-order-123",
+  //     paymentUrl: "https://app.midtrans.com/payment/123",
+  //     expiredAt: new Date("2024-03-21T08:00:00"),
+  //   },
+  // });
 
   console.log("User:", user);
   console.log("Cashier:", cashier);
   console.log("Owner:", owner);
-  console.log("Booking:", booking);
-  console.log("Transaction:", transaction);
-  console.log("Court Futsal Created:", firstCourt);
+  // console.log("Booking:", booking);
+  // console.log("Transaction:", transaction);
+  // console.log("Court Futsal Created:", firstCourt);
   console.log("Badminton Courts:", badmintonCourts);
   console.log("Table Tennis Courts:", tableTennisCourts);
   console.log("Seeding completed successfully!");

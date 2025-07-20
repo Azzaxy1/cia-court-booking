@@ -82,6 +82,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
           }
         : undefined,
       status: order?.status || "Paid",
+      paymentMethod: "Cash", // Default payment method
     },
   });
 
@@ -165,6 +166,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
       endTime: endTime,
       duration: 1,
       status: data.status as BookingStatus,
+      paymentMethod: data.paymentMethod || "Cash",
     };
 
     if (isAddForm) {
@@ -335,28 +337,64 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
               <div className="text-red-500">Tidak ada jadwal tersedia</div>
             )}
           </div>
-          {!isAddForm && order?.status !== "Paid" && (
-            <div>
-              <Label>Status</Label>
-              <Select
-                value={watch("status")}
-                onValueChange={(value) =>
-                  setValue("status", value as BookingStatus)
-                }
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(BookingStatus).map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          {!isAddForm && (
+            <>
+              <div>
+                <Label>Status</Label>
+                <Select
+                  value={watch("status")}
+                  onValueChange={(value) =>
+                    setValue("status", value as BookingStatus)
+                  }
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(BookingStatus).map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {watch("status") === "Canceled" && order?.status === "Paid" && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                  <div className="flex items-center gap-2 text-yellow-800">
+                    <span className="text-sm font-medium">⚠️ Peringatan:</span>
+                  </div>
+                  <p className="text-yellow-700 text-sm mt-1">
+                    Anda akan membatalkan pemesanan yang sudah dibayar. Jadwal akan dibebaskan dan transaksi akan diubah ke status failed.
+                  </p>
+                </div>
+              )}
+              
+              {watch("status") === "Paid" && (
+                <div>
+                  <Label>Metode Pembayaran</Label>
+                  <Select
+                    value={watch("paymentMethod") || "Cash"}
+                    onValueChange={(value) =>
+                      setValue("paymentMethod", value as "Cash" | "bank_transfer" | "qris" | "credit_card")
+                    }
+                    required
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih metode pembayaran" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Cash">Cash (Tunai)</SelectItem>
+                      <SelectItem value="bank_transfer">Transfer Bank</SelectItem>
+                      <SelectItem value="qris">QRIS</SelectItem>
+                      <SelectItem value="credit_card">Kartu Kredit</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
         <CardFooter className="flex justify-end gap-2">

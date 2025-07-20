@@ -70,6 +70,9 @@ const orderSchema = z.object({
   status: z.enum(["Paid", "Pending", "Canceled", "Refunded"], {
     errorMap: () => ({ message: "Status tidak valid" }),
   }),
+  paymentMethod: z.enum(["Cash", "bank_transfer", "qris", "credit_card"], {
+    errorMap: () => ({ message: "Metode pembayaran tidak valid" }),
+  }).optional(),
 });
 
 export { authSchema, profileSchema, courtSchema, scheduleSchema, orderSchema };
