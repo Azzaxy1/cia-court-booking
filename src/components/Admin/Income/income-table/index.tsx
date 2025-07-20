@@ -151,7 +151,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     // Court type filter
     if (filters.courtType !== "all") {
       filtered = filtered.filter(
-        (item) => item.booking.court.type === filters.courtType
+        (item) => item.booking.courtType === filters.courtType
       );
     }
 

@@ -221,14 +221,17 @@ export const getTotalBookingCurrentMonth = async () => {
 };
 
 export const getTotalRevenueCurrentMonth = async () => {
-  const currentMonth = new Date().getMonth();
-  const result = await prisma.booking.aggregate({
+  const now = new Date();
+  const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  const result = await prisma.transaction.aggregate({
     _sum: { amount: true },
     where: {
-      status: "Paid",
-      date: {
-        gte: new Date(new Date().getFullYear(), currentMonth, 1),
-        lt: new Date(new Date().getFullYear(), currentMonth + 1, 1),
+      status: { in: ["settlement", "capture", "paid"] },
+      createdAt: {
+        gte: startOfCurrentMonth,
+        lt: endOfCurrentMonth,
       },
     },
   });
@@ -258,36 +261,45 @@ export const getCourtStats = async () => {
 };
 
 export const getOrderStats = async () => {
-  const bookings = await prisma.booking.findMany({
+  const transactions = await prisma.transaction.findMany({
     where: {
-      status: "Paid",
+      status: { in: ["settlement", "capture", "paid"] },
     },
-    select: {
-      date: true,
-      courtType: true,
+    include: {
+      booking: {
+        select: {
+          date: true,
+          courtType: true,
+        },
+      },
     },
   });
 
-  return bookings.map((booking) => ({
-    date: booking.date.toISOString(),
-    fieldType: booking.courtType,
+  return transactions.map((transaction) => ({
+    date: transaction.booking.date.toISOString(),
+    fieldType: transaction.booking.courtType,
   }));
 };
 
 export const getRevenueStats = async () => {
-  // Ambil semua booking Paid
-  const bookings = await prisma.booking.findMany({
-    where: { status: "Paid" },
-    select: {
-      date: true,
-      courtType: true,
-      amount: true,
+  // Ambil semua transaksi yang sudah paid
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      status: { in: ["settlement", "capture", "paid"] },
+    },
+    include: {
+      booking: {
+        select: {
+          date: true,
+          courtType: true,
+        },
+      },
     },
   });
 
-  return bookings.map((booking) => ({
-    date: booking.date.toISOString(),
-    amount: booking.amount,
-    courtType: booking.courtType,
+  return transactions.map((transaction) => ({
+    date: transaction.booking.date.toISOString(),
+    amount: transaction.amount,
+    courtType: transaction.booking.courtType,
   }));
 };
