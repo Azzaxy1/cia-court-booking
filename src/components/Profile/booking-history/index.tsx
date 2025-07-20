@@ -1,7 +1,9 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { formatRupiah, formatSportType, formattedDate } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import {
   Calendar,
@@ -9,6 +11,7 @@ import {
   CreditCard,
   Info,
   CircleDollarSign,
+  Eye,
 } from "lucide-react";
 import { Booking, BookingStatus } from "@/types/Booking";
 
@@ -104,6 +107,16 @@ const BookingHistory = ({ booking }: Props) => {
                 <span className="text-gray-600">{booking.duration} Jam</span>
               </p>
             </div>
+          </div>
+          
+          {/* Tombol Lihat Detail */}
+          <div className="flex justify-end pt-4">
+            <Link href={`/booking/${booking.id}`}>
+              <Button size="sm" className="flex items-center gap-2">
+                <Eye className="h-4 w-4" />
+                Lihat Detail
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
