@@ -211,12 +211,19 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
                   <p className="font-medium">{booking.paymentMethod}</p>
                 </div>
               </div> */}
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-gray-500" />
+                <div>
+                  <p className="text-xs text-gray-500">Durasi</p>
+                  <p className="font-medium">{booking.duration} Jam</p>
+                </div>
+              </div>
             </div>
 
-            <div className="pt-2">
+            {/* <div className="pt-2">
               <p className="text-xs text-gray-500">Durasi</p>
               <p className="font-medium">{booking.duration} Jam</p>
-            </div>
+            </div> */}
 
             {booking.rescheduleCount > 0 && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
@@ -260,6 +267,7 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
                   </div>
                   <Badge
                     className={`${
+                      transaction.status === "paid" ||
                       transaction.status === "Paid"
                         ? "bg-green-500"
                         : transaction.status === "Pending"
