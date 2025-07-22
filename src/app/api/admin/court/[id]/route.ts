@@ -5,10 +5,10 @@ import path from "path";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const id = params.id;
+    const id = context.params.id;
 
     if (!id) {
       return NextResponse.json(
@@ -53,7 +53,7 @@ export async function DELETE(
           fs.unlinkSync(imagePath);
         }
       } catch (err) {
-        throw new Error("Failed to delete court image", { cause: err });
+        console.log("Failed to delete court image", { cause: err });
       }
     }
 

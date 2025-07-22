@@ -4,11 +4,11 @@ import { calculateEndTime } from "@/lib/utils";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const data = await request.json();
-    const { id } = params;
+    const { id } = context.params;
 
     const existingBooking = await prisma.booking.findUnique({
       where: { id },

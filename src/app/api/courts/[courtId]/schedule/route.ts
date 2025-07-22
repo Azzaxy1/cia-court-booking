@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: Request,
-  { params }: { params: { courtId: string } }
+  context: { params: { courtId: string } }
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -18,7 +18,7 @@ export async function GET(
 
     const schedules = await prisma.schedule.findMany({
       where: {
-        courtId: params.courtId,
+        courtId: context.params.courtId,
         date: {
           gte: new Date(date),
           lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)),
