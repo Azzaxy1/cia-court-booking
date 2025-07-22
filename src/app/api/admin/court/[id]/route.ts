@@ -53,7 +53,7 @@ export async function DELETE(
           fs.unlinkSync(imagePath);
         }
       } catch (err) {
-        console.log("Failed to delete court image", { cause: err });
+        console.error("Failed to delete court image", { cause: err });
       }
     }
 
