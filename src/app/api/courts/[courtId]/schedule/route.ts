@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { toUTCDateOnly } from "@/lib/utils";
 
 export async function GET(
   request: Request,
@@ -20,8 +21,8 @@ export async function GET(
       where: {
         courtId: context.params.courtId,
         date: {
-          gte: new Date(date),
-          lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)),
+          gte: toUTCDateOnly(date),
+          lt: new Date(toUTCDateOnly(date).getTime() + 24 * 60 * 60 * 1000),
         },
       },
       include: {

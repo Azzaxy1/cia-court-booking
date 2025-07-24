@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { toUTCDateOnly } from "@/lib/utils";
 
 export async function POST(req: Request) {
   try {
     const { courtId, days, timeSlot, price, dayType } = await req.json();
 
-    const today = new Date();
     const schedules = [];
 
     for (let i = 0; i < days; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
+      const today = new Date();
+      const date = toUTCDateOnly(new Date(today.getTime() + i * 24 * 60 * 60 * 1000));
 
       for (const slot of timeSlot) {
         const existing = await prisma.schedule.findFirst({
@@ -62,11 +62,13 @@ export async function PUT(req: Request) {
       );
     }
 
+    const utcDate = toUTCDateOnly(date);
+
     const existing = await prisma.schedule.findFirst({
       where: {
         courtId,
         timeSlot,
-        date,
+        date: utcDate,
         NOT: { id },
       },
     });
@@ -75,7 +77,7 @@ export async function PUT(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: `Jadwal untuk tanggal ${date
+          message: `Jadwal untuk tanggal ${utcDate
             .toISOString()
             .slice(0, 10)} dan slot ${timeSlot} sudah ada.`,
         },
@@ -87,7 +89,7 @@ export async function PUT(req: Request) {
       where: { id },
       data: {
         courtId,
-        date,
+        date: utcDate,
         timeSlot,
         price,
         dayType,

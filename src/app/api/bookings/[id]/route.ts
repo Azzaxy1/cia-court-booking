@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { calculateEndTime } from "@/lib/utils";
+import { calculateEndTime, toUTCDateOnly } from "@/lib/utils";
 
 export async function PUT(
   request: Request,
@@ -28,11 +28,9 @@ export async function PUT(
     const endTime = calculateEndTime(data.startTime, data.duration || 1);
 
     if (data.status === "Canceled" && existingBooking.status !== "Canceled") {
-      console.log("CANCELLATION DETECTED - Releasing schedule");
       // Jika booking dibatalkan, jadikan semua schedule yang terkait available lagi
       if (existingBooking.Schedule && existingBooking.Schedule.length > 0) {
         for (const schedule of existingBooking.Schedule) {
-          console.log("Updating schedule ID:", schedule.id);
           await prisma.schedule.update({
             where: { id: schedule.id },
             data: {
@@ -60,7 +58,6 @@ export async function PUT(
               available: true, // ✅ JADIKAN AVAILABLE LAGI
             },
           });
-          console.log(`Released old schedule: ${oldSchedule.id}`);
         }
       }
 
@@ -73,7 +70,6 @@ export async function PUT(
             available: false, // ✅ JADIKAN TIDAK AVAILABLE
           },
         });
-        console.log(`Connected to new schedule: ${data.scheduleId}`);
       }
     }
 
@@ -85,7 +81,6 @@ export async function PUT(
       });
       if (newSchedule) {
         finalAmount = newSchedule.price; // ✅ GUNAKAN HARGA DARI SCHEDULE BARU
-        console.log(`Updated amount from schedule: ${finalAmount}`);
       }
     }
 
@@ -98,9 +93,9 @@ export async function PUT(
     });
 
     // ✅ UPDATE BOOKING DENGAN END TIME YANG BENAR DAN HARGA DARI SCHEDULE
-    const bookingUpdateData: any = {
+    const bookingUpdateData = {
       courtId: data.courtId,
-      date: new Date(data.selectedDate),
+      date: toUTCDateOnly(data.selectedDate),
       startTime: data.startTime,
       endTime: endTime, // ✅ CALCULATED END TIME
       duration: data.duration || 1,
@@ -137,10 +132,6 @@ export async function PUT(
             updatedAt: new Date(),
           },
         });
-        console.log(
-          "Transaction updated to paid with new amount:",
-          finalAmount
-        );
       } else {
         // Jika transaction belum ada, create new transaction
         await prisma.transaction.create({
@@ -154,10 +145,6 @@ export async function PUT(
             updatedAt: new Date(),
           },
         });
-        console.log(
-          "New transaction created with paid status and amount:",
-          finalAmount
-        );
       }
     } else if (data.status === "Pending") {
       // Jika status diubah ke Pending, update transaction jadi pending juga (jika ada)
@@ -173,7 +160,6 @@ export async function PUT(
             updatedAt: new Date(),
           },
         });
-        console.log("Transaction updated to pending");
       }
     } else if (data.status === "Canceled") {
       // Jika status diubah ke Canceled, update transaction jadi failed (jika ada)
@@ -189,7 +175,6 @@ export async function PUT(
             updatedAt: new Date(),
           },
         });
-        console.log("Transaction updated to failed");
       }
     }
 

@@ -48,7 +48,14 @@ export const formattedTime = (date: Date | string | null | undefined) => {
 export const toUTCDateOnly = (dateInput: string | Date) => {
   const d =
     typeof dateInput === "string" ? new Date(dateInput) : new Date(dateInput);
-  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  
+  // Ensure we get the correct date in local timezone first
+  const year = d.getFullYear();
+  const month = d.getMonth(); 
+  const date = d.getDate();
+  
+  // Create UTC date with the same year, month, date
+  return new Date(Date.UTC(year, month, date));
 };
 
 export const calculateEndTime = (startTime: string, duration: number = 1) => {
