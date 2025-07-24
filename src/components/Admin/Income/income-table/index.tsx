@@ -47,6 +47,8 @@ import {
   startOfYear,
   endOfYear,
   isWithinInterval,
+  startOfDay,
+  endOfDay,
 } from "date-fns";
 import { id } from "date-fns/locale";
 import { jsPDF } from "jspdf";
@@ -109,23 +111,26 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
         case "this-month":
           filtered = filtered.filter(
             (item) =>
-              new Date(item.createdAt) >= startOfMonth(now) &&
-              new Date(item.createdAt) <= endOfMonth(now)
+              item.booking.date &&
+              new Date(item.booking.date) >= startOfMonth(now) &&
+              new Date(item.booking.date) <= endOfMonth(now)
           );
           break;
         case "last-month":
           const lastMonth = subMonths(now, 1);
           filtered = filtered.filter(
             (item) =>
-              new Date(item.createdAt) >= startOfMonth(lastMonth) &&
-              new Date(item.createdAt) <= endOfMonth(lastMonth)
+              item.booking.date &&
+              new Date(item.booking.date) >= startOfMonth(lastMonth) &&
+              new Date(item.booking.date) <= endOfMonth(lastMonth)
           );
           break;
         case "this-year":
           filtered = filtered.filter(
             (item) =>
-              new Date(item.createdAt) >= startOfYear(now) &&
-              new Date(item.createdAt) <= endOfYear(now)
+              item.booking.date &&
+              new Date(item.booking.date) >= startOfYear(now) &&
+              new Date(item.booking.date) <= endOfYear(now)
           );
           break;
       }
@@ -134,9 +139,10 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     // Date range filter
     if (filters.dateRange?.from && filters.dateRange?.to) {
       filtered = filtered.filter((item) =>
-        isWithinInterval(new Date(item.createdAt), {
-          start: filters.dateRange!.from!,
-          end: filters.dateRange!.to!,
+        item.booking.date &&
+        isWithinInterval(new Date(item.booking.date), {
+          start: startOfDay(filters.dateRange!.from!),
+          end: endOfDay(filters.dateRange!.to!),
         })
       );
     }
