@@ -138,12 +138,13 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
 
     // Date range filter
     if (filters.dateRange?.from && filters.dateRange?.to) {
-      filtered = filtered.filter((item) =>
-        item.booking.date &&
-        isWithinInterval(new Date(item.booking.date), {
-          start: startOfDay(filters.dateRange!.from!),
-          end: endOfDay(filters.dateRange!.to!),
-        })
+      filtered = filtered.filter(
+        (item) =>
+          item.booking.date &&
+          isWithinInterval(new Date(item.booking.date), {
+            start: startOfDay(filters.dateRange!.from!),
+            end: endOfDay(filters.dateRange!.to!),
+          })
       );
     }
 
@@ -422,7 +423,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
           <span className="font-medium text-gray-700">Filter Laporan</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {/* Period Filter */}
           <div>
             <label className="text-sm font-medium text-gray-600 mb-1 block">
@@ -520,7 +521,9 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
               </SelectContent>
             </Select>
           </div>
+        </div>
 
+        <div className="flex justify-between items-center mt-4">
           {/* Date Range Filter */}
           <div>
             <label className="text-sm font-medium text-gray-600 mb-1 block">
@@ -533,28 +536,27 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
               }
             />
           </div>
-        </div>
+          <div className="flex items-center gap-2 flex-row">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={resetFilters}
+              className="flex items-center gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Reset Filter
+            </Button>
 
-        <div className="flex justify-between items-center mt-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={resetFilters}
-            className="flex items-center gap-2"
-          >
-            <RotateCcw className="h-4 w-4" />
-            Reset Filter
-          </Button>
-
-          <Button
-            variant="default"
-            size="sm"
-            onClick={exportToPDF}
-            className="flex items-center gap-2"
-          >
-            <Download className="h-4 w-4" />
-            Export PDF
-          </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={exportToPDF}
+              className="flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export PDF
+            </Button>
+          </div>
         </div>
       </div>
 

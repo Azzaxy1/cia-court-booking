@@ -10,7 +10,9 @@ export async function POST(req: Request) {
 
     for (let i = 0; i < days; i++) {
       const today = new Date();
-      const date = toUTCDateOnly(new Date(today.getTime() + i * 24 * 60 * 60 * 1000));
+      const date = toUTCDateOnly(
+        new Date(today.getTime() + i * 24 * 60 * 60 * 1000)
+      );
 
       for (const slot of timeSlot) {
         const existing = await prisma.schedule.findFirst({

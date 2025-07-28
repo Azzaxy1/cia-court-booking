@@ -1,6 +1,13 @@
 import { PrismaClient } from "../src/app/generated/prisma/index.js";
 import { hash } from "bcryptjs";
 
+// Import gambar dengan path lokal
+const images = {
+  Futsal: "/uploads/court/futsal.png",
+  Badminton: "/uploads/court/badminton.jpg",
+  TenisMeja: "/uploads/court/tenis-meja.jpg",
+};
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -50,8 +57,7 @@ async function main() {
       name: "Lapangan Futsal 1",
       type: "Futsal",
       surfaceType: "Rumput",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaoIccHsK66ybmwTzSKb8itHVh1WDJcUP3jQ&s",
+      image: images.Futsal,
       description:
         "Lapangan Futsal 1 adalah lapangan futsal dengan permukaan rumput yang nyaman dan berkualitas tinggi.",
       capacity: 10,
@@ -60,8 +66,7 @@ async function main() {
       name: "Lapangan Futsal 2",
       type: "Futsal",
       surfaceType: "Interlok",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaoIccHsK66ybmwTzSKb8itHVh1WDJcUP3jQ&s",
+      image: images.Futsal,
       description:
         "Lapangan Futsal 2 adalah lapangan futsal dengan permukaan interlok yang nyaman dan berkualitas tinggi.",
       capacity: 10,
@@ -70,8 +75,7 @@ async function main() {
       name: "Lapangan Futsal 3",
       type: "Futsal",
       surfaceType: "Rumput",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaoIccHsK66ybmwTzSKb8itHVh1WDJcUP3jQ&s",
+      image: images.Futsal,
       description:
         "Lapangan Futsal 3 adalah lapangan futsal dengan permukaan rumput yang nyaman dan berkualitas tinggi.",
       capacity: 10,
@@ -80,8 +84,7 @@ async function main() {
       name: "Lapangan Futsal 4",
       type: "Futsal",
       surfaceType: "Semen",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaoIccHsK66ybmwTzSKb8itHVh1WDJcUP3jQ&s",
+      image: images.Futsal,
       description:
         "Lapangan Futsal 4 adalah lapangan futsal dengan permukaan semen yang nyaman dan berkualitas tinggi.",
       capacity: 10,
@@ -90,8 +93,7 @@ async function main() {
       name: "Lapangan Futsal 5",
       type: "Futsal",
       surfaceType: "Semen",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaoIccHsK66ybmwTzSKb8itHVh1WDJcUP3jQ&s",
+      image: images.Futsal,
       description:
         "Lapangan Futsal 5 adalah lapangan futsal dengan permukaan semen yang nyaman dan berkualitas tinggi.",
       capacity: 10,
@@ -100,8 +102,7 @@ async function main() {
       name: "Lapangan Futsal 6",
       type: "Futsal",
       surfaceType: "Semen",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaoIccHsK66ybmwTzSKb8itHVh1WDJcUP3jQ&s",
+      image: images.Futsal,
       description:
         "Lapangan Futsal 6 adalah lapangan futsal dengan permukaan semen yang nyaman dan berkualitas tinggi.",
       capacity: 10,
@@ -157,8 +158,8 @@ async function main() {
       firstCourt = court;
     }
 
-    // Buat schedule untuk 7 hari ke depan
-    for (let i = 0; i < 7; i++) {
+    // Buat schedule untuk 30 hari ke depan
+    for (let i = 0; i < 30; i++) {
       const date = new Date();
       date.setDate(date.getDate() + i);
       const day = date.getDay();
@@ -189,8 +190,7 @@ async function main() {
     {
       name: "Lapangan Badminton 1",
       type: "Badminton",
-      image:
-        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      image: images.Badminton,
       description:
         "Lapangan Badminton 1 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
       capacity: 4,
@@ -198,8 +198,7 @@ async function main() {
     {
       name: "Lapangan Badminton 2",
       type: "Badminton",
-      image:
-        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      image: images.Badminton,
       description:
         "Lapangan Badminton 2 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
       capacity: 4,
@@ -207,8 +206,7 @@ async function main() {
     {
       name: "Lapangan Badminton 3",
       type: "Badminton",
-      image:
-        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      image: images.Badminton,
       description:
         "Lapangan Badminton 3 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
       capacity: 4,
@@ -216,8 +214,7 @@ async function main() {
     {
       name: "Lapangan Badminton 4",
       type: "Badminton",
-      image:
-        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      image: images.Badminton,
       description:
         "Lapangan Badminton 4 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
       capacity: 4,
@@ -225,8 +222,7 @@ async function main() {
     {
       name: "Lapangan Badminton 5",
       type: "Badminton",
-      image:
-        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      image: images.Badminton,
       description:
         "Lapangan Badminton 5 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
       capacity: 4,
@@ -234,8 +230,7 @@ async function main() {
     {
       name: "Lapangan Badminton 6",
       type: "Badminton",
-      image:
-        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      image: images.Badminton,
       description:
         "Lapangan Badminton 6 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
       capacity: 4,
@@ -243,8 +238,7 @@ async function main() {
     {
       name: "Lapangan Badminton 7",
       type: "Badminton",
-      image:
-        "https://centroflor.id/wp-content/uploads/2023/07/Karpet-Vinyl-Badminton.jpg",
+      image: images.Badminton,
       description:
         "Lapangan Badminton 7 adalah lapangan badminton yang nyaman dan berkualitas tinggi.",
       capacity: 4,
@@ -258,7 +252,7 @@ async function main() {
     });
 
     // Create schedules for each badminton court
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 30; i++) {
       // Buat schedule untuk setiap court
       const timeSlots = [
         "07:00",
@@ -312,8 +306,7 @@ async function main() {
     {
       name: "Lapangan Tenis Meja 1",
       type: "TenisMeja",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKHRUU9ivOFc3ofK0kfEYAt2aDqOBpl1R08A&s",
+      image: images.TenisMeja,
       description:
         "Lapangan Tenis Meja 1 adalah lapangan tenis meja yang nyaman dan berkualitas tinggi.",
       capacity: 2,
@@ -321,8 +314,7 @@ async function main() {
     {
       name: "Lapangan Tenis Meja 2",
       type: "TenisMeja",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKHRUU9ivOFc3ofK0kfEYAt2aDqOBpl1R08A&s",
+      image: images.TenisMeja,
       description:
         "Lapangan Tenis Meja 2 adalah lapangan tenis meja yang nyaman dan berkualitas tinggi.",
       capacity: 2,
@@ -336,7 +328,7 @@ async function main() {
     });
 
     // Create schedules for each table tennis court
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 30; i++) {
       // Buat schedule untuk setiap court
       const timeSlots = [
         "07:00",
