@@ -14,7 +14,7 @@ export async function PUT(
       where: { id },
       include: {
         user: true,
-        Schedule: true, // ✅ INCLUDE SCHEDULE LAMA
+        Schedule: true,
       },
     });
 
@@ -28,14 +28,13 @@ export async function PUT(
     const endTime = calculateEndTime(data.startTime, data.duration || 1);
 
     if (data.status === "Canceled" && existingBooking.status !== "Canceled") {
-      // Jika booking dibatalkan, jadikan semua schedule yang terkait available lagi
       if (existingBooking.Schedule && existingBooking.Schedule.length > 0) {
         for (const schedule of existingBooking.Schedule) {
           await prisma.schedule.update({
             where: { id: schedule.id },
             data: {
               bookingId: null,
-              available: true, // ✅ JADIKAN AVAILABLE LAGI KARENA DIBATALKAN
+              available: true,
             },
           });
         }
@@ -46,45 +45,40 @@ export async function PUT(
       console.log("Cancellation condition not met");
     }
 
-    // ✅ HANDLE PERUBAHAN SCHEDULE - DISCONNECT DARI SCHEDULE LAMA DAN CONNECT KE SCHEDULE BARU
     if (data.status !== "Canceled") {
-      // Pertama, disconnect booking dari semua schedule lama
       if (existingBooking.Schedule && existingBooking.Schedule.length > 0) {
         for (const oldSchedule of existingBooking.Schedule) {
           await prisma.schedule.update({
             where: { id: oldSchedule.id },
             data: {
               bookingId: null,
-              available: true, // ✅ JADIKAN AVAILABLE LAGI
+              available: true,
             },
           });
         }
       }
 
-      // Kemudian, connect ke schedule baru jika ada
       if (data.scheduleId) {
         await prisma.schedule.update({
           where: { id: data.scheduleId },
           data: {
-            bookingId: id, // Connect ke booking ini
-            available: false, // ✅ JADIKAN TIDAK AVAILABLE
+            bookingId: id,
+            available: false,
           },
         });
       }
     }
 
-    // ✅ GET PRICE FROM NEW SCHEDULE
-    let finalAmount = data.amount; // Default amount dari request
+    let finalAmount = data.amount;
     if (data.scheduleId) {
       const newSchedule = await prisma.schedule.findUnique({
         where: { id: data.scheduleId },
       });
       if (newSchedule) {
-        finalAmount = newSchedule.price; // ✅ GUNAKAN HARGA DARI SCHEDULE BARU
+        finalAmount = newSchedule.price;
       }
     }
 
-    // ✅ UPDATE USER NAME
     await prisma.user.update({
       where: { id: existingBooking.userId },
       data: {
@@ -92,18 +86,17 @@ export async function PUT(
       },
     });
 
-    // ✅ UPDATE BOOKING DENGAN END TIME YANG BENAR DAN HARGA DARI SCHEDULE
     const bookingUpdateData = {
       courtId: data.courtId,
       date: toUTCDateOnly(data.selectedDate),
       startTime: data.startTime,
-      endTime: endTime, // ✅ CALCULATED END TIME
+      endTime: endTime,
       duration: data.duration || 1,
-      amount: finalAmount, // ✅ GUNAKAN HARGA DARI SCHEDULE
+      amount: finalAmount,
+      paymentMethod: data.paymentMethod || "Cash",
       status: data.status,
     };
 
-    // Tidak perlu connect Schedule karena sudah dihandle di atas
     const updatedBooking = await prisma.booking.update({
       where: { id },
       data: bookingUpdateData,
@@ -114,31 +107,27 @@ export async function PUT(
       },
     });
 
-    // ✅ HANDLE TRANSACTION BERDASARKAN STATUS BOOKING
     if (data.status === "Paid") {
-      // Check apakah transaction sudah ada
       const existingTransaction = await prisma.transaction.findFirst({
         where: { bookingId: id },
       });
 
       if (existingTransaction) {
-        // Jika transaction sudah ada, update status dan amount
         await prisma.transaction.update({
           where: { id: existingTransaction.id },
           data: {
             status: "paid",
-            amount: finalAmount, // ✅ GUNAKAN HARGA YANG SUDAH DIUPDATE
+            amount: finalAmount,
             paymentMethod: data.paymentMethod || "Cash",
             updatedAt: new Date(),
           },
         });
       } else {
-        // Jika transaction belum ada, create new transaction
         await prisma.transaction.create({
           data: {
-            transactionId: crypto.randomUUID(), // or use any unique ID generator
+            transactionId: crypto.randomUUID(),
             bookingId: id,
-            amount: finalAmount, // ✅ GUNAKAN HARGA YANG SUDAH DIUPDATE
+            amount: finalAmount,
             status: "paid",
             paymentMethod: data.paymentMethod || "Cash",
             createdAt: new Date(),
@@ -147,7 +136,6 @@ export async function PUT(
         });
       }
     } else if (data.status === "Pending") {
-      // Jika status diubah ke Pending, update transaction jadi pending juga (jika ada)
       const existingTransaction = await prisma.transaction.findFirst({
         where: { bookingId: id },
       });
@@ -162,7 +150,6 @@ export async function PUT(
         });
       }
     } else if (data.status === "Canceled") {
-      // Jika status diubah ke Canceled, update transaction jadi failed (jika ada)
       const existingTransaction = await prisma.transaction.findFirst({
         where: { bookingId: id },
       });

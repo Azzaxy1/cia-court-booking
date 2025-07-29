@@ -370,10 +370,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                     onValueChange={(value) =>
                       setValue(
                         "paymentMethod",
-                        value as
-                          | "Cash"
-                          | "bank_transfer"
-                          | "credit_card"
+                        value as "Cash" | "bank_transfer" | "credit_card"
                       )
                     }
                     required
