@@ -414,7 +414,7 @@ async function main() {
   console.log("Owner:", owner);
   // console.log("Booking:", booking);
   // console.log("Transaction:", transaction);
-  // console.log("Court Futsal Created:", firstCourt);
+  console.log("Court Futsal Created:", firstCourt);
   console.log("Badminton Courts:", badmintonCourts);
   console.log("Table Tennis Courts:", tableTennisCourts);
   console.log("Seeding completed successfully!");

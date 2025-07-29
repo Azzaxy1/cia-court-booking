@@ -373,7 +373,6 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                         value as
                           | "Cash"
                           | "bank_transfer"
-                          | "qris"
                           | "credit_card"
                       )
                     }
@@ -387,7 +386,6 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                       <SelectItem value="bank_transfer">
                         Transfer Bank
                       </SelectItem>
-                      <SelectItem value="qris">QRIS</SelectItem>
                       <SelectItem value="credit_card">Kartu Kredit</SelectItem>
                     </SelectContent>
                   </Select>
