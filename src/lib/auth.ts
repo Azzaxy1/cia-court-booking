@@ -6,10 +6,18 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { AuthOptions } from "next-auth";
 
-const prisma = new PrismaClient();
+const globalForPrismaAuth = globalThis as unknown as {
+  prismaAuth: PrismaClient | undefined;
+};
+
+const prismaAuth = globalForPrismaAuth.prismaAuth ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrismaAuth.prismaAuth = prismaAuth;
+}
 
 export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prismaAuth),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -24,7 +32,7 @@ export const authOptions: AuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
+        const user = await prismaAuth.user.findUnique({
           where: { email: credentials.email },
         });
 
@@ -48,7 +56,9 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async session({ session, token }: { session: any; token: any }) {
       if (token.sub) {
-        const user = await prisma.user.findUnique({ where: { id: token.sub } });
+        const user = await prismaAuth.user.findUnique({
+          where: { id: token.sub },
+        });
         if (user) {
           session.user.role = user.role;
           session.user.id = user.id;
@@ -76,7 +86,7 @@ export const authOptions: AuthOptions = {
       }
 
       if (trigger === "update" && session) {
-        const freshUser = await prisma.user.findUnique({
+        const freshUser = await prismaAuth.user.findUnique({
           where: { id: token.sub },
         });
         if (freshUser) {
