@@ -94,11 +94,16 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
 
   // Get unique time slots
   const timeSlots = useMemo(() => {
-    const slots = new Set(
-      data
-        .filter((item) => item.booking) // Filter out items without booking
-        .map((item) => `${item.booking!.startTime}-${item.booking!.endTime}`)
-    );
+    const slots = new Set<string>();
+    
+    data.forEach((item) => {
+      if (item.booking) {
+        slots.add(`${item.booking.startTime}-${item.booking.endTime}`);
+      } else if (item.recurringBooking) {
+        slots.add(`${item.recurringBooking.startTime}-${item.recurringBooking.endTime}`);
+      }
+    });
+    
     return Array.from(slots).sort();
   }, [data]);
 
@@ -112,27 +117,33 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
       switch (filters.period) {
         case "this-month":
           filtered = filtered.filter(
-            (item) =>
-              item.booking?.date &&
-              new Date(item.booking.date) >= startOfMonth(now) &&
-              new Date(item.booking.date) <= endOfMonth(now)
+            (item) => {
+              const date = item.booking?.date || item.recurringBooking?.startDate;
+              return date &&
+                new Date(date) >= startOfMonth(now) &&
+                new Date(date) <= endOfMonth(now);
+            }
           );
           break;
         case "last-month":
           const lastMonth = subMonths(now, 1);
           filtered = filtered.filter(
-            (item) =>
-              item.booking?.date &&
-              new Date(item.booking.date) >= startOfMonth(lastMonth) &&
-              new Date(item.booking.date) <= endOfMonth(lastMonth)
+            (item) => {
+              const date = item.booking?.date || item.recurringBooking?.startDate;
+              return date &&
+                new Date(date) >= startOfMonth(lastMonth) &&
+                new Date(date) <= endOfMonth(lastMonth);
+            }
           );
           break;
         case "this-year":
           filtered = filtered.filter(
-            (item) =>
-              item.booking?.date &&
-              new Date(item.booking.date) >= startOfYear(now) &&
-              new Date(item.booking.date) <= endOfYear(now)
+            (item) => {
+              const date = item.booking?.date || item.recurringBooking?.startDate;
+              return date &&
+                new Date(date) >= startOfYear(now) &&
+                new Date(date) <= endOfYear(now);
+            }
           );
           break;
       }
@@ -141,36 +152,49 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     // Date range filter
     if (filters.dateRange?.from && filters.dateRange?.to) {
       filtered = filtered.filter(
-        (item) =>
-          item.booking?.date &&
-          isWithinInterval(new Date(item.booking.date), {
-            start: startOfDay(filters.dateRange!.from!),
-            end: endOfDay(filters.dateRange!.to!),
-          })
+        (item) => {
+          const date = item.booking?.date || item.recurringBooking?.startDate;
+          return date &&
+            isWithinInterval(new Date(date), {
+              start: startOfDay(filters.dateRange!.from!),
+              end: endOfDay(filters.dateRange!.to!),
+            });
+        }
       );
     }
 
     // Court filter
     if (filters.courtId !== "all") {
       filtered = filtered.filter(
-        (item) => item.booking?.court.id === filters.courtId
+        (item) => {
+          const courtId = item.booking?.court.id || item.recurringBooking?.court.id;
+          return courtId === filters.courtId;
+        }
       );
     }
 
     // Court type filter
     if (filters.courtType !== "all") {
       filtered = filtered.filter(
-        (item) => item.booking?.courtType === filters.courtType
+        (item) => {
+          const courtType = item.booking?.courtType || item.recurringBooking?.courtType;
+          return courtType === filters.courtType;
+        }
       );
     }
 
     // Time slot filter
     if (filters.timeSlot !== "all") {
       filtered = filtered.filter(
-        (item) =>
-          item.booking &&
-          `${item.booking.startTime}-${item.booking.endTime}` ===
-          filters.timeSlot
+        (item) => {
+          let timeSlot = "";
+          if (item.booking) {
+            timeSlot = `${item.booking.startTime}-${item.booking.endTime}`;
+          } else if (item.recurringBooking) {
+            timeSlot = `${item.recurringBooking.startTime}-${item.recurringBooking.endTime}`;
+          }
+          return timeSlot === filters.timeSlot;
+        }
       );
     }
 
@@ -204,7 +228,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     const stats: Record<string, { count: number; revenue: number }> = {};
 
     filteredData.forEach((item) => {
-      const type = item.booking?.courtType || "Unknown";
+      const type = item.booking?.courtType || item.recurringBooking?.courtType || "Unknown";
       if (!stats[type]) {
         stats[type] = { count: 0, revenue: 0 };
       }
@@ -353,25 +377,26 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
           "Metode",
         ],
       ],
-      body: filteredData
-        .filter((item) => item.booking) // Only include items with booking for PDF
-        .map((item, index) => [
+      body: filteredData.map((item, index) => {
+        const booking = item.booking || item.recurringBooking;
+        if (!booking) return [];
+        
+        return [
           index + 1,
-          item.booking!.user.name,
-          item.booking!.court.name,
-          item.booking!.courtType === "TenisMeja"
-            ? "Tenis Meja"
-            : item.booking!.courtType,
+          booking.user.name,
+          booking.court.name,
+          booking.courtType === "TenisMeja" ? "Tenis Meja" : booking.courtType,
           format(new Date(item.createdAt), "d MMM yyyy", { locale: id }),
-          `${item.booking!.startTime}-${item.booking!.endTime}`,
+          `${booking.startTime}-${booking.endTime}`,
           new Intl.NumberFormat("id-ID", {
             style: "currency",
             currency: "IDR",
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
           }).format(Number(item.amount)),
-        item.paymentMethod,
-      ]),
+          item.paymentMethod,
+        ];
+      }).filter(row => row.length > 0),
       startY: yPos,
       headStyles: {
         fillColor: [18, 105, 120],

@@ -110,6 +110,12 @@ export const getTransactionsWithDetails = async () => {
           user: true,
         },
       },
+      recurringBooking: {
+        include: {
+          court: true,
+          user: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",

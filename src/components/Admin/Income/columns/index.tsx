@@ -23,6 +23,22 @@ export interface TransactionWithBooking extends Transaction {
       type: string;
     };
   } | null;
+  recurringBooking: {
+    startDate: string | Date;
+    endDate: string | Date;
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
+    courtType: string;
+    user: {
+      name: string;
+    };
+    court: {
+      id: string;
+      name: string;
+      type: string;
+    };
+  } | null;
 }
 
 export interface CourtFilter {
@@ -43,21 +59,27 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     accessorKey: "booking.user.name",
     header: "Pelanggan",
     cell: ({ row }) => {
-      return <div>{row.original.booking?.user.name || "N/A"}</div>;
+      const booking = row.original.booking;
+      const recurringBooking = row.original.recurringBooking;
+      return <div>{booking?.user.name || recurringBooking?.user.name || "N/A"}</div>;
     },
   },
   {
     accessorKey: "booking.court.name",
     header: "Lapangan",
     cell: ({ row }) => {
-      return <div>{row.original.booking?.court.name || "N/A"}</div>;
+      const booking = row.original.booking;
+      const recurringBooking = row.original.recurringBooking;
+      return <div>{booking?.court.name || recurringBooking?.court.name || "N/A"}</div>;
     },
   },
   {
     accessorKey: "booking.courtType",
     header: "Tipe Lapangan",
     cell: ({ row }) => {
-      const type = row.original.booking?.courtType;
+      const booking = row.original.booking;
+      const recurringBooking = row.original.recurringBooking;
+      const type = booking?.courtType || booking?.court.type || recurringBooking?.court.type;
       const typeMap = {
         Futsal: "Futsal",
         Badminton: "Badminton",
@@ -81,10 +103,20 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     },
     cell: ({ row }) => {
       const booking = row.original.booking;
-      const date = booking?.date ? new Date(booking.date) : null;
-      return (
-        <div>{date ? format(date, "d MMM yyyy", { locale: id }) : "-"}</div>
-      );
+      const recurringBooking = row.original.recurringBooking;
+      
+      if (booking?.date) {
+        const date = new Date(booking.date);
+        return <div>{format(date, "d MMM yyyy", { locale: id })}</div>;
+      }
+      
+      if (recurringBooking?.startDate) {
+        const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const dayName = dayNames[recurringBooking.dayOfWeek];
+        return <div>Setiap {dayName}</div>;
+      }
+      
+      return <div>-</div>;
     },
   },
   {
@@ -92,14 +124,19 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     header: "Jam Bermain",
     cell: ({ row }) => {
       const booking = row.original.booking;
-      if (!booking) return <div>N/A</div>;
+      const recurringBooking = row.original.recurringBooking;
       
-      const { startTime, endTime } = booking;
-      return (
-        <div>
-          {startTime} - {endTime}
-        </div>
-      );
+      if (booking) {
+        const { startTime, endTime } = booking;
+        return <div>{startTime} - {endTime}</div>;
+      }
+      
+      if (recurringBooking) {
+        const { startTime, endTime } = recurringBooking;
+        return <div>{startTime} - {endTime}</div>;
+      }
+      
+      return <div>N/A</div>;
     },
   },
   {
