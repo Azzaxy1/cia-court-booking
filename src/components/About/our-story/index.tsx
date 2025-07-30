@@ -15,29 +15,14 @@ const OurStory = () => {
               <p>
                 CIA Serang didirikan pada tahun 2018 oleh sekelompok penggemar
                 olahraga yang percaya bahwa masyarakat Serang layak mendapatkan
-                fasilitas olahraga berkualitas tinggi. Nama CIA sendiri
-                merupakan singkatan dari{" "}
-                <span className="font-medium text-teal-700">
-                  Center for Indoor Athletics
-                </span>{" "}
-                yang mencerminkan komitmen kami untuk menyediakan pusat olahraga
-                indoor terbaik.
+                fasilitas olahraga berkualitas tinggi.
               </p>
               <p>
                 Berawal dari lapangan futsal sederhana, kini CIA Serang telah
                 berkembang menjadi pusat olahraga terlengkap di Kota Serang
                 dengan berbagai jenis lapangan termasuk futsal, badminton, tenis
-                meja. Semua lapangan kami dirancang dengan standar internasional
-                untuk memberikan pengalaman bermain terbaik bagi semua level
-                pemain.
-              </p>
-              <p>
-                Visi kami sederhana: menjadi katalisator gaya hidup sehat
-                melalui olahraga dengan menyediakan fasilitas terbaik yang dapat
-                diakses oleh seluruh lapisan masyarakat. Kami percaya bahwa
-                olahraga bukan hanya tentang kompetisi, tetapi juga tentang
-                membangun komunitas dan menciptakan hubungan sosial yang
-                positif.
+                meja. Semua lapangan kami dirancang untuk memberikan pengalaman
+                bermain terbaik bagi semua level pemain.
               </p>
             </div>
           </div>

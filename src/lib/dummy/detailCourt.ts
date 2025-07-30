@@ -177,43 +177,43 @@ const scheduleData = [
   },
 ];
 
-// Tambahkan informasi tambahan untuk setiap jenis lapangan
 const courtInfo = {
   futsal: {
     title: "Lapangan Futsal",
     icon: Users,
     features: [
-      "Ukuran Standar FIFA",
-      "Rumput Sintetis Berkualitas",
-      "Sistem Pencahayaan LED",
-      "Area Ganti dan Istirahat",
-      "Skor Elektronik",
+      "Lantai Interlock & Rumput Sintetis",
+      "Pencahayaan Standar Malam Hari",
+      "Area Tunggu Penonton",
+      "Kamar Ganti & Toilet",
+      "Penyewaan Bola & Rompi",
     ],
-    openHours: "07:00 - 24:00",
+    openHours: "07:00 - 23:00 WIB",
   },
   badminton: {
     title: "Lapangan Badminton",
     icon: Users,
     features: [
-      "Lantai Vinyl Berkualitas",
+      "Lantai Karpet Vinyl Standar",
       "Pencahayaan Anti-Silau",
-      "Ruangan Berpendingin",
-      "Net Standar BWF",
-      "Area Istirahat",
+      "Area Istirahat Pemain",
+      "Kamar Ganti & Toilet",
+      "Penyewaan Shuttlecock & Raket",
     ],
-    openHours: "07:00 - 24:00",
+    openHours: "07:00 - 23:00 WIB",
   },
   tableTennis: {
     title: "Lapangan Tenis Meja",
     icon: Users,
     features: [
-      "Meja Standar ITTF",
-      "Pencahayaan Optimal",
-      "Lantai Anti-Slip",
-      "Ruangan Berpendingin",
-      "Perlengkapan Tersedia",
+      "Meja Standar Turnamen",
+      "Pencahayaan Fokus Optimal",
+      "Lantai Anti-Slip (Non-licin)",
+      "Area Bermain yang Luas",
+      "Penyewaan Bet & Bola",
+      "Kipas Angin Dinding",
     ],
-    openHours: "07:00 - 24:00",
+    openHours: "07:00 - 23:00 WIB",
   },
 };
 
