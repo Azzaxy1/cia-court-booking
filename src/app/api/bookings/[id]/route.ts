@@ -4,11 +4,12 @@ import { calculateEndTime, toUTCDateOnly } from "@/lib/utils";
 
 export async function PUT(
   request: Request,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const data = await request.json();
-    const { id } = context.params;
+    const params = await context.params;
+    const { id } = params;
 
     const existingBooking = await prisma.booking.findUnique({
       where: { id },
@@ -177,9 +178,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const { id } = params;
 
     const existingBooking = await prisma.booking.findUnique({
