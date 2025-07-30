@@ -56,9 +56,7 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error: unknown) {
-    if (error instanceof Error && error.message === "400") {
-      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-    }
+    console.error("Register error:", error);
     return NextResponse.json(
       {
         success: false,
