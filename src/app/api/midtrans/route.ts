@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import midtransClient from "midtrans-client";
 import { prisma } from "@/lib/prisma";
 
-export const serverKey = process.env.MIDTRANS_SERVER_KEY as string;
+const serverKey = process.env.MIDTRANS_SERVER_KEY as string;
 
 export async function POST(req: Request) {
   try {
