@@ -22,7 +22,7 @@ export interface TransactionWithBooking extends Transaction {
       name: string;
       type: string;
     };
-  };
+  } | null;
 }
 
 export interface CourtFilter {
@@ -43,27 +43,27 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     accessorKey: "booking.user.name",
     header: "Pelanggan",
     cell: ({ row }) => {
-      return <div>{row.original.booking.user.name}</div>;
+      return <div>{row.original.booking?.user.name || "N/A"}</div>;
     },
   },
   {
     accessorKey: "booking.court.name",
     header: "Lapangan",
     cell: ({ row }) => {
-      return <div>{row.original.booking.court.name}</div>;
+      return <div>{row.original.booking?.court.name || "N/A"}</div>;
     },
   },
   {
     accessorKey: "booking.courtType",
     header: "Tipe Lapangan",
     cell: ({ row }) => {
-      const type = row.original.booking.courtType;
+      const type = row.original.booking?.courtType;
       const typeMap = {
         Futsal: "Futsal",
         Badminton: "Badminton",
         TenisMeja: "Tenis Meja",
       };
-      return <div>{typeMap[type as keyof typeof typeMap] || type}</div>;
+      return <div>{type ? (typeMap[type as keyof typeof typeMap] || type) : "N/A"}</div>;
     },
   },
   {
@@ -91,7 +91,10 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     accessorKey: "booking.timeSlot",
     header: "Jam Bermain",
     cell: ({ row }) => {
-      const { startTime, endTime } = row.original.booking;
+      const booking = row.original.booking;
+      if (!booking) return <div>N/A</div>;
+      
+      const { startTime, endTime } = booking;
       return (
         <div>
           {startTime} - {endTime}

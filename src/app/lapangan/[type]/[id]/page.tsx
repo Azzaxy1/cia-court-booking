@@ -12,7 +12,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { courtInfo } from "@/lib/dummy/detailCourt";
-import SideBooking from "@/components/DetailLapangan/side-booking";
+import BookingTypeSelector from "@/components/DetailLapangan/side-booking/BookingTypeSelector";
 import { CourtReal } from "@/types/court/Court";
 import {
   Breadcrumb,
@@ -124,7 +124,7 @@ const DetailLapangan = async ({
             </Tabs>
           </div>
 
-          <SideBooking court={court} />
+          <BookingTypeSelector court={court} />
         </div>
       </div>
     </ScheduleProvider>

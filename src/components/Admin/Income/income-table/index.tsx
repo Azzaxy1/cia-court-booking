@@ -95,7 +95,9 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
   // Get unique time slots
   const timeSlots = useMemo(() => {
     const slots = new Set(
-      data.map((item) => `${item.booking.startTime}-${item.booking.endTime}`)
+      data
+        .filter((item) => item.booking) // Filter out items without booking
+        .map((item) => `${item.booking!.startTime}-${item.booking!.endTime}`)
     );
     return Array.from(slots).sort();
   }, [data]);
@@ -111,7 +113,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
         case "this-month":
           filtered = filtered.filter(
             (item) =>
-              item.booking.date &&
+              item.booking?.date &&
               new Date(item.booking.date) >= startOfMonth(now) &&
               new Date(item.booking.date) <= endOfMonth(now)
           );
@@ -120,7 +122,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
           const lastMonth = subMonths(now, 1);
           filtered = filtered.filter(
             (item) =>
-              item.booking.date &&
+              item.booking?.date &&
               new Date(item.booking.date) >= startOfMonth(lastMonth) &&
               new Date(item.booking.date) <= endOfMonth(lastMonth)
           );
@@ -128,7 +130,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
         case "this-year":
           filtered = filtered.filter(
             (item) =>
-              item.booking.date &&
+              item.booking?.date &&
               new Date(item.booking.date) >= startOfYear(now) &&
               new Date(item.booking.date) <= endOfYear(now)
           );
@@ -140,7 +142,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     if (filters.dateRange?.from && filters.dateRange?.to) {
       filtered = filtered.filter(
         (item) =>
-          item.booking.date &&
+          item.booking?.date &&
           isWithinInterval(new Date(item.booking.date), {
             start: startOfDay(filters.dateRange!.from!),
             end: endOfDay(filters.dateRange!.to!),
@@ -151,14 +153,14 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     // Court filter
     if (filters.courtId !== "all") {
       filtered = filtered.filter(
-        (item) => item.booking.court.id === filters.courtId
+        (item) => item.booking?.court.id === filters.courtId
       );
     }
 
     // Court type filter
     if (filters.courtType !== "all") {
       filtered = filtered.filter(
-        (item) => item.booking.courtType === filters.courtType
+        (item) => item.booking?.courtType === filters.courtType
       );
     }
 
@@ -166,6 +168,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     if (filters.timeSlot !== "all") {
       filtered = filtered.filter(
         (item) =>
+          item.booking &&
           `${item.booking.startTime}-${item.booking.endTime}` ===
           filters.timeSlot
       );
@@ -201,7 +204,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     const stats: Record<string, { count: number; revenue: number }> = {};
 
     filteredData.forEach((item) => {
-      const type = item.booking.courtType;
+      const type = item.booking?.courtType || "Unknown";
       if (!stats[type]) {
         stats[type] = { count: 0, revenue: 0 };
       }
@@ -350,21 +353,23 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
           "Metode",
         ],
       ],
-      body: filteredData.map((item, index) => [
-        index + 1,
-        item.booking.user.name,
-        item.booking.court.name,
-        item.booking.courtType === "TenisMeja"
-          ? "Tenis Meja"
-          : item.booking.courtType,
-        format(new Date(item.createdAt), "d MMM yyyy", { locale: id }),
-        `${item.booking.startTime}-${item.booking.endTime}`,
-        new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0,
-        }).format(Number(item.amount)),
+      body: filteredData
+        .filter((item) => item.booking) // Only include items with booking for PDF
+        .map((item, index) => [
+          index + 1,
+          item.booking!.user.name,
+          item.booking!.court.name,
+          item.booking!.courtType === "TenisMeja"
+            ? "Tenis Meja"
+            : item.booking!.courtType,
+          format(new Date(item.createdAt), "d MMM yyyy", { locale: id }),
+          `${item.booking!.startTime}-${item.booking!.endTime}`,
+          new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          }).format(Number(item.amount)),
         item.paymentMethod,
       ]),
       startY: yPos,

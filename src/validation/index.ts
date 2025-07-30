@@ -16,6 +16,23 @@ const authSchema = z
     role: true,
   });
 
+const recurringBookingSchema = z
+  .object({
+    courtId: z.string().min(1, "Lapangan harus dipilih"),
+    timeSlot: z.string().min(1, "Waktu harus dipilih"),
+    dayOfWeek: z.number().min(1).max(7, "Hari tidak valid"),
+    startDate: z.date({
+      required_error: "Tanggal mulai harus dipilih",
+    }),
+    endDate: z.date({
+      required_error: "Tanggal selesai harus dipilih",
+    }),
+  })
+  .refine((data) => data.endDate > data.startDate, {
+    message: "Tanggal selesai harus setelah tanggal mulai",
+    path: ["endDate"],
+  });
+
 const profileSchema = z.object({
   name: z.string().min(3, "Nama harus lebih dari 3 karakter"),
   phone: z.string().min(10, "No telepon tidak valid"),
@@ -77,4 +94,11 @@ const orderSchema = z.object({
     .optional(),
 });
 
-export { authSchema, profileSchema, courtSchema, scheduleSchema, orderSchema };
+export {
+  authSchema,
+  profileSchema,
+  courtSchema,
+  scheduleSchema,
+  orderSchema,
+  recurringBookingSchema,
+};

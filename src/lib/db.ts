@@ -320,10 +320,12 @@ export const getOrderStats = async () => {
     },
   });
 
-  return transactions.map((transaction) => ({
-    date: transaction.booking.date.toISOString(),
-    fieldType: transaction.booking.courtType,
-  }));
+  return transactions
+    .filter((transaction) => transaction.booking !== null)
+    .map((transaction) => ({
+      date: transaction.booking!.date.toISOString(),
+      fieldType: transaction.booking!.courtType,
+    }));
 };
 
 export const getRevenueStats = async () => {
@@ -342,9 +344,11 @@ export const getRevenueStats = async () => {
     },
   });
 
-  return transactions.map((transaction) => ({
-    date: transaction.booking.date.toISOString(),
-    amount: transaction.amount,
-    courtType: transaction.booking.courtType,
-  }));
+  return transactions
+    .filter((transaction) => transaction.booking !== null)
+    .map((transaction) => ({
+      date: transaction.booking!.date.toISOString(),
+      amount: transaction.amount,
+      courtType: transaction.booking!.courtType,
+    }));
 };
