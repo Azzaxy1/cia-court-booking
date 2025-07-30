@@ -52,7 +52,7 @@ const RecurringBooking = ({ court }: Props) => {
 
   const [formData, setFormData] = useState<RecurringBookingFormData>({
     courtId: court.id,
-    dayOfWeek: 1, // Monday by default
+    dayOfWeek: 5, // Friday by default (now using 1-7 system where 5 = Friday)
     startDate: new Date(),
     endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
     timeSlot: "",
@@ -83,10 +83,14 @@ const RecurringBooking = ({ court }: Props) => {
       const dayOfWeek = scheduleDate.getDay();
       const timeSlot = selectedSchedule.timeSlot;
 
+      // Convert JavaScript getDay() (0-6, Sun-Sat) to our system (1-7, Mon-Sun)
+      const ourDayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
+
       setFormData((prev) => ({
         ...prev,
-        dayOfWeek: dayOfWeek === 0 ? 7 : dayOfWeek, // Convert Sunday from 0 to 7
+        dayOfWeek: ourDayOfWeek,
         timeSlot,
+        startDate: new Date(selectedSchedule.date),
       }));
     }
   }, [selectedSchedule]);

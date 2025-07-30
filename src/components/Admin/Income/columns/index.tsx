@@ -7,6 +7,7 @@ import { id } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { Transaction } from "@/app/generated/prisma";
+import { DAYS_OF_WEEK } from "@/types/RecurringBooking";
 
 export interface TransactionWithBooking extends Transaction {
   booking: {
@@ -61,7 +62,9 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     cell: ({ row }) => {
       const booking = row.original.booking;
       const recurringBooking = row.original.recurringBooking;
-      return <div>{booking?.user.name || recurringBooking?.user.name || "N/A"}</div>;
+      return (
+        <div>{booking?.user.name || recurringBooking?.user.name || "N/A"}</div>
+      );
     },
   },
   {
@@ -70,7 +73,11 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     cell: ({ row }) => {
       const booking = row.original.booking;
       const recurringBooking = row.original.recurringBooking;
-      return <div>{booking?.court.name || recurringBooking?.court.name || "N/A"}</div>;
+      return (
+        <div>
+          {booking?.court.name || recurringBooking?.court.name || "N/A"}
+        </div>
+      );
     },
   },
   {
@@ -79,13 +86,20 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     cell: ({ row }) => {
       const booking = row.original.booking;
       const recurringBooking = row.original.recurringBooking;
-      const type = booking?.courtType || booking?.court.type || recurringBooking?.court.type;
+      const type =
+        booking?.courtType ||
+        booking?.court.type ||
+        recurringBooking?.court.type;
       const typeMap = {
         Futsal: "Futsal",
         Badminton: "Badminton",
         TenisMeja: "Tenis Meja",
       };
-      return <div>{type ? (typeMap[type as keyof typeof typeMap] || type) : "N/A"}</div>;
+      return (
+        <div>
+          {type ? typeMap[type as keyof typeof typeMap] || type : "N/A"}
+        </div>
+      );
     },
   },
   {
@@ -104,18 +118,17 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     cell: ({ row }) => {
       const booking = row.original.booking;
       const recurringBooking = row.original.recurringBooking;
-      
+
       if (booking?.date) {
         const date = new Date(booking.date);
         return <div>{format(date, "d MMM yyyy", { locale: id })}</div>;
       }
-      
+
       if (recurringBooking?.startDate) {
-        const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        const dayName = dayNames[recurringBooking.dayOfWeek];
+        const dayName = DAYS_OF_WEEK[recurringBooking.dayOfWeek - 1];
         return <div>Setiap {dayName}</div>;
       }
-      
+
       return <div>-</div>;
     },
   },
@@ -125,17 +138,25 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     cell: ({ row }) => {
       const booking = row.original.booking;
       const recurringBooking = row.original.recurringBooking;
-      
+
       if (booking) {
         const { startTime, endTime } = booking;
-        return <div>{startTime} - {endTime}</div>;
+        return (
+          <div>
+            {startTime} - {endTime}
+          </div>
+        );
       }
-      
+
       if (recurringBooking) {
         const { startTime, endTime } = recurringBooking;
-        return <div>{startTime} - {endTime}</div>;
+        return (
+          <div>
+            {startTime} - {endTime}
+          </div>
+        );
       }
-      
+
       return <div>N/A</div>;
     },
   },

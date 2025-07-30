@@ -29,11 +29,11 @@ export interface RecurringBookingPreview {
 }
 
 export const DAYS_OF_WEEK = [
-  "Minggu",
   "Senin",
-  "Selasa",
+  "Selasa", 
   "Rabu",
   "Kamis",
   "Jumat",
   "Sabtu",
+  "Minggu",
 ];

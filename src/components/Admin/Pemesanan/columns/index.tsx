@@ -50,7 +50,15 @@ export const getColumns = (role: string): ColumnDef<BookingWithUser>[] => {
       header: "Tanggal",
       cell: ({ row }) => {
         const date = row.getValue("date") as Date;
-        return <div>{format(date, "d MMM yyyy", { locale: id })}</div>;
+        // Tampilkan hari nya juga
+        return (
+          <div>
+            {format(new Date(date), "dd MMMM yyyy", { locale: id })}{" "}
+            <span className="text-xs text-gray-500">
+              ({format(new Date(date), "EEEE", { locale: id })})
+            </span>
+          </div>
+        );
       },
     },
     {

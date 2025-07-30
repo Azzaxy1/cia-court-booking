@@ -8,15 +8,18 @@ import {
  * Generate array of dates for recurring booking based on day of week
  */
 export function getRecurringDates(
-  dayOfWeek: number, // 1 = Monday, 7 = Sunday
+  dayOfWeek: number, // 1 = Monday, 2 = Tuesday, ..., 7 = Sunday
   startDate: Date,
   endDate: Date
 ): Date[] {
   const dates: Date[] = [];
   const current = new Date(startDate);
 
+  // Convert our dayOfWeek (1-7, Mon-Sun) to JavaScript getDay() (0-6, Sun-Sat)
+  const targetDay = dayOfWeek === 7 ? 0 : dayOfWeek;
+
   // Adjust to the first occurrence of the target day
-  while (current.getDay() !== (dayOfWeek === 7 ? 0 : dayOfWeek)) {
+  while (current.getDay() !== targetDay) {
     current.setDate(current.getDate() + 1);
   }
 
