@@ -1,3 +1,3 @@
 export * from "./Court";
-export * from "./CourtType";
+export type { CourtType } from "./CourtType";
 export * from "./CourtInfo";

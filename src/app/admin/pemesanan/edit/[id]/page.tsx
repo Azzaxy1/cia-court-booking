@@ -1,6 +1,7 @@
 import OrderForm from "@/components/Admin/Pemesanan/order-form";
 import BackButton from "@/components/BackButton";
 import { getBookings, getCourtWithSchedule } from "@/lib/db";
+import { notFound } from "next/navigation";
 
 const EditOrderPage = async ({
   params,
@@ -12,6 +13,10 @@ const EditOrderPage = async ({
   const courts = await getCourtWithSchedule();
 
   const order = bookings.find((order) => order.id === id);
+
+  if (!order) {
+    notFound();
+  }
 
   return (
     <div className="container mx-auto pb-8">

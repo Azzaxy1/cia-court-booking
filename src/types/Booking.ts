@@ -1,6 +1,10 @@
-import { Booking as PrismaBooking, Court } from "@/app/generated/prisma";
+import {
+  Booking as PrismaBooking,
+  Court,
+  BookingStatus as PrismaBookingStatus,
+} from "@/app/generated/prisma";
 
-export type BookingStatus = "Pending" | "Paid" | "Canceled" | "Refunded";
+export type BookingStatus = PrismaBookingStatus;
 
 export interface Booking extends PrismaBooking {
   court: Court;

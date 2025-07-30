@@ -1,1 +1,3 @@
-export type CourtType = "futsal" | "badminton" | "tableTennis";
+import { CourtType as PrismaCourtType } from "@/app/generated/prisma";
+
+export type CourtType = PrismaCourtType;

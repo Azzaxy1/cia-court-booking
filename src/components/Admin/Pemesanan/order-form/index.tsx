@@ -35,7 +35,6 @@ import {
   BookingStatus,
   Court,
   Schedule,
-  User,
 } from "@/app/generated/prisma";
 import { calculateEndTime } from "@/lib/utils";
 
@@ -46,9 +45,12 @@ type CourtWithSchedule = Court & {
 };
 
 export interface BookingWithUser extends Booking {
-  user: User;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
   court: Court;
-  Schedule: Schedule[];
 }
 
 interface Props {
@@ -73,12 +75,12 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
       customerName: order?.user?.name || "",
       courtId: order?.court?.id || "",
       selectedDate: order?.date ? new Date(order.date) : undefined,
-      selectedSchedule: order?.Schedule?.[0]
+      selectedSchedule: order
         ? {
-            id: order.Schedule[0].id,
-            timeSlot: order.Schedule[0].timeSlot,
-            price: order.Schedule[0].price,
-            available: order.Schedule[0].available,
+            id: "", // Will be populated when schedules are loaded
+            timeSlot: order.startTime,
+            price: order.amount,
+            available: true,
           }
         : undefined,
       status: order?.status || "Paid",

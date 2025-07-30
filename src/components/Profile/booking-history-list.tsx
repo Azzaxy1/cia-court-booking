@@ -6,30 +6,14 @@ import { BsFillCartXFill } from "react-icons/bs";
 import BookingHistory from "@/components/Profile/booking-history";
 import Pagination from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Booking } from "@/types/Booking";
 
-interface BookingData {
-  id: string;
-  userId: string;
-  courtId: string;
+type BookingData = Booking & {
   court: {
     name: string;
     image: string;
   };
-  courtType: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  amount: number;
-  paymentMethod: string;
-  status: string;
-  duration: number;
-  isConfirmed: boolean;
-  rescheduleFrom: string | null;
-  rescheduleCount: number;
-  cancelReason: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+};
 
 interface PaginationData {
   currentPage: number;

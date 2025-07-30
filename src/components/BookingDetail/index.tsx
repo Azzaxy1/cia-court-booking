@@ -10,6 +10,7 @@ import {
   formattedTime,
 } from "@/lib/utils";
 import { BookingStatus } from "@/types/Booking";
+import { Court, Booking, Transaction, Schedule } from "@/app/generated/prisma";
 import {
   Calendar,
   Clock,
@@ -24,35 +25,11 @@ import Link from "next/link";
 import React from "react";
 
 interface BookingDetailProps {
-  booking: {
-    id: string;
-    userId: string;
-    courtId: string;
-    court: {
-      name: string;
-      image: string;
-      location: string;
+  booking: Booking & {
+    court: Court & {
+      Schedule: Schedule[];
     };
-    courtType: string;
-    date: Date | string;
-    startTime: string;
-    endTime: string;
-    amount: number;
-    paymentMethod: string;
-    status: BookingStatus;
-    duration: number;
-    isConfirmed: boolean;
-    rescheduleFrom: string | null;
-    rescheduleCount: number;
-    cancelReason: string | null;
-    createdAt: Date | string;
-    updatedAt: Date | string;
-    Transaction: Array<{
-      id: string;
-      amount: number;
-      paymentMethod: string;
-      status: string;
-    }>;
+    Transaction: Transaction[];
   };
 }
 
@@ -74,8 +51,6 @@ const getStatusBadge = (status: BookingStatus) => {
 };
 
 const BookingDetail = ({ booking }: BookingDetailProps) => {
-  console.log(booking);
-
   const adminWhatsApp = "+62 851-8219-8144";
 
   const handleReschedule = () => {
@@ -154,7 +129,7 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
                 <div>
                   <h3 className="font-semibold">{booking.court.name}</h3>
                   <p className="text-sm text-gray-600">
-                    {booking.court.location}
+                    {booking.court.description}
                   </p>
                 </div>
               </div>

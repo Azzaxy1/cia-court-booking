@@ -22,6 +22,9 @@ export const getCourtWithSchedule = async () => {
 
 export const getCourts = async () => {
   return await prisma.court.findMany({
+    include: {
+      Schedule: true,
+    },
     orderBy: {
       createdAt: "desc",
     },
