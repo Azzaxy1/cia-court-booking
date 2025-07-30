@@ -6,12 +6,13 @@ import { notFound, redirect } from "next/navigation";
 import BookingDetail from "@/components/BookingDetail";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export const dynamic = "force-dynamic";
 
 const BookingDetailPage = async ({ params }: Props) => {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -20,7 +21,7 @@ const BookingDetailPage = async ({ params }: Props) => {
 
   const booking = await prisma.booking.findUnique({
     where: {
-      id: params.id,
+      id: id,
       userId: session.user.id, // Pastikan hanya user yang memiliki booking ini yang bisa akses
     },
     include: {
