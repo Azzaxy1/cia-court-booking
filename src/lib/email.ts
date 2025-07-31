@@ -17,9 +17,16 @@ interface PaymentSuccessEmailData {
   orderId: string;
   courtName: string;
   amount: number;
-  date: string;
   timeSlot: string;
   paymentMethod: string;
+  type: "booking" | "recurringBooking";
+  // For regular booking
+  date?: string;
+  // For recurring booking
+  startDate?: string;
+  endDate?: string;
+  dayName?: string;
+  totalSessions?: number;
 }
 
 export const sendPaymentSuccessEmail = async (
@@ -31,10 +38,71 @@ export const sendPaymentSuccessEmail = async (
     orderId,
     courtName,
     amount,
-    date,
     timeSlot,
     paymentMethod,
+    type,
+    date,
+    startDate,
+    endDate,
+    dayName,
+    totalSessions,
   } = data;
+
+  // Dynamic content based on booking type
+  const bookingTypeText = type === "recurringBooking" ? "Pemesanan Berulang" : "Pemesanan Lapangan";
+  const scheduleContent = type === "recurringBooking" 
+    ? `
+        <div class="detail-row">
+            <span><strong>Jadwal:</strong></span>
+            <span>Setiap ${dayName} jam ${timeSlot}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span><strong>Periode:</strong></span>
+            <span>${new Date(startDate!).toLocaleDateString("id-ID")} - ${new Date(endDate!).toLocaleDateString("id-ID")}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span><strong>Total Sesi:</strong></span>
+            <span>${totalSessions} kali</span>
+        </div>
+    `
+    : `
+        <div class="detail-row">
+            <span><strong>Tanggal:</strong></span>
+            <span>${new Date(date!).toLocaleDateString("id-ID", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span><strong>Waktu:</strong></span>
+            <span>${timeSlot}</span>
+        </div>
+    `;
+
+  const additionalInfo = type === "recurringBooking"
+    ? `
+        <p><strong>Informasi Pemesanan Berulang:</strong></p>
+        <ul>
+            <li>Pemesanan akan berlaku setiap ${dayName} sesuai periode yang dipilih</li>
+            <li>Silakan datang 15 menit sebelum waktu bermain</li>
+            <li>Tunjukkan email ini kepada kasir</li>
+            <li>Jika ingin membatalkan salah satu sesi, hubungi kami minimal 24 jam sebelumnya</li>
+            <li>Hubungi kami di +62 851-8219-8144 jika ada pertanyaan</li>
+        </ul>
+    `
+    : `
+        <p><strong>Informasi Penting:</strong></p>
+        <ul>
+            <li>Silakan datang 15 menit sebelum waktu bermain</li>
+            <li>Tunjukkan email ini kepada kasir</li>
+            <li>Hubungi kami di +62 851-8219-8144 jika ada pertanyaan</li>
+        </ul>
+    `;
 
   const emailContent = `
     <!DOCTYPE html>
@@ -66,10 +134,10 @@ export const sendPaymentSuccessEmail = async (
                 
                 <p>Halo <strong>${customerName}</strong>,</p>
                 
-                <p>Terima kasih! Pembayaran Anda untuk pemesanan lapangan telah berhasil diproses.</p>
+                <p>Terima kasih! Pembayaran Anda untuk ${bookingTypeText.toLowerCase()} telah berhasil diproses.</p>
                 
                 <div class="booking-details">
-                    <h3 style="margin-top: 0; color: #005d69;">Detail Pemesanan</h3>
+                    <h3 style="margin-top: 0; color: #005d69;">Detail ${bookingTypeText}</h3>
                     
                     <div class="detail-row">
                         <span><strong>ID Pesanan:</strong></span>
@@ -81,20 +149,7 @@ export const sendPaymentSuccessEmail = async (
                         <span>${courtName}</span>
                     </div>
                     
-                    <div class="detail-row">
-                        <span><strong>Tanggal:</strong></span>
-                        <span>${new Date(date).toLocaleDateString("id-ID", {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}</span>
-                    </div>
-                    
-                    <div class="detail-row">
-                        <span><strong>Waktu:</strong></span>
-                        <span>${timeSlot}</span>
-                    </div>
+                    ${scheduleContent}
                     
                     <div class="detail-row">
                         <span><strong>Metode Pembayaran:</strong></span>
@@ -106,12 +161,7 @@ export const sendPaymentSuccessEmail = async (
                     Total Pembayaran: Rp ${amount.toLocaleString("id-ID")}
                 </div>
                 
-                <p><strong>Informasi Penting:</strong></p>
-                <ul>
-                    <li>Silakan datang 15 menit sebelum waktu bermain</li>
-                    <li>Tunjukkan email ini kepada kasir</li>
-                    <li>Hubungi kami di +62 851-8219-8144 jika ada pertanyaan</li>
-                </ul>
+                ${additionalInfo}
                 
                 <div style="text-align: center; margin: 30px 0;">
                     <p style="color: #666; font-size: 14px;">
@@ -130,7 +180,7 @@ export const sendPaymentSuccessEmail = async (
     const info = await transporter.sendMail({
       from: `"CIA Court Serang" <${process.env.SMTP_USERNAME}>`,
       to: customerEmail,
-      subject: `Konfirmasi Pembayaran - Pesanan ${orderId}`,
+      subject: `Konfirmasi Pembayaran ${bookingTypeText} - Pesanan ${orderId}`,
       html: emailContent,
     });
 
