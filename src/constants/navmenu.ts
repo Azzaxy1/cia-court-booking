@@ -7,6 +7,7 @@ import { IoCart } from "react-icons/io5";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
+import { CalendarClock } from "lucide-react";
 
 export const navUser = [
   {
@@ -46,9 +47,14 @@ export const navAdmin = [
     icon: AiFillSchedule,
   },
   {
-    title: "Pemesanan",
+    title: "Semua Pemesanan",
     url: "/admin/pemesanan",
     icon: IoCart,
+  },
+  {
+    title: "Pemesanan Berulang",
+    url: "/admin/pemesanan-berulang",
+    icon: CalendarClock,
   },
   {
     title: "Pemasukan",

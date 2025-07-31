@@ -31,6 +31,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     lapangan: "Kelola Lapangan",
     jadwal: "Kelola Jadwal",
     pemesanan: "Kelola Pemesanan",
+    "pemesanan-berulang": "Monitor Pemesanan Berulang",
     pemasukan: "Monitor Pemasukan",
   };
 

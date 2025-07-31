@@ -190,24 +190,4 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     header: "Metode Pembayaran",
     cell: ({ row }) => <div>{row.getValue("paymentMethod")}</div>,
   },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      const statusMap = {
-        settlement: "Paid",
-        capture: "Paid",
-        paid: "Paid",
-        pending: "Pending",
-        expire: "Expired",
-        cancel: "Canceled",
-      };
-      return (
-        <div className="capitalize">
-          {statusMap[status as keyof typeof statusMap] || status}
-        </div>
-      );
-    },
-  },
 ];

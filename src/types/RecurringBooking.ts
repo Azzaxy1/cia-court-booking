@@ -28,9 +28,35 @@ export interface RecurringBookingPreview {
   totalPrice: number;
 }
 
+export interface RecurringBookingWithRelations extends PrismaRecurringBooking {
+  user: {
+    id: string;
+    name: string;
+    email?: string;
+    phone?: string;
+  };
+  court: {
+    id: string;
+    name: string;
+    type: string;
+  };
+  bookings: {
+    id: string;
+    date: Date;
+    status: string;
+  }[];
+  Transaction: {
+    id: string;
+    amount: number;
+    status: string;
+    paymentMethod: string;
+    createdAt: Date;
+  }[];
+}
+
 export const DAYS_OF_WEEK = [
   "Senin",
-  "Selasa", 
+  "Selasa",
   "Rabu",
   "Kamis",
   "Jumat",
