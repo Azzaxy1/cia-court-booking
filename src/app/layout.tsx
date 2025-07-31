@@ -1,6 +1,7 @@
 import { Poppins } from "next/font/google";
 import "../styles/globals.css";
 import ClientProvider from "@/providers/ClientProvider";
+import { ProgressProvider } from "@/components/BProgressProvider";
 import Script from "next/script";
 
 const poppins = Poppins({
@@ -40,7 +41,9 @@ export default function RootLayout({
         className={`${poppins.className} antialiased`}
         suppressHydrationWarning
       >
-        <ClientProvider>{children}</ClientProvider>
+        <ProgressProvider>
+          <ClientProvider>{children}</ClientProvider>
+        </ProgressProvider>
         <Script id="chatbase-script" strategy="afterInteractive">
           {`
             (function(){
