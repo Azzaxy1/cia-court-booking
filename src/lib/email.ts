@@ -49,9 +49,11 @@ export const sendPaymentSuccessEmail = async (
   } = data;
 
   // Dynamic content based on booking type
-  const bookingTypeText = type === "recurringBooking" ? "Pemesanan Berulang" : "Pemesanan Lapangan";
-  const scheduleContent = type === "recurringBooking" 
-    ? `
+  const bookingTypeText =
+    type === "recurringBooking" ? "Pemesanan Berulang" : "Pemesanan Lapangan";
+  const scheduleContent =
+    type === "recurringBooking"
+      ? `
         <div class="detail-row">
             <span><strong>Jadwal:</strong></span>
             <span>Setiap ${dayName} jam ${timeSlot}</span>
@@ -59,7 +61,9 @@ export const sendPaymentSuccessEmail = async (
         
         <div class="detail-row">
             <span><strong>Periode:</strong></span>
-            <span>${new Date(startDate!).toLocaleDateString("id-ID")} - ${new Date(endDate!).toLocaleDateString("id-ID")}</span>
+            <span>${new Date(startDate!).toLocaleDateString(
+              "id-ID"
+            )} - ${new Date(endDate!).toLocaleDateString("id-ID")}</span>
         </div>
         
         <div class="detail-row">
@@ -67,7 +71,7 @@ export const sendPaymentSuccessEmail = async (
             <span>${totalSessions} kali</span>
         </div>
     `
-    : `
+      : `
         <div class="detail-row">
             <span><strong>Tanggal:</strong></span>
             <span>${new Date(date!).toLocaleDateString("id-ID", {
@@ -84,18 +88,18 @@ export const sendPaymentSuccessEmail = async (
         </div>
     `;
 
-  const additionalInfo = type === "recurringBooking"
-    ? `
+  const additionalInfo =
+    type === "recurringBooking"
+      ? `
         <p><strong>Informasi Pemesanan Berulang:</strong></p>
         <ul>
             <li>Pemesanan akan berlaku setiap ${dayName} sesuai periode yang dipilih</li>
             <li>Silakan datang 15 menit sebelum waktu bermain</li>
             <li>Tunjukkan email ini kepada kasir</li>
-            <li>Jika ingin membatalkan salah satu sesi, hubungi kami minimal 24 jam sebelumnya</li>
             <li>Hubungi kami di +62 851-8219-8144 jika ada pertanyaan</li>
         </ul>
     `
-    : `
+      : `
         <p><strong>Informasi Penting:</strong></p>
         <ul>
             <li>Silakan datang 15 menit sebelum waktu bermain</li>

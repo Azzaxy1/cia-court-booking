@@ -402,11 +402,16 @@ const RecurringBooking = ({ court }: Props) => {
         </Card>
       ) : null}
 
-      <Card>
-        <CardFooter className="flex-col items-start">
+      <Card className="mt-4 ">
+        <CardFooter className="flex-col items-start mt-4">
+          <h1 className="font-bold">PERHATIKAN!</h1>
           <p className="text-sm text-gray-500 mb-2">
-            <span className="font-semibold">Kebijakan Pembatalan:</span>
-            Pembatalan dapat dilakukan hingga 24 jam sebelum jadwal pertama
+            Pastikan jadwal yang dipilih sudah sesuai, karena pemesanan tidak
+            dapat dibatalkan.
+          </p>
+          <p className="text-sm text-gray-500 mb-2">
+            Dengan melakukan pembayaran, Anda setuju dengan syarat dan ketentuan
+            yang berlaku.
           </p>
           <p className="text-sm text-gray-500">
             <span className="font-semibold">Butuh bantuan?</span> Hubungi kami
