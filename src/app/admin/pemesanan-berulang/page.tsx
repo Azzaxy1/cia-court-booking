@@ -30,7 +30,6 @@ const RecurringBookingsPage = () => {
   const safeRecurringBookings = Array.isArray(recurringBookings)
     ? recurringBookings
     : [];
-  console.log("Recurring Bookings Data:", safeRecurringBookings);
 
   // Check if user has proper access
   if (

@@ -47,7 +47,7 @@ export const navAdmin = [
     icon: AiFillSchedule,
   },
   {
-    title: "Semua Pemesanan",
+    title: "Pemesanan",
     url: "/admin/pemesanan",
     icon: IoCart,
   },

@@ -95,15 +95,17 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
   // Get unique time slots
   const timeSlots = useMemo(() => {
     const slots = new Set<string>();
-    
+
     data.forEach((item) => {
       if (item.booking) {
         slots.add(`${item.booking.startTime}-${item.booking.endTime}`);
       } else if (item.recurringBooking) {
-        slots.add(`${item.recurringBooking.startTime}-${item.recurringBooking.endTime}`);
+        slots.add(
+          `${item.recurringBooking.startTime}-${item.recurringBooking.endTime}`
+        );
       }
     });
-    
+
     return Array.from(slots).sort();
   }, [data]);
 
@@ -116,86 +118,82 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     if (filters.period !== "all") {
       switch (filters.period) {
         case "this-month":
-          filtered = filtered.filter(
-            (item) => {
-              const date = item.booking?.date || item.recurringBooking?.startDate;
-              return date &&
-                new Date(date) >= startOfMonth(now) &&
-                new Date(date) <= endOfMonth(now);
-            }
-          );
+          filtered = filtered.filter((item) => {
+            const date = item.booking?.date || item.recurringBooking?.startDate;
+            return (
+              date &&
+              new Date(date) >= startOfMonth(now) &&
+              new Date(date) <= endOfMonth(now)
+            );
+          });
           break;
         case "last-month":
           const lastMonth = subMonths(now, 1);
-          filtered = filtered.filter(
-            (item) => {
-              const date = item.booking?.date || item.recurringBooking?.startDate;
-              return date &&
-                new Date(date) >= startOfMonth(lastMonth) &&
-                new Date(date) <= endOfMonth(lastMonth);
-            }
-          );
+          filtered = filtered.filter((item) => {
+            const date = item.booking?.date || item.recurringBooking?.startDate;
+            return (
+              date &&
+              new Date(date) >= startOfMonth(lastMonth) &&
+              new Date(date) <= endOfMonth(lastMonth)
+            );
+          });
           break;
         case "this-year":
-          filtered = filtered.filter(
-            (item) => {
-              const date = item.booking?.date || item.recurringBooking?.startDate;
-              return date &&
-                new Date(date) >= startOfYear(now) &&
-                new Date(date) <= endOfYear(now);
-            }
-          );
+          filtered = filtered.filter((item) => {
+            const date = item.booking?.date || item.recurringBooking?.startDate;
+            return (
+              date &&
+              new Date(date) >= startOfYear(now) &&
+              new Date(date) <= endOfYear(now)
+            );
+          });
           break;
       }
     }
 
     // Date range filter
     if (filters.dateRange?.from && filters.dateRange?.to) {
-      filtered = filtered.filter(
-        (item) => {
-          const date = item.booking?.date || item.recurringBooking?.startDate;
-          return date &&
-            isWithinInterval(new Date(date), {
-              start: startOfDay(filters.dateRange!.from!),
-              end: endOfDay(filters.dateRange!.to!),
-            });
-        }
-      );
+      filtered = filtered.filter((item) => {
+        const date = item.booking?.date || item.recurringBooking?.startDate;
+        return (
+          date &&
+          isWithinInterval(new Date(date), {
+            start: startOfDay(filters.dateRange!.from!),
+            end: endOfDay(filters.dateRange!.to!),
+          })
+        );
+      });
     }
 
     // Court filter
     if (filters.courtId !== "all") {
-      filtered = filtered.filter(
-        (item) => {
-          const courtId = item.booking?.court.id || item.recurringBooking?.court.id;
-          return courtId === filters.courtId;
-        }
-      );
+      filtered = filtered.filter((item) => {
+        const courtId =
+          item.booking?.court.id || item.recurringBooking?.court.id;
+        return courtId === filters.courtId;
+      });
     }
 
     // Court type filter
     if (filters.courtType !== "all") {
-      filtered = filtered.filter(
-        (item) => {
-          const courtType = item.booking?.courtType || item.recurringBooking?.courtType;
-          return courtType === filters.courtType;
-        }
-      );
+      filtered = filtered.filter((item) => {
+        const courtType =
+          item.booking?.courtType || item.recurringBooking?.courtType;
+        return courtType === filters.courtType;
+      });
     }
 
     // Time slot filter
     if (filters.timeSlot !== "all") {
-      filtered = filtered.filter(
-        (item) => {
-          let timeSlot = "";
-          if (item.booking) {
-            timeSlot = `${item.booking.startTime}-${item.booking.endTime}`;
-          } else if (item.recurringBooking) {
-            timeSlot = `${item.recurringBooking.startTime}-${item.recurringBooking.endTime}`;
-          }
-          return timeSlot === filters.timeSlot;
+      filtered = filtered.filter((item) => {
+        let timeSlot = "";
+        if (item.booking) {
+          timeSlot = `${item.booking.startTime}-${item.booking.endTime}`;
+        } else if (item.recurringBooking) {
+          timeSlot = `${item.recurringBooking.startTime}-${item.recurringBooking.endTime}`;
         }
-      );
+        return timeSlot === filters.timeSlot;
+      });
     }
 
     return filtered;
@@ -228,7 +226,10 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
     const stats: Record<string, { count: number; revenue: number }> = {};
 
     filteredData.forEach((item) => {
-      const type = item.booking?.courtType || item.recurringBooking?.courtType || "Unknown";
+      const type =
+        item.booking?.courtType ||
+        item.recurringBooking?.courtType ||
+        "Unknown";
       if (!stats[type]) {
         stats[type] = { count: 0, revenue: 0 };
       }
@@ -377,26 +378,30 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
           "Metode",
         ],
       ],
-      body: filteredData.map((item, index) => {
-        const booking = item.booking || item.recurringBooking;
-        if (!booking) return [];
-        
-        return [
-          index + 1,
-          booking.user.name,
-          booking.court.name,
-          booking.courtType === "TenisMeja" ? "Tenis Meja" : booking.courtType,
-          format(new Date(item.createdAt), "d MMM yyyy", { locale: id }),
-          `${booking.startTime}-${booking.endTime}`,
-          new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          }).format(Number(item.amount)),
-          item.paymentMethod,
-        ];
-      }).filter(row => row.length > 0),
+      body: filteredData
+        .map((item, index) => {
+          const booking = item.booking || item.recurringBooking;
+          if (!booking) return [];
+
+          return [
+            index + 1,
+            booking.user.name,
+            booking.court.name,
+            booking.courtType === "TenisMeja"
+              ? "Tenis Meja"
+              : booking.courtType,
+            format(new Date(item.createdAt), "d MMM yyyy", { locale: id }),
+            `${booking.startTime}-${booking.endTime}`,
+            new Intl.NumberFormat("id-ID", {
+              style: "currency",
+              currency: "IDR",
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }).format(Number(item.amount)),
+            item.paymentMethod,
+          ];
+        })
+        .filter((row) => row.length > 0),
       startY: yPos,
       headStyles: {
         fillColor: [18, 105, 120],
@@ -584,7 +589,7 @@ const IncomeTable = ({ data, columns, courts }: Props) => {
               className="flex items-center gap-2"
             >
               <Download className="h-4 w-4" />
-              Export PDF
+              Unduh PDF
             </Button>
           </div>
         </div>

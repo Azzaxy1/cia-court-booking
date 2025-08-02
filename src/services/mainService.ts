@@ -73,7 +73,6 @@ export const getRecurringBookings = async () => {
       throw new Error("Gagal mendapatkan data pemesanan berulang");
     }
 
-    console.log("Service response:", res.data);
     return res.data;
   } catch (error) {
     console.error("Service error:", error);

@@ -64,12 +64,6 @@ export async function GET() {
       },
     });
 
-    console.log("Found recurring bookings:", recurringBookings.length);
-    console.log(
-      "Recurring bookings data:",
-      JSON.stringify(recurringBookings, null, 2)
-    );
-
     return NextResponse.json(recurringBookings);
   } catch (error) {
     console.error("Get recurring bookings error:", error);
