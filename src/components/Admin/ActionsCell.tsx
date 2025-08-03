@@ -94,20 +94,18 @@ const ActionsCell: React.FC<ActionsCellProps> = ({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
           {/* Edit Schedule DISABLE */}
-          {!isSchedule && (
-            <Link
-              href={
-                isOrder
-                  ? `/admin/pemesanan/edit/${id}`
-                  : `/admin/lapangan/edit/${id}`
-              }
-              className="cursor-pointer"
-            >
-              <DropdownMenuItem className="cursor-pointer">
-                Edit
-              </DropdownMenuItem>
-            </Link>
-          )}
+          <Link
+            href={
+              isOrder
+                ? `/admin/pemesanan/edit/${id}`
+                : isSchedule
+                ? `/admin/jadwal/${id}`
+                : `/admin/lapangan/edit/${id}`
+            }
+            className="cursor-pointer"
+          >
+            <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
+          </Link>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="cursor-pointer"

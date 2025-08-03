@@ -23,6 +23,24 @@ const EditSchedulePage = async ({
 
   const schedule = schedules.find((schedule) => schedule.id === id);
 
+  if (!schedule) {
+    return (
+      <div className="container mx-auto pb-8">
+        <BackButton />
+        <div className="text-center py-8">
+          <h1 className="text-2xl font-bold text-red-600">
+            Jadwal tidak ditemukan
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Jadwal dengan ID {id} tidak ditemukan.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  console.log("Schedule", schedule);
+
   return (
     <div className="container mx-auto pb-8">
       <BackButton />
@@ -31,6 +49,7 @@ const EditSchedulePage = async ({
         schedule={schedule as unknown as ScheduleWithCourt}
         id={id}
         courts={courts as unknown as CourtWithSchedule[]}
+        isAddForm={false}
       />
     </div>
   );

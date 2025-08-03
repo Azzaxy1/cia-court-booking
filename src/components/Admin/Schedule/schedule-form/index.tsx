@@ -56,10 +56,10 @@ const TIME_PRESETS = {
 const ScheduleForm = ({ courts, id, isAddForm, schedule }: Props) => {
   const router = useRouter();
 
-  const getNameCourtById = (courtId: string | undefined) => {
-    const court = courts?.find((court) => court.id === courtId);
-    return court ? court.name : "Lapangan tidak ditemukan";
-  };
+  // const getNameCourtById = (courtId: string | undefined) => {
+  //   const court = courts?.find((court) => court.id === courtId);
+  //   return court ? court.name : "Lapangan tidak ditemukan";
+  // };
 
   const {
     register,
@@ -70,11 +70,14 @@ const ScheduleForm = ({ courts, id, isAddForm, schedule }: Props) => {
   } = useForm<ScheduleFormType>({
     resolver: zodResolver(scheduleSchema),
     defaultValues: {
-      courtId: isAddForm ? "" : getNameCourtById(id) || "",
+      courtId: isAddForm ? "" : schedule?.courtId || "",
       days: 1,
-      price: 100000,
-      dayType: "Weekday",
+      price: schedule?.price || 0,
+      dayType: schedule?.dayType || "Weekday",
       timePreset: "pagi",
+      startTime: schedule?.timeSlot || "",
+      endTime: schedule?.timeSlot || "",
+      date: schedule?.date ? schedule.date.toISOString().split("T")[0] : "",
     },
   });
 
@@ -111,25 +114,27 @@ const ScheduleForm = ({ courts, id, isAddForm, schedule }: Props) => {
   });
 
   const onSubmit = async (data: ScheduleFormType) => {
-    const payload = {
-      courtId: data.courtId,
-      days: data.days,
-      price: data.price,
-      dayType: data.dayType,
-      timeSlot: TIME_PRESETS[data.timePreset as keyof typeof TIME_PRESETS],
-    };
-
     if (isAddForm) {
+      const payload = {
+        courtId: data.courtId,
+        days: data.days,
+        price: data.price,
+        dayType: data.dayType,
+        timeSlot: TIME_PRESETS[data.timePreset as keyof typeof TIME_PRESETS],
+      };
       createScheduleMutation.mutate(payload);
     } else {
       if (id && schedule) {
+        const payload = {
+          courtId: data.courtId,
+          date: data.date || schedule.date.toISOString(),
+          timeSlot: data.startTime || schedule.timeSlot,
+          price: data.price,
+          dayType: data.dayType,
+        };
         updateScheduleMutation.mutate({
           scheduleId: id,
-          scheduleData: {
-            ...payload,
-            date: schedule.date.toISOString(),
-            timeSlot: schedule.timeSlot,
-          },
+          scheduleData: payload,
         });
       } else {
         toast.error("ID jadwal tidak ditemukan");
@@ -177,24 +182,75 @@ const ScheduleForm = ({ courts, id, isAddForm, schedule }: Props) => {
           </div>
 
           {/* Days and Day Type */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="days">Jumlah Hari</Label>
-              <Input
-                id="days"
-                type="number"
-                {...register("days", { valueAsNumber: true })}
-                placeholder="Jumlah hari"
-                min={1}
-                max={30}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  setValue("days", value);
-                }}
-                required
-              />
-            </div>
+          {isAddForm && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="days">Jumlah Hari</Label>
+                <Input
+                  id="days"
+                  type="number"
+                  {...register("days", { valueAsNumber: true })}
+                  placeholder="Jumlah hari"
+                  min={1}
+                  max={30}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    setValue("days", value);
+                  }}
+                  required
+                />
+              </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="dayType">Tipe Hari</Label>
+                <Select
+                  value={watch("dayType")}
+                  onValueChange={(value) =>
+                    setValue("dayType", value as "Weekday" | "Weekend")
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih tipe hari" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Weekday">Weekday</SelectItem>
+                    <SelectItem value="Weekend">Weekend</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+
+          {/* Edit Mode: Date and Time */}
+          {!isAddForm && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="date">Tanggal</Label>
+                <Input id="date" type="date" {...register("date")} required />
+                {errors.date && (
+                  <p className="text-red-500 text-sm">{errors.date.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="startTime">Jam</Label>
+                <Input
+                  id="startTime"
+                  type="time"
+                  {...register("startTime")}
+                  placeholder="Jam mulai"
+                  required
+                />
+                {errors.startTime && (
+                  <p className="text-red-500 text-sm">
+                    {errors.startTime.message}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {!isAddForm && (
             <div className="space-y-2">
               <Label htmlFor="dayType">Tipe Hari</Label>
               <Select
@@ -212,31 +268,34 @@ const ScheduleForm = ({ courts, id, isAddForm, schedule }: Props) => {
                 </SelectContent>
               </Select>
             </div>
-          </div>
+          )}
 
-          {/* Time Slots */}
-          <div className="space-y-2">
-            <Label htmlFor="preset">Preset Jam Operasional</Label>
-            <Select
-              value={watch("timePreset")}
-              onValueChange={(value) => {
-                const selectedPreset = value as keyof typeof TIME_PRESETS;
-                setValue("timePreset", selectedPreset);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Pilih preset jam" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pagi">Pagi (07:00-13:00)</SelectItem>
-                <SelectItem value="siang">Siang (14:00-18:00)</SelectItem>
-                <SelectItem value="malam">Malam (19:00-23:00)</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-sm text-gray-500">
-              Pilih preset untuk mengisi jam otomatis, atau isi manual di bawah.
-            </p>
-          </div>
+          {/* Time Slots - Only for Add Mode */}
+          {isAddForm && (
+            <div className="space-y-2">
+              <Label htmlFor="preset">Preset Jam Operasional</Label>
+              <Select
+                value={watch("timePreset")}
+                onValueChange={(value) => {
+                  const selectedPreset = value as keyof typeof TIME_PRESETS;
+                  setValue("timePreset", selectedPreset);
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih preset jam" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pagi">Pagi (07:00-13:00)</SelectItem>
+                  <SelectItem value="siang">Siang (14:00-18:00)</SelectItem>
+                  <SelectItem value="malam">Malam (19:00-23:00)</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-gray-500">
+                Pilih preset untuk mengisi jam otomatis, atau isi manual di
+                bawah.
+              </p>
+            </div>
+          )}
 
           {/* Price */}
           <div className="space-y-2">
@@ -269,37 +328,73 @@ const ScheduleForm = ({ courts, id, isAddForm, schedule }: Props) => {
           </div>
 
           {/* Summary */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-semibold mb-2">Ringkasan Generate:</h4>
-            <div className="text-sm space-y-1">
-              <p>
-                • Lapangan:{" "}
-                {courts?.find((c) => c.id === watch("courtId"))?.name ||
-                  "Belum dipilih"}
-              </p>
-              <p>• Jumlah hari: {watch("days")} hari</p>
-              <p>• Tipe hari: {watch("dayType")}</p>
-              <p>• Jumlah slot waktu: {watch("timePreset").length} slot</p>
-              <p>• Harga per jam: Rp {watch("price").toLocaleString()}</p>
-              <p>
-                • Total jadwal yang akan dibuat:{" "}
-                <strong>
-                  {watch("days") * watch("timePreset").length} slot
-                </strong>
-              </p>
+          {isAddForm && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-semibold mb-2">Ringkasan Generate:</h4>
+              <div className="text-sm space-y-1">
+                <p>
+                  • Lapangan:{" "}
+                  {courts?.find((c) => c.id === watch("courtId"))?.name ||
+                    "Belum dipilih"}
+                </p>
+                <p>• Jumlah hari: {watch("days")} hari</p>
+                <p>• Tipe hari: {watch("dayType")}</p>
+                <p>
+                  • Jumlah slot waktu:{" "}
+                  {TIME_PRESETS[
+                    watch("timePreset") as keyof typeof TIME_PRESETS
+                  ]?.length || 0}{" "}
+                  slot
+                </p>
+                <p>• Harga per jam: Rp {watch("price").toLocaleString()}</p>
+                <p>
+                  • Total jadwal yang akan dibuat:{" "}
+                  <strong>
+                    {(watch("days") || 1) *
+                      (TIME_PRESETS[
+                        watch("timePreset") as keyof typeof TIME_PRESETS
+                      ]?.length || 0)}{" "}
+                    slot
+                  </strong>
+                </p>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Edit Summary */}
+          {!isAddForm && (
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h4 className="font-semibold mb-2">Detail Jadwal:</h4>
+              <div className="text-sm space-y-1">
+                <p>
+                  • Lapangan:{" "}
+                  {courts?.find((c) => c.id === watch("courtId"))?.name ||
+                    "Belum dipilih"}
+                </p>
+                <p>• Tanggal: {watch("date") || "Belum diisi"}</p>
+                <p>• Jam: {watch("startTime") || "Belum diisi"}</p>
+                <p>• Tipe hari: {watch("dayType")}</p>
+                <p>• Harga per jam: Rp {watch("price").toLocaleString()}</p>
+              </div>
+            </div>
+          )}
         </CardContent>
 
         <CardFooter className="flex justify-end space-x-4">
           <Button
             type="submit"
             className="bg-primary hover:bg-primary/90"
-            disabled={createScheduleMutation.isPending}
+            disabled={
+              createScheduleMutation.isPending ||
+              updateScheduleMutation.isPending
+            }
           >
-            {createScheduleMutation.isPending
+            {createScheduleMutation.isPending ||
+            updateScheduleMutation.isPending
               ? "Memproses..."
-              : "Simpan Jadwal"}
+              : isAddForm
+              ? "Simpan Jadwal"
+              : "Update Jadwal"}
           </Button>
         </CardFooter>
       </form>

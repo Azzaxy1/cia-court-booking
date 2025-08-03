@@ -58,15 +58,22 @@ const scheduleSchema = z.object({
   days: z
     .number()
     .min(1, "Jumlah hari harus lebih dari 0")
-    .max(30, "Maksimal 30 hari"),
+    .max(30, "Maksimal 30 hari")
+    .optional(),
   dayType: z.enum(["Weekday", "Weekend"], {
     errorMap: () => ({ message: "Tipe hari tidak valid" }),
   }),
-  timePreset: z.enum(["pagi", "siang", "malam"], {
-    errorMap: () => ({ message: "Preset waktu tidak valid" }),
-  }),
+  timePreset: z
+    .enum(["pagi", "siang", "malam"], {
+      errorMap: () => ({ message: "Preset waktu tidak valid" }),
+    })
+    .optional(),
   price: z.number().min(0, "Harga harus lebih dari atau sama dengan 0"),
   available: z.boolean().optional(),
+  // Fields for edit mode
+  date: z.string().optional(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
 });
 
 const orderSchema = z.object({
