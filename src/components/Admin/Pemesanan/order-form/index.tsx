@@ -118,24 +118,28 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
   }, [selectedSchedule, selectedDate, bookingType, setValue]);
 
   // Function to calculate recurring sessions
-  const calculateRecurringSessions = (startDate: Date, endDate: Date, dayOfWeek: number) => {
+  const calculateRecurringSessions = (
+    startDate: Date,
+    endDate: Date,
+    dayOfWeek: number
+  ) => {
     const sessions: Date[] = [];
     const current = new Date(startDate);
-    
+
     // Convert our dayOfWeek (1-7, Mon-Sun) to JavaScript getDay() (0-6, Sun-Sat)
     const targetDay = dayOfWeek === 7 ? 0 : dayOfWeek;
-    
+
     // Adjust to the first occurrence of the target day
     while (current.getDay() !== targetDay) {
       current.setDate(current.getDate() + 1);
     }
-    
+
     // Generate all dates until end date
     while (current <= endDate) {
       sessions.push(new Date(current));
       current.setDate(current.getDate() + 7); // Add 7 days for next week
     }
-    
+
     return sessions;
   };
 
@@ -244,7 +248,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
         toast.error("Silakan pilih jadwal terlebih dahulu");
         return;
       }
-      
+
       const recurringData = {
         customerName: data.customerName,
         courtId: data.courtId,
@@ -675,111 +679,164 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
               {watch("startDate") &&
                 watch("endDate") &&
                 watch("dayOfWeek") &&
-                selectedSchedule && (
-                  (() => {
-                    const startDate = watch("startDate")!;
-                    const endDate = watch("endDate")!;
-                    const dayOfWeek = watch("dayOfWeek")!;
-                    const sessions = calculateRecurringSessions(startDate, endDate, dayOfWeek);
-                    const totalPrice = sessions.length * selectedSchedule.price;
-                    
-                    return (
-                      <div className="bg-green-50 border border-green-200 rounded-md p-4">
-                        <h4 className="font-medium text-green-900 mb-3">
-                          Preview Pemesanan Berulang:
-                        </h4>
-                        <div className="space-y-3">
-                          <div className="grid grid-cols-2 gap-4 text-sm text-green-700">
-                            <div>
-                              <p>
-                                <strong>Hari:</strong>{" "}
-                                {
-                                  [
-                                    "",
-                                    "Senin",
-                                    "Selasa",
-                                    "Rabu",
-                                    "Kamis",
-                                    "Jumat",
-                                    "Sabtu",
-                                    "Minggu",
-                                  ][dayOfWeek]
-                                }
-                              </p>
-                              <p>
-                                <strong>Waktu:</strong> {selectedSchedule.timeSlot}
-                              </p>
-                            </div>
-                            <div>
-                              <p>
-                                <strong>Jumlah Sesi:</strong> {sessions.length} kali
-                              </p>
-                              <p>
-                                <strong>Harga per Sesi:</strong> Rp{" "}
-                                {selectedSchedule.price.toLocaleString("id-ID")}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="border-t border-green-300 pt-3">
-                            <div className="flex justify-between items-center">
-                              <span className="font-bold text-lg text-green-800">Total Harga:</span>
-                              <span className="font-bold text-xl text-green-600">
-                                Rp {totalPrice.toLocaleString("id-ID")}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <div className="text-xs text-green-600 bg-green-100 p-2 rounded">
+                selectedSchedule &&
+                (() => {
+                  const startDate = watch("startDate")!;
+                  const endDate = watch("endDate")!;
+                  const dayOfWeek = watch("dayOfWeek")!;
+                  const sessions = calculateRecurringSessions(
+                    startDate,
+                    endDate,
+                    dayOfWeek
+                  );
+
+                  // Calculate discount
+                  const originalTotalPrice =
+                    sessions.length * selectedSchedule.price;
+                  let discountPercentage = 0;
+                  if (sessions.length >= 16) {
+                    discountPercentage = 15;
+                  } else if (sessions.length >= 8) {
+                    discountPercentage = 10;
+                  } else if (sessions.length >= 4) {
+                    discountPercentage = 5;
+                  }
+                  const discountAmount = Math.floor(
+                    (originalTotalPrice * discountPercentage) / 100
+                  );
+                  const finalTotalPrice = originalTotalPrice - discountAmount;
+
+                  return (
+                    <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                      <h4 className="font-medium text-green-900 mb-3">
+                        Preview Pemesanan Berulang:
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-4 text-sm text-green-700">
+                          <div>
                             <p>
-                              <strong>Periode:</strong>{" "}
-                              {startDate.toLocaleDateString("id-ID")} -{" "}
-                              {endDate.toLocaleDateString("id-ID")}
-                            </p>
-                            <p className="mt-1">
-                              <strong>Jadwal:</strong> Setiap {
+                              <strong>Hari:</strong>{" "}
+                              {
                                 [
                                   "",
                                   "Senin",
-                                  "Selasa", 
+                                  "Selasa",
                                   "Rabu",
                                   "Kamis",
                                   "Jumat",
                                   "Sabtu",
                                   "Minggu",
                                 ][dayOfWeek]
-                              } jam {selectedSchedule.timeSlot}
+                              }
                             </p>
-                            {sessions.length <= 8 && (
-                              <div className="mt-2">
-                                <strong>Tanggal booking:</strong>
-                                <div className="flex flex-wrap gap-1 mt-1">
-                                  {sessions.map((session, index) => (
-                                    <span 
-                                      key={index}
-                                      className="bg-green-200 text-green-800 px-2 py-1 rounded text-xs"
-                                    >
-                                      {session.toLocaleDateString("id-ID", {
-                                        day: "2-digit",
-                                        month: "short"
-                                      })}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                            {sessions.length > 8 && (
-                              <p className="mt-2 text-xs">
-                                <strong>Tanggal pertama:</strong> {sessions[0].toLocaleDateString("id-ID")} <br/>
-                                <strong>Tanggal terakhir:</strong> {sessions[sessions.length - 1].toLocaleDateString("id-ID")}
-                              </p>
-                            )}
+                            <p>
+                              <strong>Waktu:</strong>{" "}
+                              {selectedSchedule.timeSlot}
+                            </p>
+                          </div>
+                          <div>
+                            <p>
+                              <strong>Jumlah Sesi:</strong> {sessions.length}{" "}
+                              kali
+                            </p>
+                            <p>
+                              <strong>Harga per Sesi:</strong> Rp{" "}
+                              {selectedSchedule.price.toLocaleString("id-ID")}
+                            </p>
                           </div>
                         </div>
+
+                        {/* Show discount info if applicable */}
+                        {discountPercentage > 0 && (
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-green-700">Subtotal:</span>
+                              <span className="text-gray-500 line-through">
+                                Rp {originalTotalPrice.toLocaleString("id-ID")}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-green-700 font-medium">
+                                Diskon ({discountPercentage}%):
+                              </span>
+                              <span className="text-green-600 font-bold">
+                                -Rp {discountAmount.toLocaleString("id-ID")}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="border-t border-green-300 pt-3">
+                          <div className="flex justify-between items-center">
+                            <span className="font-bold text-lg text-green-800">
+                              Total Harga:
+                            </span>
+                            <span className="font-bold text-xl text-green-600">
+                              Rp {finalTotalPrice.toLocaleString("id-ID")}
+                            </span>
+                          </div>
+                          {discountPercentage > 0 && (
+                            <div className="text-sm text-green-600 text-right font-medium">
+                              Hemat Rp {discountAmount.toLocaleString("id-ID")}!
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="text-xs text-green-600 bg-green-100 p-2 rounded">
+                          <p>
+                            <strong>Periode:</strong>{" "}
+                            {startDate.toLocaleDateString("id-ID")} -{" "}
+                            {endDate.toLocaleDateString("id-ID")}
+                          </p>
+                          <p className="mt-1">
+                            <strong>Jadwal:</strong> Setiap{" "}
+                            {
+                              [
+                                "",
+                                "Senin",
+                                "Selasa",
+                                "Rabu",
+                                "Kamis",
+                                "Jumat",
+                                "Sabtu",
+                                "Minggu",
+                              ][dayOfWeek]
+                            }{" "}
+                            jam {selectedSchedule.timeSlot}
+                          </p>
+                          {sessions.length <= 8 && (
+                            <div className="mt-2">
+                              <strong>Tanggal booking:</strong>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {sessions.map((session, index) => (
+                                  <span
+                                    key={index}
+                                    className="bg-green-200 text-green-800 px-2 py-1 rounded text-xs"
+                                  >
+                                    {session.toLocaleDateString("id-ID", {
+                                      day: "2-digit",
+                                      month: "short",
+                                    })}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {sessions.length > 8 && (
+                            <p className="mt-2 text-xs">
+                              <strong>Tanggal pertama:</strong>{" "}
+                              {sessions[0].toLocaleDateString("id-ID")} <br />
+                              <strong>Tanggal terakhir:</strong>{" "}
+                              {sessions[sessions.length - 1].toLocaleDateString(
+                                "id-ID"
+                              )}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    );
-                  })()
-                )}
+                    </div>
+                  );
+                })()}
             </>
           )}
           {!isAddForm && (
@@ -875,11 +932,32 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                   const startDate = watch("startDate");
                   const endDate = watch("endDate");
                   const dayOfWeek = watch("dayOfWeek");
-                  
+
                   if (startDate && endDate && dayOfWeek && selectedSchedule) {
-                    const sessions = calculateRecurringSessions(startDate, endDate, dayOfWeek);
-                    const totalPrice = sessions.length * selectedSchedule.price;
-                    return `Simpan ${sessions.length} Sesi - Rp ${totalPrice.toLocaleString("id-ID")}`;
+                    const sessions = calculateRecurringSessions(
+                      startDate,
+                      endDate,
+                      dayOfWeek
+                    );
+                    const originalTotalPrice = sessions.length * selectedSchedule.price;
+                    
+                    // Calculate discount for button
+                    let discountPercentage = 0;
+                    if (sessions.length >= 16) {
+                      discountPercentage = 15;
+                    } else if (sessions.length >= 8) {
+                      discountPercentage = 10;
+                    } else if (sessions.length >= 4) {
+                      discountPercentage = 5;
+                    }
+                    const discountAmount = Math.floor(
+                      (originalTotalPrice * discountPercentage) / 100
+                    );
+                    const finalTotalPrice = originalTotalPrice - discountAmount;
+                    
+                    return `Simpan ${
+                      sessions.length
+                    } Sesi - Rp ${finalTotalPrice.toLocaleString("id-ID")}`;
                   }
                   return "Simpan Pemesanan Berulang";
                 })()

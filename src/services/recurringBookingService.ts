@@ -33,6 +33,25 @@ export function getRecurringDates(
 }
 
 /**
+ * Calculate discount for recurring booking based on number of sessions
+ */
+export function calculateRecurringDiscount(totalSessions: number): {
+  discountPercentage: number;
+} {
+  let discountPercentage = 0;
+  
+  if (totalSessions >= 16) {
+    discountPercentage = 15; // 15% untuk 16+ sesi
+  } else if (totalSessions >= 8) {
+    discountPercentage = 10; // 10% untuk 8-15 sesi
+  } else if (totalSessions >= 4) {
+    discountPercentage = 5; // 5% untuk 4-7 sesi
+  }
+  
+  return { discountPercentage };
+}
+
+/**
  * Get preview of recurring booking (dates and total cost)
  */
 export async function getRecurringBookingPreview(
@@ -58,13 +77,21 @@ export async function getRecurringBookingPreview(
 
   const pricePerSession = schedule.price;
   const totalSessions = dates.length;
-  const totalPrice = pricePerSession * totalSessions;
+  const originalTotalPrice = pricePerSession * totalSessions;
+  
+  // Calculate discount
+  const discount = calculateRecurringDiscount(totalSessions);
+  const discountAmount = Math.floor((originalTotalPrice * discount.discountPercentage) / 100);
+  const finalTotalPrice = originalTotalPrice - discountAmount;
 
   return {
     dates,
     totalSessions,
     pricePerSession,
-    totalPrice,
+    totalPrice: finalTotalPrice,
+    originalTotalPrice,
+    discountPercentage: discount.discountPercentage,
+    discountAmount,
   };
 }
 
@@ -210,7 +237,12 @@ export async function createRecurringBooking(
     }
 
     const pricePerSession = schedule.price;
-    const totalPrice = pricePerSession * recurringDates.length;
+    const originalTotalPrice = pricePerSession * recurringDates.length;
+    
+    // Calculate discount for recurring booking
+    const discount = calculateRecurringDiscount(recurringDates.length);
+    const discountAmount = Math.floor((originalTotalPrice * discount.discountPercentage) / 100);
+    const finalTotalPrice = originalTotalPrice - discountAmount;
 
     // Create recurring booking
     const recurringBooking = await tx.recurringBooking.create({
@@ -225,7 +257,7 @@ export async function createRecurringBooking(
         startDate: data.startDate,
         endDate: data.endDate,
         paymentMethod: defaultPaymentMethod,
-        totalAmount: totalPrice,
+        totalAmount: finalTotalPrice,
         status: defaultStatus,
       },
     });
@@ -290,7 +322,7 @@ export async function createRecurringBooking(
         recurringBookingId: recurringBooking.id,
         paymentMethod: defaultPaymentMethod,
         transactionId: `recurring-${recurringBooking.id}`,
-        amount: totalPrice,
+        amount: finalTotalPrice,
         status: defaultStatus,
       },
     });
@@ -299,7 +331,7 @@ export async function createRecurringBooking(
       recurringBooking,
       bookings,
       transaction: transactionRecord,
-      totalPrice,
+      totalPrice: finalTotalPrice,
       totalSessions: recurringDates.length,
     };
   });

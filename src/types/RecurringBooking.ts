@@ -26,6 +26,9 @@ export interface RecurringBookingPreview {
   totalSessions: number;
   pricePerSession: number;
   totalPrice: number;
+  originalTotalPrice?: number;
+  discountPercentage?: number;
+  discountAmount?: number;
 }
 
 export interface RecurringBookingWithRelations extends PrismaRecurringBooking {

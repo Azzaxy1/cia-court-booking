@@ -362,12 +362,39 @@ const RecurringBooking = ({ court }: Props) => {
                 <span>{formatRupiah(selectedSchedule.price)}</span>
               </div>
 
+              {/* Show discount info if applicable */}
+              {preview.discountPercentage && preview.discountPercentage > 0 && (
+                <>
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span className="text-gray-500 line-through">
+                      {formatRupiah(preview.originalTotalPrice || 0)}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span className="text-green-700 font-medium">
+                      Diskon ({preview.discountPercentage}%):
+                    </span>
+                    <span className="text-green-600 font-bold">
+                      -{formatRupiah(preview.discountAmount || 0)}
+                    </span>
+                  </div>
+                </>
+              )}
+
               <div className="flex justify-between font-bold text-lg">
                 <span>Total Harga:</span>
                 <span className="text-teal-600">
                   {formatRupiah(preview.totalPrice)}
                 </span>
               </div>
+
+              {preview.discountPercentage && preview.discountPercentage > 0 && (
+                <div className="text-sm text-green-600 text-center font-medium bg-green-50 p-2 rounded">
+                  🎉 Hemat {formatRupiah(preview.discountAmount || 0)} dengan pemesanan berulang!
+                </div>
+              )}
 
               <div className="mt-4 p-3 bg-blue-50 rounded-md">
                 <p className="text-sm text-blue-800">
