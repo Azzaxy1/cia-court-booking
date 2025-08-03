@@ -259,16 +259,31 @@ export const getBookingHistory = async (
 };
 
 export const getTotalBookingCurrentMonth = async () => {
-  const currentMonth = new Date().getMonth();
-  const result = await prisma.booking.count({
+  const now = new Date();
+  const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  // Count regular bookings
+  const regularBookings = await prisma.booking.count({
     where: {
       createdAt: {
-        gte: new Date(new Date().getFullYear(), currentMonth, 1),
-        lt: new Date(new Date().getFullYear(), currentMonth + 1, 1),
+        gte: startOfCurrentMonth,
+        lt: endOfCurrentMonth,
       },
     },
   });
-  return result;
+
+  // Count recurring bookings
+  const recurringBookings = await prisma.recurringBooking.count({
+    where: {
+      createdAt: {
+        gte: startOfCurrentMonth,
+        lt: endOfCurrentMonth,
+      },
+    },
+  });
+
+  return regularBookings + recurringBookings;
 };
 
 export const getTotalRevenueCurrentMonth = async () => {
@@ -323,15 +338,35 @@ export const getOrderStats = async () => {
           courtType: true,
         },
       },
+      recurringBooking: {
+        select: {
+          startDate: true,
+          courtType: true,
+        },
+      },
     },
   });
 
-  return transactions
-    .filter((transaction) => transaction.booking !== null)
-    .map((transaction) => ({
-      date: transaction.booking!.date.toISOString(),
-      fieldType: transaction.booking!.courtType,
-    }));
+  // Gabungkan transaksi booking biasa dan recurring
+  return transactions.flatMap((transaction) => {
+    if (transaction.booking) {
+      return [
+        {
+          date: transaction.booking.date.toISOString(),
+          fieldType: transaction.booking.courtType,
+        },
+      ];
+    }
+    if (transaction.recurringBooking) {
+      return [
+        {
+          date: transaction.recurringBooking.startDate.toISOString(),
+          fieldType: transaction.recurringBooking.courtType,
+        },
+      ];
+    }
+    return [];
+  });
 };
 
 export const getRevenueStats = async () => {

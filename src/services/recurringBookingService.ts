@@ -139,12 +139,19 @@ export async function createRecurringBooking(
 
     // Check availability for all dates
     for (const date of recurringDates) {
+      // Check if there's already a booking on this date and time
+      const currentDate = new Date(date);
+      const startOfDay = new Date(currentDate);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(currentDate);
+      endOfDay.setHours(23, 59, 59, 999);
+
       const existingBooking = await tx.booking.findFirst({
         where: {
           courtId: data.courtId,
           date: {
-            gte: new Date(date.setHours(0, 0, 0, 0)),
-            lt: new Date(date.setHours(23, 59, 59, 999)),
+            gte: startOfDay,
+            lte: endOfDay,
           },
           startTime,
           endTime,
@@ -156,9 +163,30 @@ export async function createRecurringBooking(
 
       if (existingBooking) {
         throw new Error(
-          `Lapangan sudah dipesan untuk tanggal ${date.toLocaleDateString(
+          `Lapangan sudah dipesan untuk tanggal ${currentDate.toLocaleDateString(
             "id-ID"
-          )}`
+          )} jam ${startTime}-${endTime}`
+        );
+      }
+
+      // Check if schedule slot is available
+      const scheduleSlot = await tx.schedule.findFirst({
+        where: {
+          courtId: data.courtId,
+          timeSlot: data.timeSlot,
+          date: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
+          available: true,
+        },
+      });
+
+      if (!scheduleSlot) {
+        throw new Error(
+          `Jadwal tidak tersedia untuk tanggal ${currentDate.toLocaleDateString(
+            "id-ID"
+          )} jam ${data.timeSlot}`
         );
       }
     }
@@ -216,17 +244,29 @@ export async function createRecurringBooking(
         });
 
         // Update schedule to mark as booked
-        await tx.schedule.updateMany({
+        const currentDate = new Date(date);
+        const startOfDay = new Date(currentDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(currentDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const updatedSchedules = await tx.schedule.updateMany({
           where: {
             courtId: data.courtId,
             timeSlot: data.timeSlot,
-            date: date,
+            date: {
+              gte: startOfDay,
+              lte: endOfDay,
+            },
+            available: true, // Only update if still available
           },
           data: {
             available: false,
             bookingId: booking.id,
           },
         });
+
+        console.log(`Updated ${updatedSchedules.count} schedules for date ${currentDate.toISOString()}, courtId: ${data.courtId}, timeSlot: ${data.timeSlot}`);
 
         return booking;
       })
