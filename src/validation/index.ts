@@ -16,6 +16,23 @@ const authSchema = z
     role: true,
   });
 
+const recurringBookingSchema = z
+  .object({
+    courtId: z.string().min(1, "Lapangan harus dipilih"),
+    timeSlot: z.string().min(1, "Waktu harus dipilih"),
+    dayOfWeek: z.number().min(1).max(7, "Hari tidak valid"),
+    startDate: z.date({
+      required_error: "Tanggal mulai harus dipilih",
+    }),
+    endDate: z.date({
+      required_error: "Tanggal selesai harus dipilih",
+    }),
+  })
+  .refine((data) => data.endDate > data.startDate, {
+    message: "Tanggal selesai harus setelah tanggal mulai",
+    path: ["endDate"],
+  });
+
 const profileSchema = z.object({
   name: z.string().min(3, "Nama harus lebih dari 3 karakter"),
   phone: z.string().min(10, "No telepon tidak valid"),
@@ -41,15 +58,22 @@ const scheduleSchema = z.object({
   days: z
     .number()
     .min(1, "Jumlah hari harus lebih dari 0")
-    .max(30, "Maksimal 30 hari"),
+    .max(30, "Maksimal 30 hari")
+    .optional(),
   dayType: z.enum(["Weekday", "Weekend"], {
     errorMap: () => ({ message: "Tipe hari tidak valid" }),
   }),
-  timePreset: z.enum(["pagi", "siang", "malam"], {
-    errorMap: () => ({ message: "Preset waktu tidak valid" }),
-  }),
+  timePreset: z
+    .enum(["pagi", "siang", "malam"], {
+      errorMap: () => ({ message: "Preset waktu tidak valid" }),
+    })
+    .optional(),
   price: z.number().min(0, "Harga harus lebih dari atau sama dengan 0"),
   available: z.boolean().optional(),
+  // Fields for edit mode
+  date: z.string().optional(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
 });
 
 const orderSchema = z.object({
@@ -77,4 +101,11 @@ const orderSchema = z.object({
     .optional(),
 });
 
-export { authSchema, profileSchema, courtSchema, scheduleSchema, orderSchema };
+export {
+  authSchema,
+  profileSchema,
+  courtSchema,
+  scheduleSchema,
+  orderSchema,
+  recurringBookingSchema,
+};

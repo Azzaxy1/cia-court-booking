@@ -168,9 +168,15 @@ const SideBooking = ({ court }: Props) => {
           </Button>
         </CardContent>
         <CardFooter className="flex-col items-start">
+          <h1 className="font-bold text-red-500">PERHATIAN!</h1>
           <p className="text-sm text-gray-500 mb-2">
-            <span className="font-semibold">Kebijakan Pembatalan:</span> Gratis
-            pembatalan hingga 24 jam sebelum jadwal
+            Pastikan jadwal yang dipilih sudah sesuai, karena pemesanan tidak
+            dapat dibatalkan.
+          </p>
+          <p className="text-sm text-gray-500 mb-2">
+            Namun anda bisa melakukan perubahan jadwal di menu{" "}
+            <span className="font-semibold">Profile</span> setelah pembayaran
+            berhasil.
           </p>
           <p className="text-sm text-gray-500">
             <span className="font-semibold">Butuh bantuan?</span> Hubungi kami

@@ -1,6 +1,5 @@
 "use client";
 
-// import { useEffect, useState } from "react";
 import { CheckCircle, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +24,7 @@ const PaymentSuccess = () => {
   const orderId = useSearchParams().get("order_id");
   const [emailSent, setEmailSent] = useState(false);
   const [isProcessing, setIsProcessing] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["transactionDetails", orderId],
@@ -61,10 +61,12 @@ const PaymentSuccess = () => {
   }, [orderId, data, emailSent]);
 
   const handleBackToHome = () => {
+    setIsRedirecting(true);
     router.push("/");
   };
 
   const handleViewOrder = () => {
+    setIsRedirecting(true);
     router.push(`/profile`);
   };
 
@@ -90,7 +92,9 @@ const PaymentSuccess = () => {
             Pembayaran Berhasil!
           </CardTitle>
           <CardDescription className="text-green-600">
-            Transaksi Anda telah berhasil diproses
+            {data?.type === "recurringBooking"
+              ? "Pemesanan berulang Anda telah berhasil diproses"
+              : "Transaksi Anda telah berhasil diproses"}
           </CardDescription>
 
           {/* Email status indicator */}
@@ -127,6 +131,50 @@ const PaymentSuccess = () => {
               <span className="text-gray-500">Total Pembayaran</span>
               <span className="font-medium">{formatRupiah(data?.amount)}</span>
             </div>
+
+            {/* Conditional rendering based on booking type */}
+            {data?.type === "booking" ? (
+              // Regular booking details
+              <>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Tanggal Bermain</span>
+                  <span className="font-medium">
+                    {new Date(data.bookingDate).toLocaleDateString("id-ID", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      weekday: "long",
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Waktu Bermain</span>
+                  <span className="font-medium">
+                    {data.startTime} - {data.endTime}
+                  </span>
+                </div>
+              </>
+            ) : data?.type === "recurringBooking" ? (
+              // Recurring booking details
+              <>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Jadwal Berulang</span>
+                  <span className="font-medium">{data.recurringSchedule}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Periode</span>
+                  <span className="font-medium">
+                    {new Date(data.startDate).toLocaleDateString("id-ID")} -{" "}
+                    {new Date(data.endDate).toLocaleDateString("id-ID")}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Total Sesi</span>
+                  <span className="font-medium">{data.totalSessions} kali</span>
+                </div>
+              </>
+            ) : null}
+
             <div className="flex justify-between">
               <span className="text-gray-500">Tanggal Pembayaran</span>
               <span className="font-medium">
@@ -153,10 +201,18 @@ const PaymentSuccess = () => {
           <Separator className="my-6" />
 
           <div className="bg-gray-50 p-4 rounded-lg">
-            <p className="text-sm text-gray-600">
-              Tanda terima pembayaran telah dikirim ke email Anda. Terima kasih
-              telah melakukan pembelian.
-            </p>
+            {data?.type === "recurringBooking" ? (
+              <p className="text-sm text-gray-600">
+                Pemesanan berulang Anda telah berhasil dibuat. Anda dapat
+                melihat jadwal detail di halaman pesanan. Tanda terima
+                pembayaran telah dikirim ke email Anda.
+              </p>
+            ) : (
+              <p className="text-sm text-gray-600">
+                Tanda terima pembayaran telah dikirim ke email Anda. Terima
+                kasih telah melakukan pembelian.
+              </p>
+            )}
           </div>
         </CardContent>
 
@@ -165,14 +221,30 @@ const PaymentSuccess = () => {
             variant="outline"
             className="w-full"
             onClick={handleBackToHome}
+            disabled={isRedirecting}
           >
-            Kembali ke Beranda
+            {isRedirecting ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></span>
+                Memuat...
+              </span>
+            ) : (
+              "Kembali ke Beranda"
+            )}
           </Button>
           <Button
             className="w-full bg-primary hover:bg-green-700"
             onClick={handleViewOrder}
+            disabled={isRedirecting}
           >
-            Lihat Pesanan
+            {isRedirecting ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                Memuat...
+              </span>
+            ) : (
+              "Lihat Pesanan"
+            )}
           </Button>
         </CardFooter>
       </Card>

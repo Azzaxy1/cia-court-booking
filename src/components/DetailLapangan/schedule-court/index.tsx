@@ -99,7 +99,7 @@ const ScheduleCourt = ({ court }: Props) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-teal-50 p-4 rounded-lg">
               <h4 className="font-semibold text-teal-800 mb-2">
-                Harga Hari Kerja
+                Harga Hari Biasa
               </h4>
               {Array.isArray(court?.Schedule) && court.Schedule.length > 0 ? (
                 <p className="text-2xl font-bold text-teal-600">
@@ -111,7 +111,7 @@ const ScheduleCourt = ({ court }: Props) => {
                   Harga lapangan belum diatur oleh pemilik.
                 </div>
               )}
-              <p className="text-sm text-gray-600 mt-1">Senin - Jumat</p>
+              <p className="text-sm text-gray-600 mt-1">Senin - Kamis</p>
             </div>
             <div className="bg-teal-50 p-4 rounded-lg">
               <h4 className="font-semibold text-teal-800 mb-2">
@@ -127,7 +127,7 @@ const ScheduleCourt = ({ court }: Props) => {
                   Harga lapangan belum diatur oleh pemilik.
                 </div>
               )}
-              <p className="text-sm text-gray-600 mt-1">Sabtu - Minggu</p>
+              <p className="text-sm text-gray-600 mt-1">Jumat - Minggu</p>
             </div>
           </div>
         </CardContent>

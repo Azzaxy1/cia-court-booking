@@ -13,16 +13,11 @@ const OurStory = () => {
             </h2>
             <div className="space-y-4 text-gray-700 text-justify">
               <p>
-                CIA Serang didirikan pada tahun 2018 oleh sekelompok penggemar
-                olahraga yang percaya bahwa masyarakat Serang layak mendapatkan
-                fasilitas olahraga berkualitas tinggi.
-              </p>
-              <p>
-                Berawal dari lapangan futsal sederhana, kini CIA Serang telah
-                berkembang menjadi pusat olahraga terlengkap di Kota Serang
-                dengan berbagai jenis lapangan termasuk futsal, badminton, tenis
-                meja. Semua lapangan kami dirancang untuk memberikan pengalaman
-                bermain terbaik bagi semua level pemain.
+                CIA Serang berawal dari lapangan futsal sederhana, kini CIA
+                Serang telah berkembang menjadi pusat olahraga terlengkap di
+                Kota Serang dengan berbagai jenis lapangan termasuk futsal,
+                badminton, tenis meja. Semua lapangan kami dirancang untuk
+                memberikan pengalaman bermain terbaik bagi semua level pemain.
               </p>
             </div>
           </div>

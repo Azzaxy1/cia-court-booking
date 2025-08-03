@@ -59,8 +59,23 @@ export const getPaymentDetail = async (orderId: string) => {
   const res = await axios.get(`/api/payment/detail?order_id=${orderId}`);
 
   if (res.status !== 200) {
-    throw new Error("Gagal mendapatkan detail pembayaran");
+    throw new Error("Gagal mbendapatkan detail pembayaran");
   }
 
   return res.data;
+};
+
+export const getRecurringBookings = async () => {
+  try {
+    const res = await axios.get("/api/admin/recurring-bookings");
+
+    if (res.status !== 200) {
+      throw new Error("Gagal mendapatkan data pemesanan berulang");
+    }
+
+    return res.data;
+  } catch (error) {
+    console.error("Service error:", error);
+    throw error;
+  }
 };

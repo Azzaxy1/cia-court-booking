@@ -110,6 +110,12 @@ export const getTransactionsWithDetails = async () => {
           user: true,
         },
       },
+      recurringBooking: {
+        include: {
+          court: true,
+          user: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -320,10 +326,12 @@ export const getOrderStats = async () => {
     },
   });
 
-  return transactions.map((transaction) => ({
-    date: transaction.booking.date.toISOString(),
-    fieldType: transaction.booking.courtType,
-  }));
+  return transactions
+    .filter((transaction) => transaction.booking !== null)
+    .map((transaction) => ({
+      date: transaction.booking!.date.toISOString(),
+      fieldType: transaction.booking!.courtType,
+    }));
 };
 
 export const getRevenueStats = async () => {
@@ -339,12 +347,36 @@ export const getRevenueStats = async () => {
           courtType: true,
         },
       },
+      recurringBooking: {
+        select: {
+          startDate: true,
+          courtType: true,
+        },
+      },
     },
   });
 
-  return transactions.map((transaction) => ({
-    date: transaction.booking.date.toISOString(),
-    amount: transaction.amount,
-    courtType: transaction.booking.courtType,
-  }));
+  // Gabungkan transaksi booking biasa dan recurring
+  return transactions.flatMap((transaction) => {
+    if (transaction.booking) {
+      return [
+        {
+          date: transaction.booking.date.toISOString(),
+          amount: transaction.amount,
+          courtType: transaction.booking.courtType,
+        },
+      ];
+    }
+    if (transaction.recurringBooking) {
+      // Untuk recurring, gunakan startDate (atau bisa juga breakdown per sesi jika ada detail sesi)
+      return [
+        {
+          date: transaction.recurringBooking.startDate.toISOString(),
+          amount: transaction.amount,
+          courtType: transaction.recurringBooking.courtType,
+        },
+      ];
+    }
+    return [];
+  });
 };

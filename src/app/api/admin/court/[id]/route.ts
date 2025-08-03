@@ -18,18 +18,6 @@ export async function DELETE(
       );
     }
 
-    const scheduleCount = await prisma.schedule.count({
-      where: { courtId: id },
-    });
-    if (scheduleCount > 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Tidak bisa menghapus, masih ada jadwal terkait.",
-        },
-        { status: 400 }
-      );
-    }
     const court = await prisma.court.findUnique({
       where: { id },
     });

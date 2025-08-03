@@ -373,9 +373,9 @@ const ScheduleTable = ({ data, scheduleStats }: Props) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Semua Waktu</SelectItem>
-                  <SelectItem value="morning">Pagi (06:00-12:00)</SelectItem>
-                  <SelectItem value="afternoon">Siang (12:00-18:00)</SelectItem>
-                  <SelectItem value="evening">Malam (18:00-23:00)</SelectItem>
+                  <SelectItem value="morning">Pagi (07:00-13:00)</SelectItem>
+                  <SelectItem value="afternoon">Siang (14:00-18:00)</SelectItem>
+                  <SelectItem value="evening">Malam (19:00-23:00)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

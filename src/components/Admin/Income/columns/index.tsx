@@ -7,6 +7,7 @@ import { id } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { Transaction } from "@/app/generated/prisma";
+import { DAYS_OF_WEEK } from "@/types/RecurringBooking";
 
 export interface TransactionWithBooking extends Transaction {
   booking: {
@@ -22,7 +23,23 @@ export interface TransactionWithBooking extends Transaction {
       name: string;
       type: string;
     };
-  };
+  } | null;
+  recurringBooking: {
+    startDate: string | Date;
+    endDate: string | Date;
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
+    courtType: string;
+    user: {
+      name: string;
+    };
+    court: {
+      id: string;
+      name: string;
+      type: string;
+    };
+  } | null;
 }
 
 export interface CourtFilter {
@@ -43,27 +60,46 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     accessorKey: "booking.user.name",
     header: "Pelanggan",
     cell: ({ row }) => {
-      return <div>{row.original.booking.user.name}</div>;
+      const booking = row.original.booking;
+      const recurringBooking = row.original.recurringBooking;
+      return (
+        <div>{booking?.user.name || recurringBooking?.user.name || "N/A"}</div>
+      );
     },
   },
   {
     accessorKey: "booking.court.name",
     header: "Lapangan",
     cell: ({ row }) => {
-      return <div>{row.original.booking.court.name}</div>;
+      const booking = row.original.booking;
+      const recurringBooking = row.original.recurringBooking;
+      return (
+        <div>
+          {booking?.court.name || recurringBooking?.court.name || "N/A"}
+        </div>
+      );
     },
   },
   {
     accessorKey: "booking.courtType",
     header: "Tipe Lapangan",
     cell: ({ row }) => {
-      const type = row.original.booking.courtType;
+      const booking = row.original.booking;
+      const recurringBooking = row.original.recurringBooking;
+      const type =
+        booking?.courtType ||
+        booking?.court.type ||
+        recurringBooking?.court.type;
       const typeMap = {
         Futsal: "Futsal",
         Badminton: "Badminton",
         TenisMeja: "Tenis Meja",
       };
-      return <div>{typeMap[type as keyof typeof typeMap] || type}</div>;
+      return (
+        <div>
+          {type ? typeMap[type as keyof typeof typeMap] || type : "N/A"}
+        </div>
+      );
     },
   },
   {
@@ -81,22 +117,47 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     },
     cell: ({ row }) => {
       const booking = row.original.booking;
-      const date = booking?.date ? new Date(booking.date) : null;
-      return (
-        <div>{date ? format(date, "d MMM yyyy", { locale: id }) : "-"}</div>
-      );
+      const recurringBooking = row.original.recurringBooking;
+
+      if (booking?.date) {
+        const date = new Date(booking.date);
+        return <div>{format(date, "d MMM yyyy", { locale: id })}</div>;
+      }
+
+      if (recurringBooking?.startDate) {
+        const dayName = DAYS_OF_WEEK[recurringBooking.dayOfWeek - 1];
+        return <div>Setiap {dayName}</div>;
+      }
+
+      return <div>-</div>;
     },
   },
   {
     accessorKey: "booking.timeSlot",
     header: "Jam Bermain",
     cell: ({ row }) => {
-      const { startTime, endTime } = row.original.booking;
-      return (
-        <div>
-          {startTime} - {endTime}
-        </div>
-      );
+      const booking = row.original.booking;
+      const recurringBooking = row.original.recurringBooking;
+
+      if (booking) {
+        const { startTime, endTime } = booking;
+        return (
+          <div>
+            {startTime} - {endTime}
+          </div>
+        );
+      }
+
+      if (recurringBooking) {
+        const { startTime, endTime } = recurringBooking;
+        return (
+          <div>
+            {startTime} - {endTime}
+          </div>
+        );
+      }
+
+      return <div>N/A</div>;
     },
   },
   {
@@ -128,25 +189,5 @@ export const columns: ColumnDef<TransactionWithBooking>[] = [
     accessorKey: "paymentMethod",
     header: "Metode Pembayaran",
     cell: ({ row }) => <div>{row.getValue("paymentMethod")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      const statusMap = {
-        settlement: "Paid",
-        capture: "Paid",
-        paid: "Paid",
-        pending: "Pending",
-        expire: "Expired",
-        cancel: "Canceled",
-      };
-      return (
-        <div className="capitalize">
-          {statusMap[status as keyof typeof statusMap] || status}
-        </div>
-      );
-    },
   },
 ];

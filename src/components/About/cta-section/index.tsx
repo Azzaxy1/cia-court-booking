@@ -7,13 +7,13 @@ const CTA = () => {
   return (
     <section className="py-16 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="bg-gray-100 rounded-xl p-8 md:p-12">
+        <div className="bg-primary rounded-xl p-8 md:p-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold text-white mb-4">
                 Siap untuk Bergabung?
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-300 mb-6">
                 Jangan lewatkan kesempatan untuk menggunakan fasilitas olahraga
                 terbaik di Kota Serang. Jadwalkan kunjungan anda hari ini!
               </p>
