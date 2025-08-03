@@ -404,14 +404,15 @@ const RecurringBooking = ({ court }: Props) => {
 
       <Card className="mt-4 ">
         <CardFooter className="flex-col items-start mt-4">
-          <h1 className="font-bold">PERHATIKAN!</h1>
+          <h1 className="font-bold text-red-500">PERHATIAN!</h1>
           <p className="text-sm text-gray-500 mb-2">
             Pastikan jadwal yang dipilih sudah sesuai, karena pemesanan tidak
             dapat dibatalkan.
           </p>
           <p className="text-sm text-gray-500 mb-2">
-            Dengan melakukan pembayaran, Anda setuju dengan syarat dan ketentuan
-            yang berlaku.
+            Namun anda bisa melakukan perubahan jadwal di menu{" "}
+            <span className="font-semibold">Profile</span> setelah pembayaran
+            berhasil.
           </p>
           <p className="text-sm text-gray-500">
             <span className="font-semibold">Butuh bantuan?</span> Hubungi kami
