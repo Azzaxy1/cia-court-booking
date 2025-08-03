@@ -3,12 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  formatRupiah,
-  formatSportType,
-  formattedDate,
-  formattedTime,
-} from "@/lib/utils";
+import { formatRupiah, formatSportType, formattedDate } from "@/lib/utils";
 import { BookingStatus } from "@/types/Booking";
 import { Court, Booking, Transaction, Schedule } from "@/app/generated/prisma";
 import {
@@ -19,10 +14,13 @@ import {
   CircleDollarSign,
   MessageCircle,
   ArrowLeft,
+  CreditCard,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import { PiCourtBasketball } from "react-icons/pi";
+import { useSession } from "next-auth/react";
 
 interface BookingDetailProps {
   booking: Booking & {
@@ -51,20 +49,46 @@ const getStatusBadge = (status: BookingStatus) => {
 };
 
 const BookingDetail = ({ booking }: BookingDetailProps) => {
-  const adminWhatsApp = "+62 851-8219-8144";
+  const adminWhatsApp = "+62 813-1457-4274";
+  const { data: session } = useSession();
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [newDate, setNewDate] = useState("");
+  const [newStartTime, setNewStartTime] = useState("");
 
   const handleReschedule = () => {
+    setShowRescheduleModal(true);
+  };
+
+  const handleRescheduleSubmit = () => {
     const message = `Halo Admin, saya ingin melakukan reschedule untuk booking berikut:
 
 📋 Detail Booking:
+- Nama Pengguna: ${session?.user?.name || "Pengguna Tidak Dikenal"}
+- Email: ${session?.user?.email || "Email Tidak Diketahui"}
 - ID Booking: ${booking.id}
 - Lapangan: ${booking.court.name}
 - Jenis Olahraga: ${formatSportType(booking.courtType)}
-- Tanggal Saat Ini: ${formattedDate(booking.date)}
-- Waktu Saat Ini: ${formattedTime(booking.startTime)} - ${formattedTime(
-      booking.endTime
-    )}
-- Total Harga: ${formatRupiah(booking.amount)}
+- Tanggal Pemesanan: ${new Date(booking.date).toLocaleDateString("id-ID", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "long",
+    })}
+- Waktu Pemesanan: ${booking.startTime} - ${booking.endTime}
+- Total Harga: ${booking.amount}
+
+🔄 Permintaan perubahan jadwal:
+- Tanggal Baru: ${
+      newDate
+        ? new Date(newDate).toLocaleDateString("id-ID", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            weekday: "long",
+          })
+        : "-"
+    }
+- Jam Mulai Baru: ${newStartTime || "-"}
 
 Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
 
@@ -75,6 +99,9 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
     )}?text=${encodedMessage}`;
 
     window.open(whatsappUrl, "_blank");
+    setShowRescheduleModal(false);
+    setNewDate("");
+    setNewStartTime("");
   };
 
   const handleContactAdmin = () => {
@@ -90,6 +117,72 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Reschedule Modal */}
+      {showRescheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                Request Reschedule
+              </h2>
+              <p className="text-sm text-gray-600 mb-6">
+                Masukkan tanggal dan jam mulai baru untuk booking Anda
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Tanggal Baru <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    value={newDate}
+                    onChange={(e) => setNewDate(e.target.value)}
+                    min={new Date().toISOString().split("T")[0]}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Jam Mulai Baru <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="time"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    value={newStartTime}
+                    onChange={(e) => setNewStartTime(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Durasi tetap {booking.duration} jam dari waktu mulai
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 bg-gray-50 rounded-b-xl flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowRescheduleModal(false);
+                  setNewDate("");
+                  setNewStartTime("");
+                }}
+                className="px-4 py-2"
+              >
+                Batal
+              </Button>
+              <Button
+                className="bg-blue-600 hover:bg-blue-700 px-6 py-2"
+                onClick={handleRescheduleSubmit}
+                disabled={!newDate || !newStartTime}
+              >
+                Kirim ke Admin
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link href="/profile">
@@ -134,9 +227,9 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 ">
                 <div className="h-5 w-5 flex items-center justify-center">
-                  🏸
+                  <PiCourtBasketball />
                 </div>
                 <span className="text-sm font-medium">
                   {formatSportType(booking.courtType)}
@@ -179,13 +272,13 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
                 </div>
               </div>
 
-              {/* <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-gray-500" />
                 <div>
                   <p className="text-xs text-gray-500">Metode Pembayaran</p>
                   <p className="font-medium">{booking.paymentMethod}</p>
                 </div>
-              </div> */}
+              </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-gray-500" />
                 <div>
@@ -194,11 +287,6 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
                 </div>
               </div>
             </div>
-
-            {/* <div className="pt-2">
-              <p className="text-xs text-gray-500">Durasi</p>
-              <p className="font-medium">{booking.duration} Jam</p>
-            </div> */}
 
             {booking.rescheduleCount > 0 && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
