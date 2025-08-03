@@ -1,6 +1,5 @@
 "use client";
 
-// import { useEffect, useState } from "react";
 import { CheckCircle, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +24,7 @@ const PaymentSuccess = () => {
   const orderId = useSearchParams().get("order_id");
   const [emailSent, setEmailSent] = useState(false);
   const [isProcessing, setIsProcessing] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["transactionDetails", orderId],
@@ -61,10 +61,12 @@ const PaymentSuccess = () => {
   }, [orderId, data, emailSent]);
 
   const handleBackToHome = () => {
+    setIsRedirecting(true);
     router.push("/");
   };
 
   const handleViewOrder = () => {
+    setIsRedirecting(true);
     router.push(`/profile`);
   };
 
@@ -90,10 +92,9 @@ const PaymentSuccess = () => {
             Pembayaran Berhasil!
           </CardTitle>
           <CardDescription className="text-green-600">
-            {data?.type === "recurringBooking" 
-              ? "Pemesanan berulang Anda telah berhasil diproses" 
-              : "Transaksi Anda telah berhasil diproses"
-            }
+            {data?.type === "recurringBooking"
+              ? "Pemesanan berulang Anda telah berhasil diproses"
+              : "Transaksi Anda telah berhasil diproses"}
           </CardDescription>
 
           {/* Email status indicator */}
@@ -220,14 +221,30 @@ const PaymentSuccess = () => {
             variant="outline"
             className="w-full"
             onClick={handleBackToHome}
+            disabled={isRedirecting}
           >
-            Kembali ke Beranda
+            {isRedirecting ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></span>
+                Memuat...
+              </span>
+            ) : (
+              "Kembali ke Beranda"
+            )}
           </Button>
           <Button
             className="w-full bg-primary hover:bg-green-700"
             onClick={handleViewOrder}
+            disabled={isRedirecting}
           >
-            Lihat Pesanan
+            {isRedirecting ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                Memuat...
+              </span>
+            ) : (
+              "Lihat Pesanan"
+            )}
           </Button>
         </CardFooter>
       </Card>
