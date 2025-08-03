@@ -163,7 +163,7 @@ const SideBooking = ({ court }: Props) => {
                 Memproses...
               </span>
             ) : (
-              "Bayar Sekarang"
+              `Bayar Sekarang - ${formatRupiah(selectedSchedule?.price ?? 0)}`
             )}
           </Button>
         </CardContent>

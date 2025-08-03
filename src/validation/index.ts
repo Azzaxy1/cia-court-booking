@@ -76,30 +76,95 @@ const scheduleSchema = z.object({
   endTime: z.string().optional(),
 });
 
-const orderSchema = z.object({
-  customerName: z.string().min(1, "Nama pelanggan wajib diisi"),
-  courtId: z.string().min(1, "ID lapangan wajib diisi"),
-  selectedDate: z.date().optional(),
-  selectedSchedule: z
-    .object({
-      id: z.string(),
-      timeSlot: z.string(),
-      price: z.number(),
-      available: z.boolean(),
-    })
-    .nullable(),
-  date: z.date().optional(),
-  scheduleId: z.string().optional(),
-  timeSlot: z.string().optional(),
-  status: z.enum(["Paid", "Pending", "Canceled", "Refunded"], {
-    errorMap: () => ({ message: "Status tidak valid" }),
-  }),
-  paymentMethod: z
-    .enum(["Cash", "bank_transfer", "credit_card"], {
-      errorMap: () => ({ message: "Metode pembayaran tidak valid" }),
-    })
-    .optional(),
-});
+const orderSchema = z
+  .object({
+    customerName: z.string().min(1, "Nama pelanggan wajib diisi"),
+    courtId: z.string().min(1, "ID lapangan wajib diisi"),
+    bookingType: z.enum(["single", "recurring"], {
+      errorMap: () => ({ message: "Tipe pemesanan tidak valid" }),
+    }),
+    // Fields for single booking
+    selectedDate: z.date().optional(),
+    selectedSchedule: z
+      .object({
+        id: z.string(),
+        timeSlot: z.string(),
+        price: z.number(),
+        available: z.boolean(),
+      })
+      .nullable(),
+    date: z.date().optional(),
+    scheduleId: z.string().optional(),
+    timeSlot: z.string().optional(),
+    // Fields for recurring booking
+    dayOfWeek: z.number().min(1).max(7).optional(),
+    startDate: z.date().optional(),
+    endDate: z.date().optional(),
+    recurringTimeSlot: z.string().optional(),
+    // Common fields
+    status: z.enum(["Paid", "Pending", "Canceled", "Refunded"], {
+      errorMap: () => ({ message: "Status tidak valid" }),
+    }),
+    paymentMethod: z
+      .enum(["Cash", "bank_transfer", "credit_card"], {
+        errorMap: () => ({ message: "Metode pembayaran tidak valid" }),
+      })
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.bookingType === "single") {
+      if (!data.selectedDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Tanggal harus dipilih untuk pemesanan sekali",
+          path: ["selectedDate"],
+        });
+      }
+      if (!data.selectedSchedule) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Jadwal harus dipilih untuk pemesanan sekali",
+          path: ["selectedSchedule"],
+        });
+      }
+    } else if (data.bookingType === "recurring") {
+      if (!data.startDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Tanggal mulai harus dipilih untuk pemesanan berulang",
+          path: ["startDate"],
+        });
+      }
+      if (!data.endDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Tanggal selesai harus dipilih untuk pemesanan berulang",
+          path: ["endDate"],
+        });
+      }
+      if (!data.dayOfWeek) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Hari harus dipilih untuk pemesanan berulang",
+          path: ["dayOfWeek"],
+        });
+      }
+      if (!data.recurringTimeSlot) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Waktu harus dipilih untuk pemesanan berulang",
+          path: ["recurringTimeSlot"],
+        });
+      }
+      if (data.endDate && data.startDate && data.endDate <= data.startDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Tanggal selesai harus setelah tanggal mulai",
+          path: ["endDate"],
+        });
+      }
+    }
+  });
 
 export {
   authSchema,

@@ -73,8 +73,14 @@ export async function getRecurringBookingPreview(
  */
 export async function createRecurringBooking(
   userId: string,
-  data: RecurringBookingFormData
+  data: RecurringBookingFormData,
+  options?: {
+    status?: "Pending" | "Paid" | "Canceled";
+    paymentMethod?: "BankTransfer" | "Cash" | "QRIS";
+  }
 ) {
+  const defaultStatus = options?.status || "Pending";
+  const defaultPaymentMethod = options?.paymentMethod || "BankTransfer";
   // Parse timeSlot - handle both single time (HH:MM) and range (HH:MM-HH:MM) formats
   let startTime: string;
   let endTime: string;
@@ -218,9 +224,9 @@ export async function createRecurringBooking(
         dayOfWeek: data.dayOfWeek,
         startDate: data.startDate,
         endDate: data.endDate,
-        paymentMethod: "BankTransfer",
+        paymentMethod: defaultPaymentMethod,
         totalAmount: totalPrice,
-        status: "Pending",
+        status: defaultStatus,
       },
     });
 
@@ -236,9 +242,9 @@ export async function createRecurringBooking(
             courtType: court.type,
             duration: 1, // Default 1 hour
             date,
-            paymentMethod: "BankTransfer",
+            paymentMethod: defaultPaymentMethod,
             amount: pricePerSession,
-            status: "Pending",
+            status: defaultStatus,
             recurringBookingId: recurringBooking.id,
           },
         });
@@ -266,7 +272,13 @@ export async function createRecurringBooking(
           },
         });
 
-        console.log(`Updated ${updatedSchedules.count} schedules for date ${currentDate.toISOString()}, courtId: ${data.courtId}, timeSlot: ${data.timeSlot}`);
+        console.log(
+          `Updated ${
+            updatedSchedules.count
+          } schedules for date ${currentDate.toISOString()}, courtId: ${
+            data.courtId
+          }, timeSlot: ${data.timeSlot}`
+        );
 
         return booking;
       })
@@ -276,10 +288,10 @@ export async function createRecurringBooking(
     const transactionRecord = await tx.transaction.create({
       data: {
         recurringBookingId: recurringBooking.id,
-        paymentMethod: "BankTransfer",
+        paymentMethod: defaultPaymentMethod,
         transactionId: `recurring-${recurringBooking.id}`,
         amount: totalPrice,
-        status: "Pending",
+        status: defaultStatus,
       },
     });
 

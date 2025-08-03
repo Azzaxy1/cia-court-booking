@@ -381,6 +381,30 @@ const RecurringBooking = ({ court }: Props) => {
                   {formData.endDate.toLocaleDateString("id-ID")}
                 </p>
               </div>
+              {/* Booking Dates */}
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Tanggal booking:
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {preview.dates.slice(0, 12).map((date, index) => (
+                    <span
+                      key={index}
+                      className="inline-block bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded font-medium"
+                    >
+                      {new Date(date).toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "short",
+                      })}
+                    </span>
+                  ))}
+                  {preview.dates.length > 12 && (
+                    <span className="inline-block bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded font-medium">
+                      +{preview.dates.length - 12} lagi
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           </CardContent>
           <CardFooter>

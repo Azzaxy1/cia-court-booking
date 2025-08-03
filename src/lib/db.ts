@@ -101,7 +101,7 @@ export const getBookings = async (filters?: GetBookingsFilters) => {
 export const getTransactionsWithDetails = async () => {
   return await prisma.transaction.findMany({
     where: {
-      status: { in: ["settlement", "capture", "paid"] },
+      status: { in: ["settlement", "capture", "paid", "Paid"] },
     },
     include: {
       booking: {

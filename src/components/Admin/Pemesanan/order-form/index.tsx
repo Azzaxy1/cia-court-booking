@@ -37,6 +37,8 @@ import {
   Schedule,
 } from "@/app/generated/prisma";
 import { calculateEndTime } from "@/lib/utils";
+import { useEffect } from "react";
+import { id } from "date-fns/locale";
 
 type OrderFormType = z.infer<typeof orderSchema>;
 
@@ -74,6 +76,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
     defaultValues: {
       customerName: order?.user?.name || "",
       courtId: order?.court?.id || "",
+      bookingType: "single" as "single" | "recurring",
       selectedDate: order?.date ? new Date(order.date) : undefined,
       selectedSchedule: order
         ? {
@@ -87,6 +90,54 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
       paymentMethod: "Cash", // Default payment method
     },
   });
+
+  // Update recurring form data when schedule is selected
+  const selectedSchedule = watch("selectedSchedule");
+  const selectedDate = watch("selectedDate");
+  const bookingType = watch("bookingType");
+
+  useEffect(() => {
+    if (selectedSchedule && bookingType === "recurring") {
+      if (selectedDate) {
+        const dayOfWeek = selectedDate.getDay();
+        // Convert JavaScript getDay() (0-6, Sun-Sat) to our system (1-7, Mon-Sun)
+        const ourDayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
+
+        setValue("dayOfWeek", ourDayOfWeek);
+        setValue("recurringTimeSlot", selectedSchedule?.timeSlot || "");
+
+        // Set default start date to selected date
+        setValue("startDate", selectedDate);
+
+        // Set default end date to 30 days from start date
+        const endDate = new Date(selectedDate);
+        endDate.setDate(endDate.getDate() + 30);
+        setValue("endDate", endDate);
+      }
+    }
+  }, [selectedSchedule, selectedDate, bookingType, setValue]);
+
+  // Function to calculate recurring sessions
+  const calculateRecurringSessions = (startDate: Date, endDate: Date, dayOfWeek: number) => {
+    const sessions: Date[] = [];
+    const current = new Date(startDate);
+    
+    // Convert our dayOfWeek (1-7, Mon-Sun) to JavaScript getDay() (0-6, Sun-Sat)
+    const targetDay = dayOfWeek === 7 ? 0 : dayOfWeek;
+    
+    // Adjust to the first occurrence of the target day
+    while (current.getDay() !== targetDay) {
+      current.setDate(current.getDate() + 1);
+    }
+    
+    // Generate all dates until end date
+    while (current <= endDate) {
+      sessions.push(new Date(current));
+      current.setDate(current.getDate() + 7); // Add 7 days for next week
+    }
+    
+    return sessions;
+  };
 
   const { data: schedules = [], isLoading } = useQuery<Schedule[]>({
     queryKey: [
@@ -144,41 +195,105 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
     },
   });
 
+  const { mutate: createRecurringMutate, isPending: isRecurringPending } =
+    useMutation({
+      mutationFn: async (data: {
+        customerName: string;
+        courtId: string;
+        dayOfWeek: number;
+        startDate: Date;
+        endDate: Date;
+        timeSlot: string;
+      }) => {
+        const response = await fetch("/api/admin/recurring-booking", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerName: data.customerName,
+            courtId: data.courtId,
+            dayOfWeek: data.dayOfWeek,
+            startDate: data.startDate.toISOString(),
+            endDate: data.endDate.toISOString(),
+            timeSlot: data.timeSlot,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to create recurring booking");
+        }
+
+        return response.json();
+      },
+      onSuccess: () => {
+        toast.success("Pemesanan berulang berhasil dibuat");
+        router.push("/admin/pemesanan-berulang");
+        router.refresh();
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+
   const onSubmit = async (data: OrderFormType) => {
-    const endTime = calculateEndTime(data.selectedSchedule?.timeSlot || "", 1);
-
-    const bookingData = {
-      scheduleId: data.selectedSchedule?.id ?? "",
-      customerName: data.customerName,
-      courtId: data.courtId,
-      price: data.selectedSchedule?.price ?? 0,
-      selectedScheduleId: data.selectedSchedule?.id ?? null,
-      selectedDate: data.selectedDate
-        ? `${data.selectedDate.getFullYear()}-${(
-            data.selectedDate.getMonth() + 1
-          )
-            .toString()
-            .padStart(2, "0")}-${data.selectedDate
-            .getDate()
-            .toString()
-            .padStart(2, "0")}`
-        : "",
-      amount: data.selectedSchedule?.price ?? 0,
-      startTime: data.selectedSchedule?.timeSlot ?? "",
-      endTime: endTime,
-      duration: 1,
-      status: data.status as BookingStatus,
-      paymentMethod: data.paymentMethod || "Cash",
-    };
-
-    if (isAddForm) {
-      createMutate(bookingData);
-    } else {
-      if (!order?.id) {
-        toast.error("ID pemesanan tidak ditemukan");
+    if (data.bookingType === "recurring") {
+      // Handle recurring booking - use selectedSchedule data
+      if (!selectedSchedule) {
+        toast.error("Silakan pilih jadwal terlebih dahulu");
         return;
       }
-      updateMutate({ ...bookingData, id: order.id });
+      
+      const recurringData = {
+        customerName: data.customerName,
+        courtId: data.courtId,
+        dayOfWeek: data.dayOfWeek!,
+        startDate: data.startDate!,
+        endDate: data.endDate!,
+        timeSlot: selectedSchedule.timeSlot,
+      };
+      createRecurringMutate(recurringData);
+    } else {
+      // Handle single booking
+      const endTime = calculateEndTime(
+        data.selectedSchedule?.timeSlot || "",
+        1
+      );
+
+      const bookingData = {
+        scheduleId: data.selectedSchedule?.id ?? "",
+        customerName: data.customerName,
+        courtId: data.courtId,
+        price: data.selectedSchedule?.price ?? 0,
+        selectedScheduleId: data.selectedSchedule?.id ?? null,
+        selectedDate: data.selectedDate
+          ? `${data.selectedDate.getFullYear()}-${(
+              data.selectedDate.getMonth() + 1
+            )
+              .toString()
+              .padStart(2, "0")}-${data.selectedDate
+              .getDate()
+              .toString()
+              .padStart(2, "0")}`
+          : "",
+        amount: data.selectedSchedule?.price ?? 0,
+        startTime: data.selectedSchedule?.timeSlot ?? "",
+        endTime: endTime,
+        duration: 1,
+        status: data.status as BookingStatus,
+        paymentMethod: data.paymentMethod || "Cash",
+      };
+
+      if (isAddForm) {
+        createMutate(bookingData);
+      } else {
+        if (!order?.id) {
+          toast.error("ID pemesanan tidak ditemukan");
+          return;
+        }
+        updateMutate({ ...bookingData, id: order.id });
+      }
     }
   };
 
@@ -228,6 +343,28 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
               </span>
             )}
           </div>
+
+          {isAddForm && (
+            <div>
+              <Label>Tipe Pemesanan</Label>
+              <Select
+                value={watch("bookingType")}
+                onValueChange={(value) =>
+                  setValue("bookingType", value as "single" | "recurring")
+                }
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih tipe pemesanan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="single">Pemesanan Sekali</SelectItem>
+                  <SelectItem value="recurring">Pemesanan Berulang</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           <div>
             <Label>Lapangan</Label>
             <Select
@@ -247,87 +384,404 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label>Tanggal</Label>
-            <Calendar
-              mode="single"
-              selected={watch("selectedDate")}
-              onSelect={(date) => setValue("selectedDate", date)}
-              disabled={(date) => {
-                const now = new Date();
-                now.setHours(0, 0, 0, 0);
-                return date < now;
-              }}
-            />
-          </div>
-          <div>
-            <Label>Jadwal</Label>
-            {watch("selectedSchedule") && (
-              <div className="mb-2 p-2 bg-green-50 rounded-md text-white">
-                <span className="text-green-700 text-sm">Jadwal Dipilih: </span>
-                <Badge variant="default">
-                  {watch("selectedSchedule")?.timeSlot} -{" "}
-                  {calculateEndTime(
-                    watch("selectedSchedule")?.timeSlot || "",
-                    1
-                  )}
-                </Badge>
-                <span className="text-green-700 text-sm ml-2">
-                  (Rp {watch("selectedSchedule")?.price.toLocaleString("id-ID")}
-                  )
-                </span>
-              </div>
-            )}
-            {isLoading ? (
-              <div className="flex items-center gap-2">
-                <FaSpinner className="animate-spin" /> Memuat jadwal...
-              </div>
-            ) : schedules.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {schedules.map((schedule) => {
-                  const isSelected =
-                    watch("selectedSchedule")?.id === schedule.id;
-                  const endTime = calculateEndTime(schedule.timeSlot, 1);
 
-                  return (
-                    <Button
-                      key={schedule.id}
-                      type="button"
-                      variant={
-                        isSelected
-                          ? "default"
-                          : schedule.available
-                          ? "outline"
-                          : "secondary"
-                      }
-                      disabled={!schedule.available && !isSelected} // ✅ ALLOW CURRENT SELECTED EVEN IF NOT AVAILABLE
-                      onClick={() => setValue("selectedSchedule", schedule)}
-                      className="h-auto p-3 flex flex-col items-center"
-                    >
-                      <div className="font-medium">
-                        {schedule.timeSlot} - {endTime}
-                      </div>
-                      <div className="text-xs mt-1">
-                        Rp {schedule.price.toLocaleString("id-ID")}
-                      </div>
-                      {!schedule.available && !isSelected && (
-                        <Badge variant="destructive" className="mt-1 text-xs">
-                          Terbooked
-                        </Badge>
-                      )}
-                      {isSelected && (
-                        <Badge variant="default" className="mt-1 text-xs">
-                          Dipilih
-                        </Badge>
-                      )}
-                    </Button>
-                  );
-                })}
+          {/* Single Booking Fields */}
+          {(!isAddForm || watch("bookingType") === "single") && (
+            <>
+              <div>
+                <Label>Tanggal</Label>
+                <Calendar
+                  mode="single"
+                  selected={watch("selectedDate")}
+                  onSelect={(date) => setValue("selectedDate", date)}
+                  className="w-full md:w-1/2 mx-auto flex justify-center"
+                  locale={id}
+                  initialFocus={true}
+                  disabled={(date) => {
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0);
+                    return date < now;
+                  }}
+                />
               </div>
-            ) : (
-              <div className="text-red-500">Tidak ada jadwal tersedia</div>
-            )}
-          </div>
+              <div>
+                <Label>Jadwal</Label>
+                {watch("selectedSchedule") && (
+                  <div className="mb-2 p-2 bg-green-50 rounded-md text-white">
+                    <span className="text-green-700 text-sm">
+                      Jadwal Dipilih:{" "}
+                    </span>
+                    <Badge variant="default">
+                      {watch("selectedSchedule")?.timeSlot} -{" "}
+                      {calculateEndTime(
+                        watch("selectedSchedule")?.timeSlot || "",
+                        1
+                      )}
+                    </Badge>
+                    <span className="text-green-700 text-sm ml-2">
+                      (Rp{" "}
+                      {watch("selectedSchedule")?.price.toLocaleString("id-ID")}
+                      )
+                    </span>
+                  </div>
+                )}
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <FaSpinner className="animate-spin" /> Memuat jadwal...
+                  </div>
+                ) : schedules.length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {schedules.map((schedule) => {
+                      const isSelected =
+                        watch("selectedSchedule")?.id === schedule.id;
+                      const endTime = calculateEndTime(schedule.timeSlot, 1);
+
+                      return (
+                        <Button
+                          key={schedule.id}
+                          type="button"
+                          variant={
+                            isSelected
+                              ? "default"
+                              : schedule.available
+                              ? "outline"
+                              : "secondary"
+                          }
+                          disabled={!schedule.available && !isSelected} // ✅ ALLOW CURRENT SELECTED EVEN IF NOT AVAILABLE
+                          onClick={() => setValue("selectedSchedule", schedule)}
+                          className="h-auto p-3 flex flex-col items-center"
+                        >
+                          <div className="font-medium">
+                            {schedule.timeSlot} - {endTime}
+                          </div>
+                          <div className="text-xs mt-1">
+                            Rp {schedule.price.toLocaleString("id-ID")}
+                          </div>
+                          {!schedule.available && !isSelected && (
+                            <Badge
+                              variant="destructive"
+                              className="mt-1 text-xs"
+                            >
+                              Terbooked
+                            </Badge>
+                          )}
+                          {isSelected && (
+                            <Badge variant="default" className="mt-1 text-xs">
+                              Dipilih
+                            </Badge>
+                          )}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-red-500">Tidak ada jadwal tersedia</div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Recurring Booking Fields */}
+          {isAddForm && bookingType === "recurring" && (
+            <>
+              {/* First, let user select schedule like normal booking */}
+              <div>
+                <Label>Tanggal Referensi (untuk menentukan hari dan jam)</Label>
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => setValue("selectedDate", date)}
+                  className="w-full md:w-1/2 mx-auto flex justify-center"
+                  locale={id}
+                  initialFocus={true}
+                  disabled={(date) => {
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0);
+                    return date < now;
+                  }}
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Pilih tanggal untuk menentukan hari dalam seminggu dan melihat
+                  jadwal tersedia
+                </p>
+              </div>
+
+              {selectedDate && (
+                <div>
+                  <Label>Jadwal yang Dipilih</Label>
+                  {watch("selectedSchedule") && (
+                    <div className="mb-2 p-2 bg-green-50 rounded-md">
+                      <span className="text-green-700 text-sm">
+                        Jadwal Dipilih:{" "}
+                      </span>
+                      <Badge variant="default">
+                        {watch("selectedSchedule")?.timeSlot} -{" "}
+                        {calculateEndTime(
+                          watch("selectedSchedule")?.timeSlot || "",
+                          1
+                        )}
+                      </Badge>
+                      <span className="text-green-700 text-sm ml-2">
+                        (Rp{" "}
+                        {watch("selectedSchedule")?.price.toLocaleString(
+                          "id-ID"
+                        )}
+                        )
+                      </span>
+                    </div>
+                  )}
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <FaSpinner className="animate-spin" /> Memuat jadwal...
+                    </div>
+                  ) : schedules.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {schedules.map((schedule) => {
+                        const isSelected =
+                          watch("selectedSchedule")?.id === schedule.id;
+                        const endTime = calculateEndTime(schedule.timeSlot, 1);
+
+                        return (
+                          <Button
+                            key={schedule.id}
+                            type="button"
+                            variant={
+                              isSelected
+                                ? "default"
+                                : schedule.available
+                                ? "outline"
+                                : "secondary"
+                            }
+                            disabled={!schedule.available && !isSelected}
+                            onClick={() =>
+                              setValue("selectedSchedule", schedule)
+                            }
+                            className="h-auto p-3 flex flex-col items-center"
+                          >
+                            <div className="font-medium">
+                              {schedule.timeSlot} - {endTime}
+                            </div>
+                            <div className="text-xs mt-1">
+                              Rp {schedule.price.toLocaleString("id-ID")}
+                            </div>
+                            {!schedule.available && !isSelected && (
+                              <Badge
+                                variant="destructive"
+                                className="mt-1 text-xs"
+                              >
+                                Terbooked
+                              </Badge>
+                            )}
+                            {isSelected && (
+                              <Badge variant="default" className="mt-1 text-xs">
+                                Dipilih
+                              </Badge>
+                            )}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-red-500">
+                      Tidak ada jadwal tersedia
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Recurring period settings */}
+              {selectedSchedule && (
+                <>
+                  <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                    <h4 className="font-medium text-blue-900 mb-2">
+                      Pengaturan Otomatis:
+                    </h4>
+                    <div className="text-sm text-blue-700 space-y-1">
+                      <p>
+                        <strong>Hari terpilih:</strong>{" "}
+                        {
+                          [
+                            "Minggu",
+                            "Senin",
+                            "Selasa",
+                            "Rabu",
+                            "Kamis",
+                            "Jumat",
+                            "Sabtu",
+                          ][selectedDate?.getDay() || 0]
+                        }
+                      </p>
+                      <p>
+                        <strong>Waktu:</strong> {selectedSchedule?.timeSlot}
+                      </p>
+                      <p>
+                        <strong>Harga per sesi:</strong> Rp{" "}
+                        {selectedSchedule?.price.toLocaleString("id-ID")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Tanggal Mulai Berulang</Label>
+                      <Calendar
+                        mode="single"
+                        selected={watch("startDate")}
+                        onSelect={(date) => setValue("startDate", date)}
+                        className="w-full flex justify-center"
+                        locale={id}
+                        initialFocus={true}
+                        disabled={(date) => {
+                          const now = new Date();
+                          now.setHours(0, 0, 0, 0);
+                          return date < now;
+                        }}
+                      />
+                      {errors.startDate && (
+                        <span className="text-red-500 text-sm">
+                          {errors.startDate.message}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <Label>Tanggal Selesai Berulang</Label>
+                      <Calendar
+                        mode="single"
+                        selected={watch("endDate")}
+                        onSelect={(date) => setValue("endDate", date)}
+                        className="w-full flex justify-center"
+                        locale={id}
+                        initialFocus={true}
+                        disabled={(date) => {
+                          const now = new Date();
+                          const startDate = watch("startDate");
+                          now.setHours(0, 0, 0, 0);
+                          if (date < now) return true;
+                          if (startDate && date <= startDate) return true;
+                          return false;
+                        }}
+                      />
+                      {errors.endDate && (
+                        <span className="text-red-500 text-sm">
+                          {errors.endDate.message}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Preview untuk recurring booking */}
+              {watch("startDate") &&
+                watch("endDate") &&
+                watch("dayOfWeek") &&
+                selectedSchedule && (
+                  (() => {
+                    const startDate = watch("startDate")!;
+                    const endDate = watch("endDate")!;
+                    const dayOfWeek = watch("dayOfWeek")!;
+                    const sessions = calculateRecurringSessions(startDate, endDate, dayOfWeek);
+                    const totalPrice = sessions.length * selectedSchedule.price;
+                    
+                    return (
+                      <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                        <h4 className="font-medium text-green-900 mb-3">
+                          Preview Pemesanan Berulang:
+                        </h4>
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-4 text-sm text-green-700">
+                            <div>
+                              <p>
+                                <strong>Hari:</strong>{" "}
+                                {
+                                  [
+                                    "",
+                                    "Senin",
+                                    "Selasa",
+                                    "Rabu",
+                                    "Kamis",
+                                    "Jumat",
+                                    "Sabtu",
+                                    "Minggu",
+                                  ][dayOfWeek]
+                                }
+                              </p>
+                              <p>
+                                <strong>Waktu:</strong> {selectedSchedule.timeSlot}
+                              </p>
+                            </div>
+                            <div>
+                              <p>
+                                <strong>Jumlah Sesi:</strong> {sessions.length} kali
+                              </p>
+                              <p>
+                                <strong>Harga per Sesi:</strong> Rp{" "}
+                                {selectedSchedule.price.toLocaleString("id-ID")}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="border-t border-green-300 pt-3">
+                            <div className="flex justify-between items-center">
+                              <span className="font-bold text-lg text-green-800">Total Harga:</span>
+                              <span className="font-bold text-xl text-green-600">
+                                Rp {totalPrice.toLocaleString("id-ID")}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <div className="text-xs text-green-600 bg-green-100 p-2 rounded">
+                            <p>
+                              <strong>Periode:</strong>{" "}
+                              {startDate.toLocaleDateString("id-ID")} -{" "}
+                              {endDate.toLocaleDateString("id-ID")}
+                            </p>
+                            <p className="mt-1">
+                              <strong>Jadwal:</strong> Setiap {
+                                [
+                                  "",
+                                  "Senin",
+                                  "Selasa", 
+                                  "Rabu",
+                                  "Kamis",
+                                  "Jumat",
+                                  "Sabtu",
+                                  "Minggu",
+                                ][dayOfWeek]
+                              } jam {selectedSchedule.timeSlot}
+                            </p>
+                            {sessions.length <= 8 && (
+                              <div className="mt-2">
+                                <strong>Tanggal booking:</strong>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {sessions.map((session, index) => (
+                                    <span 
+                                      key={index}
+                                      className="bg-green-200 text-green-800 px-2 py-1 rounded text-xs"
+                                    >
+                                      {session.toLocaleDateString("id-ID", {
+                                        day: "2-digit",
+                                        month: "short"
+                                      })}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {sessions.length > 8 && (
+                              <p className="mt-2 text-xs">
+                                <strong>Tanggal pertama:</strong> {sessions[0].toLocaleDateString("id-ID")} <br/>
+                                <strong>Tanggal terakhir:</strong> {sessions[sessions.length - 1].toLocaleDateString("id-ID")}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()
+                )}
+            </>
+          )}
           {!isAddForm && (
             <>
               <div>
@@ -402,18 +856,36 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
             disabled={
               isCreatePending ||
               isUpdatePending ||
+              isRecurringPending ||
               !watch("customerName") ||
               !watch("courtId") ||
-              !watch("selectedSchedule")
+              (bookingType === "single" && !selectedSchedule) ||
+              (bookingType === "recurring" &&
+                (!watch("startDate") || !watch("endDate") || !selectedSchedule))
               // (!isAddForm && order?.status === "Paid")
             }
           >
-            {isCreatePending || isUpdatePending ? (
+            {isCreatePending || isUpdatePending || isRecurringPending ? (
               <span className="flex items-center gap-2">
                 <FaSpinner className="animate-spin" /> Memproses...
               </span>
             ) : isAddForm ? (
-              "Simpan Pemesanan"
+              bookingType === "recurring" ? (
+                (() => {
+                  const startDate = watch("startDate");
+                  const endDate = watch("endDate");
+                  const dayOfWeek = watch("dayOfWeek");
+                  
+                  if (startDate && endDate && dayOfWeek && selectedSchedule) {
+                    const sessions = calculateRecurringSessions(startDate, endDate, dayOfWeek);
+                    const totalPrice = sessions.length * selectedSchedule.price;
+                    return `Simpan ${sessions.length} Sesi - Rp ${totalPrice.toLocaleString("id-ID")}`;
+                  }
+                  return "Simpan Pemesanan Berulang";
+                })()
+              ) : (
+                "Simpan Pemesanan"
+              )
             ) : (
               "Update Pemesanan"
             )}

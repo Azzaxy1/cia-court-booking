@@ -39,7 +39,7 @@ const getStatusBadge = (status: BookingStatus) => {
       return <Badge className="bg-red-500 text-white">Dibatalkan</Badge>;
     case "Pending":
       return (
-        <Badge className="bg-yellow-500 text-white">Menunggu Konfirmasi</Badge>
+        <Badge className="bg-yellow-500 text-white">Menunggu Pembayaran</Badge>
       );
     case "Refunded":
       return <Badge className="bg-gray-500 text-white">Dikembalikan</Badge>;
