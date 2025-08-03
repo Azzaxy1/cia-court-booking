@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { formatRupiah, formatSportType, formattedDate } from "@/lib/utils";
+import { formatRupiah, formatSportType } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -69,7 +69,13 @@ const BookingHistory = ({ booking }: Props) => {
               <p>
                 <span className="font-semibold text-gray-700">Tanggal:</span>{" "}
                 <span className="text-gray-600">
-                  {formattedDate(booking.date)}
+                  {/* Tampilkan format beserta hari  dalam js*/}
+                  {new Date(booking.date).toLocaleDateString("id-ID", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    weekday: "long",
+                  })}
                 </span>
               </p>
             </div>
@@ -108,7 +114,7 @@ const BookingHistory = ({ booking }: Props) => {
               </p>
             </div>
           </div>
-          
+
           {/* Tombol Lihat Detail */}
           <div className="flex justify-end pt-4">
             <Link href={`/booking/${booking.id}`}>
