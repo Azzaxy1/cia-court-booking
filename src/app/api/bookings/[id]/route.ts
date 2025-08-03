@@ -188,6 +188,7 @@ export async function DELETE(
       where: { id },
       include: {
         Transaction: true,
+        Schedule: true,
       },
     });
 
@@ -221,6 +222,18 @@ export async function DELETE(
         status: "Canceled",
       },
     });
+
+    if (existingBooking.Schedule && existingBooking.Schedule.length > 0) {
+      for (const schedule of existingBooking.Schedule) {
+        await prisma.schedule.update({
+          where: { id: schedule.id },
+          data: {
+            bookingId: null,
+            available: true,
+          },
+        });
+      }
+    }
 
     return NextResponse.json({
       message: "Pemesanan berhasil dihapus!",
