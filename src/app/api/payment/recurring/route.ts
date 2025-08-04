@@ -64,6 +64,11 @@ export async function POST(req: Request) {
           name: `Pemesanan Berulang - ${recurringBooking.court.name}`,
         },
       ],
+      callbacks: {
+        finish: `http://localhost:3000/payment/success?booking_id=${recurringBooking.id}`,
+        error: `http://localhost:3000/payment/failed?booking_id=${recurringBooking.id}`,
+        pending: `http://localhost:3000/payment/pending?booking_id=${recurringBooking.id}`,
+      },
     };
 
     const midtransResponse = await snap.createTransaction(parameter);

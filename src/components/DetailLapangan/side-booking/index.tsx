@@ -125,7 +125,7 @@ const SideBooking = ({ court }: Props) => {
         courtId: court.id,
         scheduleId: selectedSchedule.id,
         amount: selectedSchedule?.price ?? 0,
-        paymentMethod: "BankTransfer",
+        paymentMethod: "midtrans",
       });
     } catch (error) {
       toast.error(

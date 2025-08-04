@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate new transaction ID untuk retry
-    const newTransactionId = `ORDER-${nanoid(10)}`;
+    const newTransactionId = `order-${nanoid(10)}`;
 
     // Create new transaction record
     const transaction = await prisma.transaction.create({
@@ -89,9 +89,9 @@ export async function POST(request: NextRequest) {
         },
       ],
       callbacks: {
-        finish: `${process.env.NEXTAUTH_URL}/payment/success?booking_id=${booking.id}`,
-        error: `${process.env.NEXTAUTH_URL}/payment/failed?booking_id=${booking.id}`,
-        pending: `${process.env.NEXTAUTH_URL}/payment/pending?booking_id=${booking.id}`,
+        finish: `http://localhost:3000/payment/success?booking_id=${booking.id}`,
+        error: `http://localhost:3000/payment/failed?booking_id=${booking.id}`,
+        pending: `http://localhost:3000/payment/pending?booking_id=${booking.id}`,
       },
     };
 

@@ -47,13 +47,18 @@ export async function POST(req: Request) {
       },
       item_details: itemDetails,
       customer_details: customerDetails,
+      callbacks: {
+        finish: `http://localhost:3000/payment/success?booking_id=${bookingId}`,
+        error: `http://localhost:3000/payment/failed?booking_id=${bookingId}`,
+        pending: `http://localhost:3000/payment/pending?booking_id=${bookingId}`,
+      },
     };
 
     const transaction = await snap.createTransaction(parameter);
     await prisma.transaction.create({
       data: {
         bookingId,
-        paymentMethod: "BankTransfer",
+        paymentMethod: "midtrans",
         transactionId: `TRX-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         amount,
         midtransToken: transaction.token,
