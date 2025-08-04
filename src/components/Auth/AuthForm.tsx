@@ -95,16 +95,31 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
 
   const handleGoogleLogin = async () => {
     try {
-      await signIn("google", {
+      const result = await signIn("google", {
         redirect: false,
-        callbackUrl: `${window.location.origin}/`,
-      }).then((res) => {
-        if (res?.error) {
-          toast.error("Gagal masuk dengan Google");
-        } else {
-          toast.success("Berhasil masuk dengan Google");
-        }
+        callbackUrl: `${window.location.origin}/lapangan`,
       });
+
+      if (result?.error) {
+        console.error("Google login error:", result.error);
+
+        // Handle specific error types
+        if (result.error === "OAuthAccountNotLinked") {
+          toast.error(
+            "Email ini sudah terdaftar dengan metode login lain. Silakan gunakan email dan password untuk masuk."
+          );
+        } else if (result.error === "OAuthCallback") {
+          toast.error(
+            "Terjadi kesalahan saat menghubungkan dengan Google. Silakan coba lagi."
+          );
+        } else {
+          toast.error("Gagal masuk dengan Google. Silakan coba lagi.");
+        }
+      } else if (result?.ok) {
+        toast.success("Berhasil masuk dengan Google");
+        router.push("/lapangan");
+        router.refresh();
+      }
     } catch (error) {
       toast.error(`Gagal masuk dengan Google. ${String(error)}`);
     }

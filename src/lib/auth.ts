@@ -22,6 +22,7 @@ export const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -53,7 +54,30 @@ export const authOptions: AuthOptions = {
     maxAge: 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
   },
+  pages: {
+    signIn: "/login",
+    error: "/auth/error",
+  },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        try {
+          const existingUser = await prismaAuth.user.findUnique({
+            where: { email: user.email! },
+          });
+
+          if (existingUser) {
+            return true;
+          }
+
+          return true;
+        } catch (error) {
+          console.error("Error during Google sign in:", error);
+          return false;
+        }
+      }
+      return true;
+    },
     async session({ session, token }: { session: any; token: any }) {
       if (token.sub) {
         const user = await prismaAuth.user.findUnique({
@@ -98,5 +122,6 @@ export const authOptions: AuthOptions = {
       return token;
     },
   },
+  debug: process.env.NODE_ENV === "development",
   secret: process.env.NEXTAUTH_SECRET,
 };
