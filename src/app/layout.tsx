@@ -47,6 +47,11 @@ export default function RootLayout({
         <Script id="chatbase-script" strategy="afterInteractive">
           {`
             (function(){
+              // Jangan tampilkan chatbot di halaman admin/kasir
+              if(window.location.pathname.startsWith('/admin')){
+                return;
+              }
+              
               if(!window.chatbase||window.chatbase("getState")!=="initialized"){
                 window.chatbase=(...arguments)=>{
                   if(!window.chatbase.q){window.chatbase.q=[]}
