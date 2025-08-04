@@ -854,7 +854,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                     <SelectValue placeholder="Pilih status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.values(BookingStatus).map((status) => (
+                    {Object.values(BookingStatus).filter(status => status !== "Refunded").map((status) => (
                       <SelectItem key={status} value={status}>
                         {status}
                       </SelectItem>
@@ -875,7 +875,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                 </div>
               )}
 
-              {watch("status") === "Paid" && (
+              {watch("status") === "Paid" && order?.status === "Pending" && (
                 <div>
                   <Label>Metode Pembayaran</Label>
                   <Select

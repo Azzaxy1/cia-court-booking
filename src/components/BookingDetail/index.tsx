@@ -41,8 +41,6 @@ const getStatusBadge = (status: BookingStatus) => {
       return (
         <Badge className="bg-yellow-500 text-white">Menunggu Pembayaran</Badge>
       );
-    case "Refunded":
-      return <Badge className="bg-gray-500 text-white">Dikembalikan</Badge>;
     default:
       return <Badge className="bg-gray-500 text-white">Tidak Diketahui</Badge>;
   }
