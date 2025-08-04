@@ -33,6 +33,149 @@ export const getCourts = async () => {
     },
   });
 };
+export const getAllBookings = async (filters?: GetBookingsFilters) => {
+  const bookingWhere: Prisma.BookingWhereInput = {};
+  const recurringWhere: Prisma.RecurringBookingWhereInput = {};
+
+  if (filters?.userId) {
+    bookingWhere.userId = filters.userId;
+    recurringWhere.userId = filters.userId;
+  }
+  if (filters?.status && filters.status !== "all") {
+    bookingWhere.status = filters.status as BookingStatus;
+    recurringWhere.status = filters.status as BookingStatus;
+  }
+  if (filters?.courtId && filters.courtId !== "all") {
+    bookingWhere.courtId = filters.courtId;
+    recurringWhere.courtId = filters.courtId;
+  }
+  if (filters?.date) {
+    bookingWhere.date = filters.date;
+    recurringWhere.startDate = filters.date;
+  }
+  if (filters?.search) {
+    const searchOR: Prisma.BookingWhereInput[] = [
+      {
+        user: {
+          name: {
+            contains: filters.search,
+            mode: Prisma.QueryMode.insensitive,
+          },
+        },
+      },
+      {
+        user: {
+          email: {
+            contains: filters.search,
+            mode: Prisma.QueryMode.insensitive,
+          },
+        },
+      },
+      {
+        court: {
+          name: {
+            contains: filters.search,
+            mode: Prisma.QueryMode.insensitive,
+          },
+        },
+      },
+      {
+        paymentMethod: {
+          contains: filters.search,
+          mode: Prisma.QueryMode.insensitive,
+        },
+      },
+    ];
+
+    const recurringSearchOR: Prisma.RecurringBookingWhereInput[] = [
+      {
+        user: {
+          name: {
+            contains: filters.search,
+            mode: Prisma.QueryMode.insensitive,
+          },
+        },
+      },
+      {
+        user: {
+          email: {
+            contains: filters.search,
+            mode: Prisma.QueryMode.insensitive,
+          },
+        },
+      },
+      {
+        court: {
+          name: {
+            contains: filters.search,
+            mode: Prisma.QueryMode.insensitive,
+          },
+        },
+      },
+    ];
+
+    bookingWhere.OR = searchOR;
+    recurringWhere.OR = recurringSearchOR;
+  }
+
+  // Get regular bookings
+  const regularBookings = await prisma.booking.findMany({
+    where: bookingWhere,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      court: true,
+      Schedule: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  // Get recurring bookings
+  const recurringBookings = await prisma.recurringBooking.findMany({
+    where: recurringWhere,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      court: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  // Transform recurring bookings to match regular booking structure
+  const transformedRecurringBookings = recurringBookings.map((recurring) => ({
+    ...recurring,
+    date: recurring.startDate,
+    timeSlot: `${recurring.startTime} - ${recurring.endTime}`,
+    price: recurring.totalAmount || 0,
+    paymentMethod: recurring.paymentMethod || "CASH",
+    Schedule: null, // Recurring bookings don't have direct schedule relation
+  }));
+
+  // Combine and sort all bookings
+  const allBookings = [
+    ...regularBookings,
+    ...transformedRecurringBookings,
+  ].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  return allBookings;
+};
+
 export const getBookings = async (filters?: GetBookingsFilters) => {
   const where: Prisma.BookingWhereInput = {};
 
@@ -263,27 +406,17 @@ export const getTotalBookingCurrentMonth = async () => {
   const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-  // Count regular bookings
-  const regularBookings = await prisma.booking.count({
+  // Count only regular bookings since recurring bookings create individual booking records
+  const totalBookings = await prisma.booking.count({
     where: {
-      createdAt: {
+      date: {
         gte: startOfCurrentMonth,
         lt: endOfCurrentMonth,
       },
     },
   });
 
-  // Count recurring bookings
-  const recurringBookings = await prisma.recurringBooking.count({
-    where: {
-      createdAt: {
-        gte: startOfCurrentMonth,
-        lt: endOfCurrentMonth,
-      },
-    },
-  });
-
-  return regularBookings + recurringBookings;
+  return totalBookings;
 };
 
 export const getTotalRevenueCurrentMonth = async () => {
@@ -294,7 +427,7 @@ export const getTotalRevenueCurrentMonth = async () => {
   const result = await prisma.transaction.aggregate({
     _sum: { amount: true },
     where: {
-      status: { in: ["settlement", "capture", "paid"] },
+      status: { in: ["settlement", "capture", "paid", "Paid"] },
       createdAt: {
         gte: startOfCurrentMonth,
         lt: endOfCurrentMonth,
@@ -326,54 +459,30 @@ export const getCourtStats = async () => {
   return stats;
 };
 
+// Ambil data dari tabel booking saja (recurring booking otomatis membuat booking individual)
 export const getOrderStats = async () => {
-  const transactions = await prisma.transaction.findMany({
-    where: {
-      status: { in: ["settlement", "capture", "paid"] },
-    },
-    include: {
-      booking: {
-        select: {
-          date: true,
-          courtType: true,
-        },
-      },
-      recurringBooking: {
-        select: {
-          startDate: true,
-          courtType: true,
-        },
-      },
+  // Ambil data booking yang sudah include dari recurring booking
+  const bookings = await prisma.booking.findMany({
+    select: {
+      date: true,
+      courtType: true,
     },
   });
 
-  // Gabungkan transaksi booking biasa dan recurring
-  return transactions.flatMap((transaction) => {
-    if (transaction.booking) {
-      return [
-        {
-          date: transaction.booking.date.toISOString(),
-          fieldType: transaction.booking.courtType,
-        },
-      ];
-    }
-    if (transaction.recurringBooking) {
-      return [
-        {
-          date: transaction.recurringBooking.startDate.toISOString(),
-          fieldType: transaction.recurringBooking.courtType,
-        },
-      ];
-    }
-    return [];
-  });
+  // Transform ke format yang dibutuhkan chart
+  const allBookings = bookings.map((booking) => ({
+    date: booking.date?.toISOString() || new Date().toISOString(),
+    fieldType: booking.courtType,
+  }));
+
+  return allBookings;
 };
 
 export const getRevenueStats = async () => {
   // Ambil semua transaksi yang sudah paid
   const transactions = await prisma.transaction.findMany({
     where: {
-      status: { in: ["settlement", "capture", "paid"] },
+      status: { in: ["settlement", "capture", "paid", "Paid"] },
     },
     include: {
       booking: {

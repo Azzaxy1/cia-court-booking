@@ -12,7 +12,6 @@ import { formatRupiah } from "@/lib/utils";
 const Stats = async () => {
   const totalBooking = await getTotalBookingCurrentMonth();
   const totalRevenue = await getTotalRevenueCurrentMonth();
-  console.log("Total Revenue", totalRevenue);
 
   const totalCourts = await getCourts();
 
