@@ -76,7 +76,7 @@ const AuthForm = ({ isLogin = false, className }: AuthFormProps) => {
     try {
       if (isLogin) {
         await login(formData.email, formData.password);
-        router.push("/");
+        router.push("/lapangan");
       } else {
         mutate(formData);
       }
