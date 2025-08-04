@@ -18,9 +18,25 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PiCourtBasketball } from "react-icons/pi";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+
+declare global {
+  interface Window {
+    snap?: {
+      pay: (
+        token: string,
+        options: {
+          onSuccess: (result: Record<string, unknown>) => void;
+          onError: (result: Record<string, unknown>) => void;
+        }
+      ) => void;
+    };
+  }
+}
 
 interface BookingDetailProps {
   booking: Booking & {
@@ -49,9 +65,71 @@ const getStatusBadge = (status: BookingStatus) => {
 const BookingDetail = ({ booking }: BookingDetailProps) => {
   const adminWhatsApp = "+62 813-1457-4274";
   const { data: session } = useSession();
+  const router = useRouter();
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [newDate, setNewDate] = useState("");
   const [newStartTime, setNewStartTime] = useState("");
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY as string;
+
+  useEffect(() => {
+    // Cek apakah script sudah ada
+    if (document.getElementById("midtrans-script")) return;
+
+    const script = document.createElement("script");
+    script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
+    script.setAttribute("data-client-key", clientKey);
+    script.id = "midtrans-script";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.getElementById("midtrans-script")?.remove();
+    };
+  }, [clientKey]);
+
+  const handleRetryPayment = async () => {
+    setIsProcessingPayment(true);
+    try {
+      const response = await fetch("/api/payment/retry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId: booking.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Gagal membuat ulang pembayaran");
+      }
+
+      // Gunakan popup Midtrans
+      if (data.transactionToken && window.snap) {
+        window.snap.pay(data.transactionToken, {
+          onSuccess: (result) => {
+            console.log("Payment success:", result);
+            toast.success("Pembayaran berhasil!");
+            router.push(`/payment/success?order_id=${result.order_id}`);
+            router.refresh();
+          },
+          onError: (result) => {
+            console.log("Payment error:", result);
+            toast.error("Pembayaran gagal!");
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error retrying payment:", error);
+      toast.error("Gagal memproses pembayaran ulang. Silakan hubungi admin.");
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
 
   const handleReschedule = () => {
     setShowRescheduleModal(true);
@@ -352,6 +430,18 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Retry Payment Button - hanya tampil jika status Pending */}
+            {booking.status === "Pending" && (
+              <Button
+                onClick={handleRetryPayment}
+                disabled={isProcessingPayment}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+              >
+                <CreditCard className="h-4 w-4" />
+                {isProcessingPayment ? "Memproses..." : "Bayar Sekarang"}
+              </Button>
+            )}
+
             {/* Reschedule Button - hanya tampil jika status Paid dan belum reschedule lebih dari 2 kali */}
             {booking.status === "Paid" && booking.rescheduleCount < 2 && (
               <Button

@@ -64,16 +64,18 @@ const SideBooking = ({ court }: Props) => {
   const { mutate, isPending } = useMutation({
     mutationFn: paymentMidtrans,
     onSuccess: (data) => {
-      const { token } = data;
-      console.log("DATA", data);
-      if (window.snap) {
-        window.snap.pay(token, {
-          onSuccess: (data) => {
-            console.log("DATA ON SUCCESS", data);
-            router.push(`/payment/success?order_id=${data.order_id}`);
+      // Gunakan popup Midtrans
+      if (data.token && window.snap) {
+        window.snap.pay(data.token, {
+          onSuccess: (result) => {
+            console.log("Payment success:", result);
+            toast.success("Pembayaran berhasil!");
+            router.push(`/payment/success?order_id=${result.order_id}`);
+            router.refresh();
           },
-          onError: () => {
-            toast.error("Pesan lapangan gagal!");
+          onError: (result) => {
+            console.log("Payment error:", result);
+            toast.error("Pembayaran gagal!");
           },
         });
       }
