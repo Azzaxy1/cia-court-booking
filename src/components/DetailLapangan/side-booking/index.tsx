@@ -118,6 +118,14 @@ const SideBooking = ({ court }: Props) => {
       toast.error("Silakan login terlebih dahulu untuk memesan lapangan");
       router.push("/login");
       return;
+    } else if (
+      session?.user?.role === "OWNER" ||
+      session?.user?.role === "CASHIER"
+    ) {
+      toast.error(
+        "Owner dan Cashier tidak dapat melakukan pemesanan dari sisi pelanggan"
+      );
+      return;
     }
 
     try {
@@ -154,20 +162,34 @@ const SideBooking = ({ court }: Props) => {
             )}
           </div>
 
-          <Button
-            onClick={handleBooking}
-            className="w-full mb-3"
-            disabled={isPending || isPendingBooking}
-          >
-            {isPending || isPendingBooking ? (
-              <span className="flex items-center justify-center gap-3">
-                <FaSpinner className="animate-spin mr-2" size={16} />{" "}
-                Memproses...
-              </span>
-            ) : (
-              `Bayar Sekarang - ${formatRupiah(selectedSchedule?.price ?? 0)}`
-            )}
-          </Button>
+          {/* Tampilkan pesan khusus untuk owner/cashier */}
+          {session?.user?.role === "OWNER" ||
+          session?.user?.role === "CASHIER" ? (
+            <div className="w-full mb-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+              <p className="text-sm text-orange-700 text-center font-medium">
+                Owner dan Cashier tidak dapat melakukan pemesanan dari sisi
+                pelanggan
+              </p>
+              <p className="text-xs text-orange-600 text-center mt-1">
+                Gunakan panel admin untuk mengelola pemesanan
+              </p>
+            </div>
+          ) : (
+            <Button
+              onClick={handleBooking}
+              className="w-full mb-3"
+              disabled={isPending || isPendingBooking}
+            >
+              {isPending || isPendingBooking ? (
+                <span className="flex items-center justify-center gap-3">
+                  <FaSpinner className="animate-spin mr-2" size={16} />{" "}
+                  Memproses...
+                </span>
+              ) : (
+                `Bayar Sekarang - ${formatRupiah(selectedSchedule?.price ?? 0)}`
+              )}
+            </Button>
+          )}
         </CardContent>
         <CardFooter className="flex-col items-start">
           <h1 className="font-bold text-red-500">PERHATIAN!</h1>

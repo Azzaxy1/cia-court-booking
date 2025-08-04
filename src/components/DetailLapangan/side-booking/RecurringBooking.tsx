@@ -221,6 +221,13 @@ const RecurringBooking = ({ court }: Props) => {
       return;
     }
 
+    if (session?.user?.role === "OWNER" || session?.user?.role === "CASHIER") {
+      toast.error(
+        "Owner dan Cashier tidak dapat melakukan pemesanan dari sisi pelanggan"
+      );
+      return;
+    }
+
     try {
       const validatedData = recurringBookingSchema.parse(formData);
       createRecurring(validatedData);
@@ -371,7 +378,7 @@ const RecurringBooking = ({ court }: Props) => {
                       {formatRupiah(preview.originalTotalPrice || 0)}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between">
                     <span className="text-green-700 font-medium">
                       Diskon ({preview.discountPercentage}%):
@@ -392,7 +399,8 @@ const RecurringBooking = ({ court }: Props) => {
 
               {preview.discountPercentage && preview.discountPercentage > 0 && (
                 <div className="text-sm text-green-600 text-center font-medium bg-green-50 p-2 rounded">
-                  🎉 Hemat {formatRupiah(preview.discountAmount || 0)} dengan pemesanan berulang!
+                  🎉 Hemat {formatRupiah(preview.discountAmount || 0)} dengan
+                  pemesanan berulang!
                 </div>
               )}
 
@@ -435,20 +443,34 @@ const RecurringBooking = ({ court }: Props) => {
             </div>
           </CardContent>
           <CardFooter>
-            <Button
-              onClick={handleSubmit}
-              className="w-full"
-              disabled={isCreatingBooking}
-            >
-              {isCreatingBooking ? (
-                <span className="flex items-center justify-center gap-2">
-                  <FaSpinner className="animate-spin" size={16} />
-                  Memproses...
-                </span>
-              ) : (
-                `Bayar Sekarang - ${formatRupiah(preview.totalPrice)}`
-              )}
-            </Button>
+            {/* Tampilkan pesan khusus untuk admin/cashier */}
+            {session?.user?.role === "OWNER" ||
+            session?.user?.role === "CASHIER" ? (
+              <div className="w-full p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <p className="text-sm text-orange-700 text-center font-medium">
+                  Owner dan Cashier tidak dapat melakukan pemesanan dari sisi
+                  pelanggan
+                </p>
+                <p className="text-xs text-orange-600 text-center mt-1">
+                  Gunakan panel admin untuk mengelola pemesanan
+                </p>
+              </div>
+            ) : (
+              <Button
+                onClick={handleSubmit}
+                className="w-full"
+                disabled={isCreatingBooking}
+              >
+                {isCreatingBooking ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <FaSpinner className="animate-spin" size={16} />
+                    Memproses...
+                  </span>
+                ) : (
+                  `Bayar Sekarang - ${formatRupiah(preview.totalPrice)}`
+                )}
+              </Button>
+            )}
           </CardFooter>
         </Card>
       ) : null}
