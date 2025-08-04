@@ -11,9 +11,10 @@ const images = {
 const prisma = new PrismaClient();
 
 async function main() {
-  // Delete all existing data
+  // Delete all existing data in correct order (child tables first)
   await prisma.transaction.deleteMany();
   await prisma.booking.deleteMany();
+  await prisma.recurringBooking.deleteMany();
   await prisma.schedule.deleteMany();
   await prisma.court.deleteMany();
   await prisma.session.deleteMany();
@@ -158,8 +159,8 @@ async function main() {
       firstCourt = court;
     }
 
-    // Buat schedule untuk 30 hari ke depan
-    for (let i = 0; i < 30; i++) {
+    // Buat schedule untuk 3 bulan ke depan
+    for (let i = 0; i < 90; i++) {
       const date = new Date();
       date.setDate(date.getDate() + i);
       const day = date.getDay();
@@ -252,7 +253,7 @@ async function main() {
     });
 
     // Create schedules for each badminton court
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 90; i++) {
       // Buat schedule untuk setiap court
       const timeSlots = [
         "07:00",
@@ -328,7 +329,7 @@ async function main() {
     });
 
     // Create schedules for each table tennis court
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 90; i++) {
       // Buat schedule untuk setiap court
       const timeSlots = [
         "07:00",
