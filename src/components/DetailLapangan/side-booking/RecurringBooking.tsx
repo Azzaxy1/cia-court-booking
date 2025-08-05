@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSchedule } from "@/contexts/ScheduleContext";
-import { formatRupiah, formatDateString, parseDateString } from "@/lib/utils";
+import { formatRupiah } from "@/lib/utils";
 import { CourtReal } from "@/types/court";
 import {
   DAYS_OF_WEEK,
@@ -86,11 +86,18 @@ const RecurringBooking = ({ court }: Props) => {
       // Convert JavaScript getDay() (0-6, Sun-Sat) to our system (1-7, Mon-Sun)
       const ourDayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
 
+      // Create date without timezone offset by using local date components
+      const localStartDate = new Date(
+        scheduleDate.getFullYear(),
+        scheduleDate.getMonth(),
+        scheduleDate.getDate()
+      );
+
       setFormData((prev) => ({
         ...prev,
         dayOfWeek: ourDayOfWeek,
         timeSlot,
-        startDate: new Date(selectedSchedule.date),
+        startDate: localStartDate,
       }));
     }
   }, [selectedSchedule]);
@@ -186,12 +193,10 @@ const RecurringBooking = ({ court }: Props) => {
     },
     onSuccess: (paymentData) => {
       const { token } = paymentData;
-      console.log("Payment data:", paymentData);
 
       if (window.snap) {
         window.snap.pay(token, {
           onSuccess: (result) => {
-            console.log("Payment success:", result);
             toast.success("Pembayaran berhasil!");
             router.push(`/payment/success?order_id=${result.order_id}`);
           },
@@ -238,11 +243,9 @@ const RecurringBooking = ({ court }: Props) => {
   };
 
   const handleDateChange = (field: "startDate" | "endDate", value: string) => {
-    // Gunakan helper function yang konsisten
-    const date = parseDateString(value);
-
-    console.log("RecurringBooking: Input value:", value);
-    console.log("RecurringBooking: Parsed date:", date);
+    // Parse date string directly to avoid timezone issues
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(year, month - 1, day); // month is 0-based in Date constructor
 
     setFormData((prev) => ({
       ...prev,
@@ -251,8 +254,11 @@ const RecurringBooking = ({ court }: Props) => {
   };
 
   const formatDate = (date: Date) => {
-    // Gunakan helper function yang konsisten
-    return formatDateString(date);
+    // Use local date methods to avoid timezone offset
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   if (!selectedSchedule) {
