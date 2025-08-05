@@ -205,6 +205,13 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
                 Masukkan tanggal dan jam mulai baru untuk booking Anda
               </p>
 
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p className="text-sm text-yellow-800">
+                  ⚠️ Batas maksimal reschedule hanya (1 kali), jika ada kendala
+                  silakan hubungi admin.
+                </p>
+              </div>
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -442,8 +449,8 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
               </Button>
             )}
 
-            {/* Reschedule Button - hanya tampil jika status Paid dan belum reschedule lebih dari 2 kali */}
-            {booking.status === "Paid" && booking.rescheduleCount < 2 && (
+            {/* Reschedule Button - hanya tampil jika status Paid dan belum reschedule */}
+            {booking.status === "Paid" && booking.rescheduleCount < 1 && (
               <Button
                 onClick={handleReschedule}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
@@ -480,14 +487,12 @@ Mohon bantuan untuk mengatur jadwal baru. Terima kasih!`;
             </div>
           </div>
 
-          {booking.rescheduleCount >= 2 && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-800">
-                ⚠️ Batas maksimal reschedule (2 kali) telah tercapai. Hubungi
-                admin jika masih memerlukan perubahan jadwal.
-              </p>
-            </div>
-          )}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-sm text-yellow-800">
+              ⚠️ Batas maksimal reschedule hanya (1 kali), jika ada kendala
+              silakan hubungi admin.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
