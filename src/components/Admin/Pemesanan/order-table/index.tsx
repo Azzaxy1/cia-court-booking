@@ -348,15 +348,17 @@ const OrderTable = ({ data }: Props) => {
               <SelectItem value="all" className="cursor-pointer">
                 Semua
               </SelectItem>
-              {Object.values(BookingStatus).map((status) => (
-                <SelectItem
-                  key={status}
-                  value={status}
-                  className="cursor-pointer"
-                >
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
-                </SelectItem>
-              ))}
+              {Object.values(BookingStatus)
+                .filter((status) => status !== "Refunded")
+                .map((status) => (
+                  <SelectItem
+                    key={status}
+                    value={status}
+                    className="cursor-pointer"
+                  >
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>
