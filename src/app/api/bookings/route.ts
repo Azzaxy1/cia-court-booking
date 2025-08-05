@@ -61,6 +61,10 @@ export async function POST(req: Request) {
     }
 
     const result = await prisma.$transaction(async (tx) => {
+      const bookingDate = date
+        ? toUTCDateOnly(date)
+        : toUTCDateOnly(schedule.date);
+
       const booking = await tx.booking.create({
         data: {
           userId,
@@ -72,7 +76,7 @@ export async function POST(req: Request) {
             (parseInt(schedule.timeSlot) + 1).toString().padStart(2, "0") +
               ":00",
           courtType: courtType || schedule.court.type,
-          date: date ? toUTCDateOnly(date) : toUTCDateOnly(schedule.date),
+          date: bookingDate,
           paymentMethod: paymentMethod || "Cash",
           amount,
           status: status || "Pending",

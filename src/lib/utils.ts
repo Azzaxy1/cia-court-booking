@@ -46,16 +46,41 @@ export const formattedTime = (date: Date | string | null | undefined) => {
 };
 
 export const toUTCDateOnly = (dateInput: string | Date) => {
-  const d =
-    typeof dateInput === "string" ? new Date(dateInput) : new Date(dateInput);
-  
-  // Ensure we get the correct date in local timezone first
-  const year = d.getFullYear();
-  const month = d.getMonth(); 
-  const date = d.getDate();
-  
-  // Create UTC date with the same year, month, date
-  return new Date(Date.UTC(year, month, date));
+  let year: number, month: number, day: number;
+
+  if (typeof dateInput === "string") {
+    // Parse string secara manual untuk menghindari timezone issues
+    [year, month, day] = dateInput.split("-").map(Number);
+  } else {
+    const d = new Date(dateInput);
+    year = d.getFullYear();
+    month = d.getMonth() + 1; // Konversi ke 1-based month
+    day = d.getDate();
+  }
+
+  // Buat UTC date dengan waktu 12:00:00 (siang hari) untuk menghindari timezone shift
+  // Menggunakan ISO string format untuk memastikan konsistensi
+  const isoString = `${year}-${month.toString().padStart(2, "0")}-${day
+    .toString()
+    .padStart(2, "0")}T12:00:00.000Z`;
+  const result = new Date(isoString);
+
+  return result;
+};
+
+// Fungsi helper untuk format tanggal yang konsisten
+export const formatDateString = (date: Date): string => {
+  // Gunakan UTC methods untuk menghindari timezone issues
+  const year = date.getUTCFullYear();
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+// Fungsi helper untuk parse tanggal string yang konsisten
+export const parseDateString = (dateString: string): Date => {
+  // Gunakan toUTCDateOnly untuk konsistensi
+  return toUTCDateOnly(dateString);
 };
 
 export const calculateEndTime = (startTime: string, duration: number = 1) => {
@@ -230,4 +255,3 @@ export const generateChartRevenue = (revenueData: Revenue[]): MonthlyData[] => {
     };
   });
 };
-

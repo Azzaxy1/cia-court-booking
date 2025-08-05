@@ -18,12 +18,14 @@ export async function GET(
       );
     }
 
+    const utcDate = toUTCDateOnly(date);
+
     const schedules = await prisma.schedule.findMany({
       where: {
         courtId: params.courtId,
         date: {
-          gte: toUTCDateOnly(date),
-          lt: new Date(toUTCDateOnly(date).getTime() + 24 * 60 * 60 * 1000),
+          gte: utcDate,
+          lt: new Date(utcDate.getTime() + 24 * 60 * 60 * 1000),
         },
       },
       include: {

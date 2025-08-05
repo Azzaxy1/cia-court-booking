@@ -159,8 +159,8 @@ async function main() {
       firstCourt = court;
     }
 
-    // Buat schedule untuk 3 bulan ke depan
-    for (let i = 0; i < 90; i++) {
+    // Buat schedule untuk 2 bulan ke depan
+    for (let i = 0; i < 60; i++) {
       const date = new Date();
       date.setDate(date.getDate() + i);
       const day = date.getDay();
@@ -253,7 +253,7 @@ async function main() {
     });
 
     // Create schedules for each badminton court
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 60; i++) {
       // Buat schedule untuk setiap court
       const timeSlots = [
         "07:00",
@@ -329,7 +329,7 @@ async function main() {
     });
 
     // Create schedules for each table tennis court
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 60; i++) {
       // Buat schedule untuk setiap court
       const timeSlots = [
         "07:00",

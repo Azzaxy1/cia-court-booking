@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSchedule } from "@/contexts/ScheduleContext";
-import { formatRupiah } from "@/lib/utils";
+import { formatRupiah, formatDateString, parseDateString } from "@/lib/utils";
 import { CourtReal } from "@/types/court";
 import {
   DAYS_OF_WEEK,
@@ -238,14 +238,21 @@ const RecurringBooking = ({ court }: Props) => {
   };
 
   const handleDateChange = (field: "startDate" | "endDate", value: string) => {
+    // Gunakan helper function yang konsisten
+    const date = parseDateString(value);
+
+    console.log("RecurringBooking: Input value:", value);
+    console.log("RecurringBooking: Parsed date:", date);
+
     setFormData((prev) => ({
       ...prev,
-      [field]: new Date(value),
+      [field]: date,
     }));
   };
 
   const formatDate = (date: Date) => {
-    return date.toISOString().split("T")[0];
+    // Gunakan helper function yang konsisten
+    return formatDateString(date);
   };
 
   if (!selectedSchedule) {

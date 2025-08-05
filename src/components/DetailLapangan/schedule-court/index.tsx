@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { formatRupiah } from "@/lib/utils";
+import { formatRupiah, formatDateString } from "@/lib/utils";
 import { CourtReal } from "@/types/court";
 import { Calendar as CalenderIcon, DollarSign } from "lucide-react";
 import React, { useState, useEffect } from "react";
@@ -39,10 +39,9 @@ const ScheduleCourt = ({ court }: Props) => {
     queryKey: ["schedules", court.id, selectedDate],
     queryFn: async () => {
       if (!selectedDate) return [];
-      const year = selectedDate.getFullYear();
-      const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
-      const day = selectedDate.getDate().toString().padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
+
+      const formattedDate = formatDateString(selectedDate);
+
       const res = await getCourtSchedule(court.id, formattedDate);
       return res.data;
     },
