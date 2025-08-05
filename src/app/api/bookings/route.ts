@@ -46,7 +46,9 @@ export async function POST(req: Request) {
         user = await prisma.user.create({
           data: {
             name: customerName,
-            email: `${customerName.replace(/\s/g, "").toLowerCase()}@gmail.com`,
+            email: `${customerName
+              .replace(/\s/g, "")
+              .toLowerCase()}@customer.cash`,
             role: "CUSTOMER",
           },
         });

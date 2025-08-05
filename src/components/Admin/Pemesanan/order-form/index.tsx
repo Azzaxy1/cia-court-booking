@@ -36,7 +36,7 @@ import {
   Court,
   Schedule,
 } from "@/app/generated/prisma";
-import { calculateEndTime } from "@/lib/utils";
+import { calculateEndTime, formatDateString } from "@/lib/utils";
 import { useEffect } from "react";
 import { id } from "date-fns/locale";
 
@@ -154,10 +154,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
       const selectedDate = watch("selectedDate");
       if (!selectedDate) return [];
 
-      const year = selectedDate.getFullYear();
-      const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
-      const day = selectedDate.getDate().toString().padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
+      const formattedDate = formatDateString(selectedDate);
       const res = await getCourtSchedule(watch("courtId"), formattedDate);
       return res.data;
     },
@@ -272,14 +269,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
         price: data.selectedSchedule?.price ?? 0,
         selectedScheduleId: data.selectedSchedule?.id ?? null,
         selectedDate: data.selectedDate
-          ? `${data.selectedDate.getFullYear()}-${(
-              data.selectedDate.getMonth() + 1
-            )
-              .toString()
-              .padStart(2, "0")}-${data.selectedDate
-              .getDate()
-              .toString()
-              .padStart(2, "0")}`
+          ? formatDateString(data.selectedDate)
           : "",
         amount: data.selectedSchedule?.price ?? 0,
         startTime: data.selectedSchedule?.timeSlot ?? "",
@@ -854,11 +844,13 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                     <SelectValue placeholder="Pilih status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.values(BookingStatus).filter(status => status !== "Refunded").map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {status}
-                      </SelectItem>
-                    ))}
+                    {Object.values(BookingStatus)
+                      .filter((status) => status !== "Refunded")
+                      .map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -939,8 +931,9 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                       endDate,
                       dayOfWeek
                     );
-                    const originalTotalPrice = sessions.length * selectedSchedule.price;
-                    
+                    const originalTotalPrice =
+                      sessions.length * selectedSchedule.price;
+
                     // Calculate discount for button
                     let discountPercentage = 0;
                     if (sessions.length >= 16) {
@@ -954,7 +947,7 @@ const OrderForm = ({ courts, isAddForm, order }: Props) => {
                       (originalTotalPrice * discountPercentage) / 100
                     );
                     const finalTotalPrice = originalTotalPrice - discountAmount;
-                    
+
                     return `Simpan ${
                       sessions.length
                     } Sesi - Rp ${finalTotalPrice.toLocaleString("id-ID")}`;
