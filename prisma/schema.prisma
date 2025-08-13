@@ -164,6 +164,19 @@ model Schedule {
   @@index([courtId, date, timeSlot])
 }
 
+model SystemProtection {
+  id              String   @id @default(cuid())
+  isActive        Boolean  @default(true)
+  protectionDays  Int      @default(30) // Jumlah hari proteksi (default 30 hari)
+  migratedAt      DateTime @default(now()) // Tanggal migration
+  expiredAt       DateTime // Tanggal expired otomatis berdasarkan protectionDays
+  description     String?  @default("System protection for trial period")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("system_protection")
+}
+
 enum Role {
   CUSTOMER
   CASHIER
