@@ -20,6 +20,7 @@ async function main() {
   await prisma.session.deleteMany();
   await prisma.account.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.systemProtection.deleteMany();
 
   // Seed Users
   const user = await prisma.user.create({
@@ -418,6 +419,26 @@ async function main() {
   console.log("Court Futsal Created:", firstCourt);
   console.log("Badminton Courts:", badmintonCourts);
   console.log("Table Tennis Courts:", tableTennisCourts);
+
+  // Initialize System Protection
+  console.log("Initializing System Protection...");
+  const protectionDays = 30; // Set berapa hari proteksi (default 30 hari)
+  const now = new Date();
+  const expiredAt = new Date(now);
+  expiredAt.setDate(now.getDate() + protectionDays);
+
+  const systemProtection = await prisma.systemProtection.create({
+    data: {
+      isActive: true,
+      protectionDays: protectionDays,
+      migratedAt: now,
+      expiredAt: expiredAt,
+      description: `System protection for ${protectionDays} days trial period`
+    }
+  });
+
+  console.log("System Protection Created:", systemProtection);
+  console.log(`✅ System will expire on: ${expiredAt.toLocaleDateString('id-ID')}`);
   console.log("Seeding completed successfully!");
 }
 
