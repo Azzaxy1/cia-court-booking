@@ -21,18 +21,26 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import InformationCourt from "@/components/DetailLapangan/information-court";
-import ScheduleCourt from "@/components/DetailLapangan/schedule-court";
+import dynamic from "next/dynamic";
 import { getCourtWithSchedule } from "@/lib/db";
 import { ScheduleProvider } from "@/contexts/ScheduleContext";
 
 type CourtType = "futsal" | "badminton" | "tableTennis";
 
+interface DetailLapanganProps {
+  params: Promise<{ type: string; id: string }>;
+}
+
+const InformationCourt = dynamic(
+  () => import("@/components/DetailLapangan/information-court"),
+);
+const ScheduleCourt = dynamic(
+  () => import("@/components/DetailLapangan/schedule-court"),
+);
+
 const DetailLapangan = async ({
   params,
-}: {
-  params: Promise<{ type: string; id: string }>;
-}) => {
+}: DetailLapanganProps) => {
   const courts = await getCourtWithSchedule();
 
   const { type, id } = await params;
@@ -76,7 +84,7 @@ const DetailLapangan = async ({
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    href="lapangan"
+                    href="/lapangan"
                     className="text-teal-700 hover:underline text-sm"
                   >
                     Daftar Lapangan
@@ -108,6 +116,7 @@ const DetailLapangan = async ({
                 src={court.image}
                 alt={court.name}
                 fill
+                priority
                 className="object-cover rounded-lg"
               />
             </div>
