@@ -151,7 +151,7 @@ const ScheduleCourt = ({ court }: Props) => {
               className="w-full md:w-1/2 mx-auto flex justify-center"
               locale={id}
               initialFocus={true}
-              disabled={(date) => {
+              disabled={(date: Date) => {
                 const now = new Date();
                 now.setHours(0, 0, 0, 0);
                 return date < now;

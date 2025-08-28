@@ -33,6 +33,7 @@
     "@tanstack/react-table": "^8.21.2",
     "@types/aos": "^3.0.7",
     "@types/lodash": "^4.17.17",
+    "@types/react-icons": "^3.0.0",
     "aos": "^2.3.4",
     "axios": "^1.8.1",
     "bcryptjs": "^3.0.2",
@@ -76,4 +77,3 @@
     "typescript": "^5.8.3"
   }
 }
-
