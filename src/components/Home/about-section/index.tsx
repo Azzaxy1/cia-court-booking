@@ -13,6 +13,8 @@ const AboutSection = () => {
             alt="About Image"
             width={500}
             height={500}
+            priority
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             className="w-full max-w-sm sm:max-w-md md:max-w-lg 2xl:max-w-2xl"
           />
         </div>

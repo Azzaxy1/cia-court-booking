@@ -44,6 +44,8 @@ const HowToOrder = () => {
             alt="Tenis Image"
             width={300}
             height={300}
+            priority
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             className="w-full max-w-sm sm:max-w-md md:max-w-md 2xl:max-w-xl"
           />
         </div>

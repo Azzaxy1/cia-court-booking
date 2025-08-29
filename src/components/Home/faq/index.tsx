@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { faqData } from "@/constants/faq";
 import Link from "next/link";
@@ -43,9 +43,9 @@ const FaqItem = ({
 const Faq = () => {
   const [openAccordion, setOpenAccordion] = useState<number | null>(null);
 
-  const toggleAccordion = (id: number) => {
+  const toggleAccordion = useCallback((id: number) => {
     setOpenAccordion(openAccordion === id ? null : id);
-  };
+  }, [openAccordion]);
 
   return (
     <section className="py-16 bg-gray-50">
