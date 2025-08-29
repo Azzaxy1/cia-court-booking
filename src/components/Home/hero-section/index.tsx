@@ -6,10 +6,10 @@ import React from "react";
 
 const HeroSection = () => {
   return (
-    <section className="min-h-screen flex items-center justify-center  md:px-12 pt-20 md:pt-0 pb-10 md:pb-0">
+    <section className="min-h-screen flex items-center justify-center md:px-12 pt-20 md:pt-0 pb-10 md:pb-0">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full container">
         <div
-          className="flex flex-col justify-center  md:text-left"
+          className="flex flex-col justify-center md:text-left"
           data-aos="fade-right"
         >
           <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-semibold leading-tight text-slate-800">
@@ -44,8 +44,11 @@ const HeroSection = () => {
             width={500}
             height={500}
             priority
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PC9zdmc+"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             className="w-full max-w-sm sm:max-w-md md:max-w-lg 2xl:max-w-2xl"
+            quality={85}
           />
         </div>
       </div>

@@ -2,14 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+// Image optimization
   images: {
-    domains: [
-      "encrypted-tbn0.gstatic.com",
-      "centroflor.id",
-      "lh3.googleusercontent.com",
-      "avatars.githubusercontent.com",
-      "platform-lookaside.fbsbx.com",
-    ],
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 31536000, // 1 year
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   eslint: {
     ignoreDuringBuilds: true,
@@ -20,4 +20,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
