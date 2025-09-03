@@ -1,1 +1,10 @@
 src/app/generated/prisma
+node_modules/
+.next/
+out/
+build/
+dist/
+*.config.js
+*.config.ts
+coverage/
+public/
