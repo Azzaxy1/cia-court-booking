@@ -3,6 +3,8 @@ import BackButton from "@/components/BackButton";
 import { getBookings, getCourtWithSchedule } from "@/lib/db";
 import { notFound } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 const EditOrderPage = async ({
   params,
 }: {

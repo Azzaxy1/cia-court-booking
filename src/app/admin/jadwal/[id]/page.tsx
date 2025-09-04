@@ -4,6 +4,8 @@ import { getAllSchedules, getCourts } from "@/lib/db";
 import BulkGenerateForm from "@/components/Admin/Schedule/schedule-form";
 import { Schedule, Court } from "@/app/generated/prisma/client";
 
+export const dynamic = 'force-dynamic';
+
 type CourtWithSchedule = Court & {
   Schedule: Schedule[];
 };

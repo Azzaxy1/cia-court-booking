@@ -1,8 +1,10 @@
-import React from "next";
+import React from "react";
 import { getCourts } from "@/lib/db";
 import CourtTable from "@/components/Admin/Court/court-table";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+
+export const dynamic = 'force-dynamic';
 
 const ManageCourt = async () => {
   const courts = await getCourts();

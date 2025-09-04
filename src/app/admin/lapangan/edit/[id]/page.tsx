@@ -3,6 +3,8 @@ import CourtForm from "@/components/Admin/Court/court-form";
 import BackButton from "@/components/BackButton";
 import { getCourts } from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 const EditCourtPage = async ({
   params,
 }: {

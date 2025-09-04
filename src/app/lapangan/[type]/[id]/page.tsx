@@ -21,22 +21,18 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import dynamic from "next/dynamic";
 import { getCourtWithSchedule } from "@/lib/db";
 import { ScheduleProvider } from "@/contexts/ScheduleContext";
+import InformationCourt from "@/components/DetailLapangan/information-court";
+import ScheduleCourt from "@/components/DetailLapangan/schedule-court";
 
 type CourtType = "futsal" | "badminton" | "tableTennis";
+
+export const dynamic = 'force-dynamic';
 
 interface DetailLapanganProps {
   params: Promise<{ type: string; id: string }>;
 }
-
-const InformationCourt = dynamic(
-  () => import("@/components/DetailLapangan/information-court"),
-);
-const ScheduleCourt = dynamic(
-  () => import("@/components/DetailLapangan/schedule-court"),
-);
 
 const DetailLapangan = async ({
   params,

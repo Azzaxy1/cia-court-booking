@@ -3,6 +3,8 @@ import { ChartConfig } from "@/components/ui/chart";
 import { getOrderStats } from "@/lib/db";
 import { generateChartOrder } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 const OrdersChart = async () => {
   const orderStats = await getOrderStats();
   const chartDataOrders = generateChartOrder(orderStats);

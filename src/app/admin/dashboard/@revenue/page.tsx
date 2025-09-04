@@ -3,6 +3,8 @@ import { getRevenueStats } from "@/lib/db";
 import RevenueChartClient from "@/components/Admin/Dashboard/revenue-chart-client";
 import { generateChartRevenue } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 const RevenueChart = async () => {
   const revenueStats = await getRevenueStats();
   const chartDataRevenue = generateChartRevenue(revenueStats);

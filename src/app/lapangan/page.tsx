@@ -2,6 +2,8 @@ import React from "react";
 import SelectCourt from "@/components/Lapangan/select-court";
 import { getCourtWithSchedule } from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 const CourtPage = async () => {
   const courts = await getCourtWithSchedule();
 

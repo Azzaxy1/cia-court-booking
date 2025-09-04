@@ -3,6 +3,9 @@ import React from "react";
 import { getCourtStats } from "@/lib/db";
 import CourtChartClient from "@/components/Admin/Dashboard/court-chart-client";
 
+// Force dynamic rendering untuk mencegah static generation
+export const dynamic = "force-dynamic";
+
 const CourtChart = async () => {
   const stats = await getCourtStats();
 

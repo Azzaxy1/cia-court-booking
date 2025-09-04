@@ -2,6 +2,8 @@ import OrderForm from "@/components/Admin/Pemesanan/order-form";
 import BackButton from "@/components/BackButton";
 import { getCourtWithSchedule } from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 const AddOrderPage = async () => {
   const courts = await getCourtWithSchedule();
 

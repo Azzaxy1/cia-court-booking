@@ -9,6 +9,8 @@ import {
 import { FaMoneyBill } from "react-icons/fa";
 import { formatRupiah } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 const Stats = async () => {
   const totalBooking = await getTotalBookingCurrentMonth();
   const totalRevenue = await getTotalRevenueCurrentMonth();

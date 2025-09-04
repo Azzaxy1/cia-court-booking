@@ -3,6 +3,8 @@ import { getBookings } from "@/lib/db";
 import OrderTable from "@/components/Admin/Pemesanan/order-table";
 import { Booking, BookingStatus, Court, User } from "@/app/generated/prisma";
 
+export const dynamic = 'force-dynamic';
+
 interface ManageOrderProps {
   searchParams: Promise<{
     [key: string]: string | string[] | undefined;
