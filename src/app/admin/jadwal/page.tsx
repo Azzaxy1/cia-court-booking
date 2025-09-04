@@ -2,6 +2,8 @@
 import { getAllSchedules, getScheduleStats } from "@/lib/db";
 import ScheduleTable from "@/components/Admin/Schedule/schedule-table";
 
+export const dynamic = "force-dynamic";
+
 const ManageSchedule = async () => {
   const [rawSchedules, stats] = await Promise.all([
     getAllSchedules(),
