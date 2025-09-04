@@ -3,6 +3,8 @@ import { columns } from "@/components/Admin/Income/columns";
 import { getTransactionsWithDetails, getCourtsForFilter } from "@/lib/db";
 import IncomeTable from "@/components/Admin/Income/income-table";
 
+export const dynamic = "force-dynamic";
+
 const ManageIncome = async () => {
   const [transactions, courts] = await Promise.all([
     getTransactionsWithDetails(),

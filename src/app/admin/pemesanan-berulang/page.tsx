@@ -11,6 +11,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CalendarClock, AlertCircle } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 const RecurringBookingsPage = () => {
   const { data: session } = useSession();
 
@@ -24,7 +26,6 @@ const RecurringBookingsPage = () => {
     enabled:
       !!session?.user?.role && ["CASHIER", "OWNER"].includes(session.user.role),
   });
-  console.log("data:", recurringBookings);
 
   // Ensure data is always an array
   const safeRecurringBookings = Array.isArray(recurringBookings)
