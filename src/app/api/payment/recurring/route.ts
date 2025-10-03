@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import midtransClient from "midtrans-client";
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL as string;
+
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -65,9 +67,9 @@ export async function POST(req: Request) {
         },
       ],
       callbacks: {
-        finish: `http://localhost:3000/payment/success?booking_id=${recurringBooking.id}`,
-        error: `http://localhost:3000/payment/failed?booking_id=${recurringBooking.id}`,
-        pending: `http://localhost:3000/payment/pending?booking_id=${recurringBooking.id}`,
+        finish: `${baseUrl}/payment/success?booking_id=${recurringBooking.id}`,
+        error: `${baseUrl}/payment/failed?booking_id=${recurringBooking.id}`,
+        pending: `${baseUrl}/payment/pending?booking_id=${recurringBooking.id}`,
       },
     };
 

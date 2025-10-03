@@ -6,6 +6,7 @@ import midtransClient from "midtrans-client";
 import { nanoid } from "nanoid";
 
 const serverKey = process.env.MIDTRANS_SERVER_KEY as string;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL as string;
 
 export async function POST(request: NextRequest) {
   try {
@@ -89,9 +90,9 @@ export async function POST(request: NextRequest) {
         },
       ],
       callbacks: {
-        finish: `http://localhost:3000/payment/success?booking_id=${booking.id}`,
-        error: `http://localhost:3000/payment/failed?booking_id=${booking.id}`,
-        pending: `http://localhost:3000/payment/pending?booking_id=${booking.id}`,
+        finish: `${baseUrl}/payment/success?booking_id=${booking.id}`,
+        error: `${baseUrl}/payment/failed?booking_id=${booking.id}`,
+        pending: `${baseUrl}/payment/pending?booking_id=${booking.id}`,
       },
     };
 

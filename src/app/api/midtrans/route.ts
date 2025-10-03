@@ -3,6 +3,7 @@ import midtransClient from "midtrans-client";
 import { prisma } from "@/lib/prisma";
 
 const serverKey = process.env.MIDTRANS_SERVER_KEY as string;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL as string;
 
 export async function POST(req: Request) {
   try {
@@ -48,9 +49,9 @@ export async function POST(req: Request) {
       item_details: itemDetails,
       customer_details: customerDetails,
       callbacks: {
-        finish: `http://localhost:3000/payment/success?booking_id=${bookingId}`,
-        error: `http://localhost:3000/payment/failed?booking_id=${bookingId}`,
-        pending: `http://localhost:3000/payment/pending?booking_id=${bookingId}`,
+        finish: `${baseUrl}/payment/success?booking_id=${bookingId}`,
+        error: `${baseUrl}/payment/failed?booking_id=${bookingId}`,
+        pending: `${baseUrl}/payment/pending?booking_id=${bookingId}`,
       },
     };
 
