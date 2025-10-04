@@ -150,11 +150,6 @@ export async function createRecurringBooking(
     );
   }
 
-  // Log untuk debugging
-  console.log("timeSlot:", data.timeSlot);
-  console.log("parsed startTime:", startTime);
-  console.log("parsed endTime:", endTime);
-
   // Increase transaction timeout for recurring bookings (30 seconds)
   const transaction = await prisma.$transaction(
     async (tx) => {

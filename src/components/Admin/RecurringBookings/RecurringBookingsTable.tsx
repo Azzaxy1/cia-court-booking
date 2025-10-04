@@ -58,7 +58,6 @@ const RecurringBookingsTable = ({ data, columns }: Props) => {
     pageIndex: 0,
     pageSize: 10,
   });
-  console.log("Data:", data);
 
   // Ensure data is an array
   const safeData = Array.isArray(data) ? data : [];

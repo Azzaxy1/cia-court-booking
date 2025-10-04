@@ -41,8 +41,6 @@ const EditSchedulePage = async ({
     );
   }
 
-  console.log("Schedule", schedule);
-
   return (
     <div className="container mx-auto pb-8">
       <BackButton />

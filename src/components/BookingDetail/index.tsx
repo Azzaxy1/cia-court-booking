@@ -112,20 +112,26 @@ const BookingDetail = ({ booking }: BookingDetailProps) => {
       if (data.transactionToken && window.snap) {
         window.snap.pay(data.transactionToken, {
           onSuccess: (result) => {
-            console.log("Payment success:", result);
             toast.success("Pembayaran berhasil!");
             router.push(`/payment/success?order_id=${result.order_id}`);
             router.refresh();
           },
           onError: (result) => {
-            console.log("Payment error:", result);
-            toast.error("Pembayaran gagal!");
+            toast.error(
+              `Pembayaran gagal! ${result?.message || "Terjadi kesalahan"}`,
+              {
+                duration: 3000,
+              }
+            );
           },
         });
       }
     } catch (error) {
-      console.error("Error retrying payment:", error);
-      toast.error("Gagal memproses pembayaran ulang. Silakan hubungi admin.");
+      toast.error(
+        `Gagal memproses pembayaran ulang. Silakan hubungi admin. ${String(
+          error
+        )}`
+      );
     } finally {
       setIsProcessingPayment(false);
     }

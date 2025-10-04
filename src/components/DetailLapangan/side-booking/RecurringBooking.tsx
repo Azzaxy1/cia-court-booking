@@ -209,8 +209,12 @@ const RecurringBooking = ({ court }: Props) => {
             router.push(`/payment/success?order_id=${result.order_id}`);
           },
           onError: (result) => {
-            console.log("Payment error:", result);
-            toast.error("Pembayaran gagal!");
+            toast.error(
+              `Pembayaran gagal! ${result?.message || "Terjadi kesalahan"}`,
+              {
+                duration: 3000,
+              }
+            );
           },
         });
       }

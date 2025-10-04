@@ -40,10 +40,10 @@ export async function PUT(
           });
         }
       } else {
-        console.log("No schedules found on existing booking");
+        throw new Error("No schedules found on existing booking");
       }
     } else {
-      console.log("Cancellation condition not met");
+      throw new Error("Cancellation condition not met");
     }
 
     if (data.status !== "Canceled") {

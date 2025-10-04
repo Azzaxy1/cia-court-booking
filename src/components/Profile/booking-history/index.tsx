@@ -97,14 +97,17 @@ const BookingHistory = ({ booking }: Props) => {
       if (data.transactionToken && window.snap) {
         window.snap.pay(data.transactionToken, {
           onSuccess: (result) => {
-            console.log("Payment success:", result);
             toast.success("Pembayaran berhasil!");
             router.push(`/payment/success?order_id=${result.order_id}`);
             router.refresh();
           },
           onError: (result) => {
-            console.log("Payment error:", result);
-            toast.error("Pembayaran gagal!");
+            toast.error(
+              `Pembayaran gagal! ${result?.message || "Terjadi kesalahan"}`,
+              {
+                duration: 3000,
+              }
+            );
           },
         });
       }

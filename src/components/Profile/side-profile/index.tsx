@@ -13,7 +13,6 @@ import { signOut, useSession } from "next-auth/react";
 const SideProfile = () => {
   const { data: session } = useSession();
   const [imageError, setImageError] = useState(false);
-  console.log("Session Data:", session?.user);
 
   const handleLogout = async () => {
     try {
@@ -41,12 +40,6 @@ const SideProfile = () => {
                 className="object-cover"
                 onError={() => {
                   setImageError(true);
-                }}
-                onLoad={() => {
-                  console.log(
-                    "Image loaded successfully:",
-                    session?.user?.image
-                  );
                 }}
               />
             ) : null}

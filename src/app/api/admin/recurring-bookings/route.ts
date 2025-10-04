@@ -7,10 +7,7 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
-    console.log("Session:", session);
-
     if (!session?.user) {
-      console.log("No session user");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -19,11 +16,8 @@ export async function GET() {
       !session.user.role ||
       !["CASHIER", "OWNER"].includes(session.user.role)
     ) {
-      console.log("User role not authorized:", session.user.role);
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
-    console.log("Fetching recurring bookings...");
 
     const recurringBookings = await prisma.recurringBooking.findMany({
       include: {
