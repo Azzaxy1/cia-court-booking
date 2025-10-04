@@ -3,6 +3,7 @@ import {
   RecurringBookingFormData,
   RecurringBookingPreview,
 } from "@/types/RecurringBooking";
+import { startOfDay, addDays, getDay } from "date-fns";
 
 /**
  * Generate array of dates for recurring booking based on day of week
@@ -13,20 +14,23 @@ export function getRecurringDates(
   endDate: Date
 ): Date[] {
   const dates: Date[] = [];
-  const current = new Date(startDate);
+
+  // Gunakan startOfDay untuk memastikan tanggal mulai dari awal hari
+  let current = startOfDay(startDate);
+  const end = startOfDay(endDate);
 
   // Convert our dayOfWeek (1-7, Mon-Sun) to JavaScript getDay() (0-6, Sun-Sat)
   const targetDay = dayOfWeek === 7 ? 0 : dayOfWeek;
 
   // Adjust to the first occurrence of the target day
-  while (current.getDay() !== targetDay) {
-    current.setDate(current.getDate() + 1);
+  while (getDay(current) !== targetDay) {
+    current = addDays(current, 1);
   }
 
   // Generate all dates until end date
-  while (current <= endDate) {
+  while (current <= end) {
     dates.push(new Date(current));
-    current.setDate(current.getDate() + 7); // Add 7 days for next week
+    current = addDays(current, 7); // Add 7 days for next week
   }
 
   return dates;
@@ -39,7 +43,7 @@ export function calculateRecurringDiscount(totalSessions: number): {
   discountPercentage: number;
 } {
   let discountPercentage = 0;
-  
+
   if (totalSessions >= 16) {
     discountPercentage = 15; // 15% untuk 16+ sesi
   } else if (totalSessions >= 8) {
@@ -47,7 +51,7 @@ export function calculateRecurringDiscount(totalSessions: number): {
   } else if (totalSessions >= 4) {
     discountPercentage = 5; // 5% untuk 4-7 sesi
   }
-  
+
   return { discountPercentage };
 }
 
@@ -78,10 +82,12 @@ export async function getRecurringBookingPreview(
   const pricePerSession = schedule.price;
   const totalSessions = dates.length;
   const originalTotalPrice = pricePerSession * totalSessions;
-  
+
   // Calculate discount
   const discount = calculateRecurringDiscount(totalSessions);
-  const discountAmount = Math.floor((originalTotalPrice * discount.discountPercentage) / 100);
+  const discountAmount = Math.floor(
+    (originalTotalPrice * discount.discountPercentage) / 100
+  );
   const finalTotalPrice = originalTotalPrice - discountAmount;
 
   return {
@@ -238,10 +244,12 @@ export async function createRecurringBooking(
 
     const pricePerSession = schedule.price;
     const originalTotalPrice = pricePerSession * recurringDates.length;
-    
+
     // Calculate discount for recurring booking
     const discount = calculateRecurringDiscount(recurringDates.length);
-    const discountAmount = Math.floor((originalTotalPrice * discount.discountPercentage) / 100);
+    const discountAmount = Math.floor(
+      (originalTotalPrice * discount.discountPercentage) / 100
+    );
     const finalTotalPrice = originalTotalPrice - discountAmount;
 
     // Create recurring booking

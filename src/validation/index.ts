@@ -21,17 +21,26 @@ const recurringBookingSchema = z
     courtId: z.string().min(1, "Lapangan harus dipilih"),
     timeSlot: z.string().min(1, "Waktu harus dipilih"),
     dayOfWeek: z.number().min(1).max(7, "Hari tidak valid"),
-    startDate: z.date({
-      required_error: "Tanggal mulai harus dipilih",
-    }),
-    endDate: z.date({
-      required_error: "Tanggal selesai harus dipilih",
-    }),
+    startDate: z.string().refine((date) => {
+      const parsed = new Date(date + "T00:00:00");
+      return !isNaN(parsed.getTime());
+    }, "Format tanggal tidak valid"),
+    endDate: z.string().refine((date) => {
+      const parsed = new Date(date + "T00:00:00");
+      return !isNaN(parsed.getTime());
+    }, "Format tanggal tidak valid"),
   })
-  .refine((data) => data.endDate > data.startDate, {
-    message: "Tanggal selesai harus setelah tanggal mulai",
-    path: ["endDate"],
-  });
+  .refine(
+    (data) => {
+      const startDate = new Date(data.startDate + "T00:00:00");
+      const endDate = new Date(data.endDate + "T00:00:00");
+      return endDate > startDate;
+    },
+    {
+      message: "Tanggal selesai harus setelah tanggal mulai",
+      path: ["endDate"],
+    }
+  );
 
 const profileSchema = z.object({
   name: z.string().min(3, "Nama harus lebih dari 3 karakter"),

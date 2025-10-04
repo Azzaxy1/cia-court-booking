@@ -21,6 +21,14 @@ export interface RecurringBookingFormData {
   endDate: Date;
 }
 
+export interface RecurringBookingApiPayload {
+  courtId: string;
+  timeSlot: string;
+  dayOfWeek: number;
+  startDate: string;
+  endDate: string;
+}
+
 export interface RecurringBookingPreview {
   dates: Date[];
   totalSessions: number;

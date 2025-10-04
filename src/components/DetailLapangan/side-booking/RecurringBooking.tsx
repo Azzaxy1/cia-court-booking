@@ -19,13 +19,14 @@ import {
   RecurringBookingFormData,
   RecurringBookingPreview,
 } from "@/types/RecurringBooking";
-import { recurringBookingSchema } from "@/validation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaCalendarAlt, FaSpinner } from "react-icons/fa";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 interface Props {
   court: CourtReal;
@@ -113,8 +114,8 @@ const RecurringBooking = ({ court }: Props) => {
           action: "preview",
           courtId: formData.courtId,
           dayOfWeek: formData.dayOfWeek.toString(),
-          startDate: formData.startDate.toISOString(),
-          endDate: formData.endDate.toISOString(),
+          startDate: format(formData.startDate, "yyyy-MM-dd"),
+          endDate: format(formData.endDate, "yyyy-MM-dd"),
           timeSlot: formData.timeSlot,
         });
 
@@ -134,12 +135,19 @@ const RecurringBooking = ({ court }: Props) => {
   const { mutate: createRecurring, isPending: isCreatingBooking } = useMutation(
     {
       mutationFn: async (data: RecurringBookingFormData) => {
+        // Format tanggal sebagai string YYYY-MM-DD untuk menghindari timezone issues
+        const formattedData = {
+          ...data,
+          startDate: format(data.startDate, "yyyy-MM-dd"),
+          endDate: format(data.endDate, "yyyy-MM-dd"),
+        };
+
         const response = await fetch("/api/recurring-booking", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(formattedData),
         });
 
         const result = await response.json();
@@ -234,8 +242,8 @@ const RecurringBooking = ({ court }: Props) => {
     }
 
     try {
-      const validatedData = recurringBookingSchema.parse(formData);
-      createRecurring(validatedData);
+      // Tidak perlu validasi zod di client, validasi akan dilakukan di server
+      createRecurring(formData);
     } catch (error) {
       console.error("Validation error:", error);
       toast.error("Data tidak valid. Silakan periksa kembali form Anda.");
@@ -243,9 +251,11 @@ const RecurringBooking = ({ court }: Props) => {
   };
 
   const handleDateChange = (field: "startDate" | "endDate", value: string) => {
-    // Parse date string directly to avoid timezone issues
+    // Menggunakan parseISO untuk parsing tanggal yang konsisten di semua timezone
+    // Format YYYY-MM-DD akan di-parse sebagai tanggal lokal tanpa offset timezone
     const [year, month, day] = value.split("-").map(Number);
-    const date = new Date(year, month - 1, day); // month is 0-based in Date constructor
+    // Buat tanggal dengan komponen lokal untuk menghindari timezone shift
+    const date = new Date(year, month - 1, day);
 
     setFormData((prev) => ({
       ...prev,
@@ -254,11 +264,8 @@ const RecurringBooking = ({ court }: Props) => {
   };
 
   const formatDate = (date: Date) => {
-    // Use local date methods to avoid timezone offset
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    // Gunakan format dari date-fns untuk konsistensi
+    return format(date, "yyyy-MM-dd");
   };
 
   if (!selectedSchedule) {
@@ -425,8 +432,8 @@ const RecurringBooking = ({ court }: Props) => {
                 </p>
                 <p className="text-sm text-blue-800">
                   <strong>Periode:</strong>{" "}
-                  {formData.startDate.toLocaleDateString("id-ID")} -{" "}
-                  {formData.endDate.toLocaleDateString("id-ID")}
+                  {format(formData.startDate, "dd MMMM yyyy", { locale: id })} -{" "}
+                  {format(formData.endDate, "dd MMMM yyyy", { locale: id })}
                 </p>
               </div>
               {/* Booking Dates */}
@@ -440,10 +447,7 @@ const RecurringBooking = ({ court }: Props) => {
                       key={index}
                       className="inline-block bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded font-medium"
                     >
-                      {new Date(date).toLocaleDateString("id-ID", {
-                        day: "2-digit",
-                        month: "short",
-                      })}
+                      {format(new Date(date), "dd MMM", { locale: id })}
                     </span>
                   ))}
                   {preview.dates.length > 12 && (

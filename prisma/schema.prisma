@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/app/generated/prisma"
@@ -26,11 +20,11 @@ model User {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime?          @default(now()) @updatedAt
   Account          Account[]
-  Session          Session[]
   Booking          Booking[]
   RecurringBooking RecurringBooking[]
+  Session          Session[]
 }
-
+  
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -44,8 +38,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id])
+  user              User    @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerAccountId])
 }
@@ -55,8 +48,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id])
 }
 
 model Court {
@@ -71,12 +63,12 @@ model Court {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   Booking          Booking[]
-  Schedule         Schedule[]
   RecurringBooking RecurringBooking[]
+  Schedule         Schedule[]
 }
 
 model Booking {
-  id                 String        @id @default(cuid())
+  id                 String            @id @default(cuid())
   userId             String
   courtId            String
   startTime          String
@@ -85,21 +77,20 @@ model Booking {
   duration           Int
   date               DateTime
   paymentMethod      String
-  isConfirmed        Boolean       @default(false)
+  isConfirmed        Boolean           @default(false)
   amount             Int
-  status             BookingStatus @default(Pending)
+  status             BookingStatus     @default(Pending)
   rescheduleFrom     DateTime?
-  rescheduleCount    Int           @default(0)
+  rescheduleCount    Int               @default(0)
   cancelReason       String?
   recurringBookingId String?
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-
-  user             User              @relation(fields: [userId], references: [id])
-  court            Court             @relation(fields: [courtId], references: [id])
-  recurringBooking RecurringBooking? @relation(fields: [recurringBookingId], references: [id])
-  Transaction      Transaction[]
-  Schedule         Schedule[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  court              Court             @relation(fields: [courtId], references: [id])
+  recurringBooking   RecurringBooking? @relation(fields: [recurringBookingId], references: [id])
+  user               User              @relation(fields: [userId], references: [id])
+  Schedule           Schedule[]
+  Transaction        Transaction[]
 }
 
 model RecurringBooking {
@@ -110,7 +101,7 @@ model RecurringBooking {
   endTime       String
   courtType     CourtType
   duration      Int
-  dayOfWeek     Int // 0 = Sunday, 1 = Monday, etc.
+  dayOfWeek     Int
   startDate     DateTime
   endDate       DateTime
   paymentMethod String
@@ -119,30 +110,28 @@ model RecurringBooking {
   isActive      Boolean       @default(true)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-
-  user        User          @relation(fields: [userId], references: [id])
-  court       Court         @relation(fields: [courtId], references: [id])
-  bookings    Booking[]
-  Transaction Transaction[]
+  bookings      Booking[]
+  court         Court         @relation(fields: [courtId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  Transaction   Transaction[]
 }
 
 model Transaction {
-  id                 String    @id @default(cuid())
+  id                 String            @id @default(cuid())
   bookingId          String?
   recurringBookingId String?
   paymentMethod      String
-  transactionId      String    @unique
+  transactionId      String            @unique
   amount             Int
   midtransToken      String?
   midtransOrderId    String?
   paymentUrl         String?
   status             String
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
   expiredAt          DateTime?
-
-  booking          Booking?          @relation(fields: [bookingId], references: [id])
-  recurringBooking RecurringBooking? @relation(fields: [recurringBookingId], references: [id])
+  booking            Booking?          @relation(fields: [bookingId], references: [id])
+  recurringBooking   RecurringBooking? @relation(fields: [recurringBookingId], references: [id])
 }
 
 model Schedule {
@@ -156,23 +145,22 @@ model Schedule {
   available Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  court   Court    @relation(fields: [courtId], references: [id])
-  booking Booking? @relation(fields: [bookingId], references: [id])
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  court     Court    @relation(fields: [courtId], references: [id])
 
   @@unique([courtId, date, timeSlot])
   @@index([courtId, date, timeSlot])
 }
 
 model SystemProtection {
-  id              String   @id @default(cuid())
-  isActive        Boolean  @default(true)
-  protectionDays  Int      @default(30) // Jumlah hari proteksi (default 30 hari)
-  migratedAt      DateTime @default(now()) // Tanggal migration
-  expiredAt       DateTime // Tanggal expired otomatis berdasarkan protectionDays
-  description     String?  @default("System protection for trial period")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  isActive       Boolean  @default(true)
+  protectionDays Int      @default(30)
+  migratedAt     DateTime @default(now())
+  expiredAt      DateTime
+  description    String?  @default("System protection for trial period")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@map("system_protection")
 }

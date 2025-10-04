@@ -429,16 +429,18 @@ async function main() {
 
   const systemProtection = await prisma.systemProtection.create({
     data: {
-      isActive: true,
+      isActive: false,
       protectionDays: protectionDays,
       migratedAt: now,
       expiredAt: expiredAt,
-      description: `System protection for ${protectionDays} days trial period`
-    }
+      description: `System protection for ${protectionDays} days trial period`,
+    },
   });
 
   console.log("System Protection Created:", systemProtection);
-  console.log(`✅ System will expire on: ${expiredAt.toLocaleDateString('id-ID')}`);
+  console.log(
+    `✅ System will expire on: ${expiredAt.toLocaleDateString("id-ID")}`
+  );
   console.log("Seeding completed successfully!");
 }
 
