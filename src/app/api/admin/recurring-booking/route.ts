@@ -48,18 +48,57 @@ export async function POST(req: Request) {
       });
     }
 
-    // Parse and validate dates
+    // Parse and validate dates - handle string dates with timezone consistency
+    let startDate: Date;
+    let endDate: Date;
+
+    try {
+      // Handle string dates from client
+      if (typeof body.startDate === "string") {
+        startDate = new Date(body.startDate + "T00:00:00");
+      } else {
+        startDate = new Date(body.startDate);
+      }
+
+      if (typeof body.endDate === "string") {
+        endDate = new Date(body.endDate + "T00:00:00");
+      } else {
+        endDate = new Date(body.endDate);
+      }
+
+      // Validate dates
+      if (isNaN(startDate.getTime())) {
+        throw new Error("Invalid start date");
+      }
+      if (isNaN(endDate.getTime())) {
+        throw new Error("Invalid end date");
+      }
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid date format" },
+        { status: 400 }
+      );
+    }
+
     const parsedBody = {
       courtId: body.courtId,
       dayOfWeek: body.dayOfWeek,
-      startDate: new Date(body.startDate),
-      endDate: new Date(body.endDate),
+      // Keep dates as strings for validation
+      startDate: body.startDate,
+      endDate: body.endDate,
       timeSlot: body.timeSlot,
     };
 
     const validatedData = recurringBookingSchema.parse(parsedBody);
 
-    const result = await createRecurringBooking(customer.id, validatedData, {
+    // Convert validated string dates back to Date objects for service
+    const serviceData = {
+      ...validatedData,
+      startDate,
+      endDate,
+    };
+
+    const result = await createRecurringBooking(customer.id, serviceData, {
       status: "Paid",
       paymentMethod: "Cash",
     });
